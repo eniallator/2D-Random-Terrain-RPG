@@ -1,4 +1,6 @@
 local config = require 'myConf'
+mouse = require 'src.utils.mouse'
+keys = require 'src.utils.keys'
 
 -- Modifying from: https://bitbucket.org/rude/love/src/default/src/scripts/boot.lua#lines-578:619
 function love.run()
@@ -32,6 +34,8 @@ function love.run()
         if love.update then
             while dt > 1 / config.tps do
                 love.update()
+                mouse.updateClicked()
+                keys.textInput = nil
                 dt = dt - (1 / config.tps)
             end
         end

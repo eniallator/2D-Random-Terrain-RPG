@@ -13,7 +13,7 @@ local test
 function love.load()
     sprite = require 'src.sprite'
     engine = require 'src.engine'
-    test = sprite('assets/textures/icons/game-icon.png', 32, 32)
+    test = sprite('assets/textures/icons/game-icon.png', 32)
     print(serialise(test), test:getFrameQuad())
 end
 

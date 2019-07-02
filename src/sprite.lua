@@ -1,7 +1,10 @@
 local function sprite(imgPath, frameWidth, frameHeight)
     local sprite = {}
     sprite.spriteSheet = love.graphics.newImage(imgPath)
-    sprite.frameDim = {width = frameWidth, height = frameHeight}
+    sprite.frameDim = {
+        width = frameWidth or sprite.spriteSheet:getWidth(),
+        height = frameHeight or frameWidth or sprite.spriteSheet:getHeight()
+    }
     sprite.frames = {
         x = math.floor(sprite.spriteSheet:getWidth() / sprite.frameDim.width),
         y = math.floor(sprite.spriteSheet:getHeight() / sprite.frameDim.height)
