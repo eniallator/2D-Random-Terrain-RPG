@@ -1,4 +1,4 @@
-local function sprite(imgPath, frameWidth, frameHeight)
+return function(imgPath, frameWidth, frameHeight)
     local sprite = {}
     sprite.spriteSheet = love.graphics.newImage(imgPath)
     sprite.frameDim = {
@@ -29,5 +29,3 @@ local function sprite(imgPath, frameWidth, frameHeight)
 
     return sprite
 end
-
-return sprite

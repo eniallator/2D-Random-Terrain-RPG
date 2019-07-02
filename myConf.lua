@@ -1,6 +1,6 @@
-local config = {
-    tps = 10,
-    development = true
+return {
+    development = true,
+    chunkSize = 16,
+    minDimVisibleTiles = 20,
+    tps = 10
 }
-
-return config
