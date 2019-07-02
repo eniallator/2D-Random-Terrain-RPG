@@ -8,15 +8,16 @@ local function sprite(imgPath, frameWidth, frameHeight)
     }
     sprite.currFrame = 0
 
-    function sprite:nextframe()
-        self.currFrame = (self.currFrame + 1) % self.totalFrames
+    function sprite:nextFrame()
+        self.currFrame = (self.currFrame + 1) % (self.frames.x * self.frames.y)
     end
 
     function sprite:getFrameQuad()
         local pos = {x = self.currFrame % self.frames.x, y = math.floor(self.currFrame / self.frames.y)}
-        return sprite.spriteSheet, love.graphics.newQuad(
-            pos.x,
-            pos.y,
+
+        return love.graphics.newQuad(
+            pos.x * sprite.frameDim.width,
+            pos.y * sprite.frameDim.height,
             sprite.frameDim.width,
             sprite.frameDim.height,
             self.spriteSheet:getDimensions()
