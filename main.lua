@@ -17,7 +17,10 @@ function love.update()
     ]]
 end
 
+local test = (require 'src.chunk')()
+
 function love.draw(dt)
+    test:drawGroundTiles(30, 30)
     --[[
         1. Draw ground tiles
         2. Draw sprites/tiles above the ground from the back to the front
