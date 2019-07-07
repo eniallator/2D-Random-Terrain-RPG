@@ -1,13 +1,13 @@
-require 'src.engine'
+require 'src.Engine'
 
-local config, sprite = require 'myConf'
+local config, Sprite = require 'myConf'
 
 if config.development then
-    serialise = require 'src.development.serialise'
+    serialise = require 'src.development.Serialise'
 end
 
 function love.load()
-    sprite = require 'src.sprite'
+    Sprite = require 'src.Sprite'
 end
 
 function love.update()

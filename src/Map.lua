@@ -1,5 +1,5 @@
 local config = require 'myConf'
-local Chunk = require 'src.chunk'
+local Chunk = require 'src.Chunk'
 
 return function()
     local map = {}
