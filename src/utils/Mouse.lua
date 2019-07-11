@@ -5,6 +5,7 @@ local mouse = {
 
 local function checkClick(isDown, button)
     mouse[button].clicked = not mouse[button].held and isDown
+    mouse[button].held = isDown
 end
 
 mouse.updateClicked = function()
@@ -16,15 +17,10 @@ local function updateMouseState(isDown, x, y, id)
     local button = id == 1 and 'left' or 'right'
     mouse[button].pos = {x = x, y = y}
     checkClick(isDown, button)
-    mouse[button].held = isDown
 end
 
 function love.mousepressed(x, y, button, isTouch)
     updateMouseState(true, x, y, button)
-end
-
-function love.mousereleased(x, y, button, isTouch)
-    updateMouseState(false, x, y, button)
 end
 
 return mouse

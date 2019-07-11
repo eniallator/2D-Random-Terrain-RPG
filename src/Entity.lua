@@ -1,7 +1,6 @@
 return function(sprite, speed, x, y)
     local entity = {}
 
-    entity.oldPos = {x = x or 0, y = y or 0}
     entity.pos = {x = x or 0, y = y or 0}
     entity.sprite = sprite
     entity.speed = speed
@@ -12,6 +11,7 @@ return function(sprite, speed, x, y)
 
     function entity:update()
         if self.dest == nil then
+            self.oldPos = nil
             return
         end
 
@@ -30,8 +30,8 @@ return function(sprite, speed, x, y)
                 y = posDiff.y / magnitude
             }
             nextPos = {
-                x = normalised.x * self.speed,
-                y = normalised.y * self.speed
+                x = self.pos.x + normalised.x * self.speed,
+                y = self.pos.y + normalised.y * self.speed
             }
         end
 
@@ -41,5 +41,19 @@ return function(sprite, speed, x, y)
 
     function entity:draw(dt)
         -- interpolate from oldPos to pos with sprite:draw
+        local drawPos = self.pos
+        if self.oldPos ~= nil then
+            local posDiff = {
+                x = self.pos.x - self.oldPos.x,
+                y = self.pos.y - self.oldPos.y
+            }
+            drawPos = {
+                x = self.oldPos.x + posDiff.x * dt,
+                y = self.oldPos.y + posDiff.y * dt
+            }
+        end
+        self.sprite:draw(drawPos)
     end
+
+    return entity
 end

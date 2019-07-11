@@ -27,5 +27,18 @@ return function(imgPath, frameWidth, frameHeight)
         )
     end
 
+    function sprite:draw(xOrPos, y)
+        local pos = xOrPos
+
+        if y then
+            pos = {
+                x = xOrPos,
+                y = y
+            }
+        end
+
+        love.graphics.draw(self.spriteSheet, self:getFrameQuad(), pos.x, pos.y)
+    end
+
     return sprite
 end

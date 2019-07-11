@@ -1,6 +1,6 @@
 require 'src.Engine'
 
-local config, Sprite = require 'myConf'
+local config, Sprite, player = require 'myConf'
 
 if config.development then
     serialise = require 'src.development.Serialise'
@@ -8,6 +8,7 @@ end
 
 function love.load()
     Sprite = require 'src.Sprite'
+    player = require 'src.Player'
 end
 
 function love.update()
@@ -15,12 +16,17 @@ function love.update()
         1. Get inputs ✔
         2. Update values
     ]]
+    if MOUSE.right.clicked then
+        player:setDest(MOUSE.right.pos.x, MOUSE.right.pos.y)
+    end
+    player:update()
 end
 
 local test = (require 'src.chunk')()
 
 function love.draw(dt)
     test:drawGroundTiles(30, 30)
+    player:draw(dt)
     --[[
         1. Draw ground tiles
         2. Draw sprites/tiles above the ground from the back to the front
