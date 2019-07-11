@@ -25,7 +25,7 @@ end
 local test = (require 'src.chunk')()
 
 function love.draw(dt)
-    test:drawGroundTiles(30, 30)
+    test:draw(30, 30, config.initialScale)
     player:draw(dt)
     --[[
         1. Draw ground tiles

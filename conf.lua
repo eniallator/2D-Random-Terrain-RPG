@@ -9,5 +9,6 @@ return {
     development = true,
     chunkSize = 16,
     minDimVisibleTiles = 20,
-    tps = 20
+    tps = 20,
+    initialScale = 30
 }

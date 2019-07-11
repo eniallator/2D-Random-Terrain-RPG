@@ -14,11 +14,11 @@ return function(x, y)
         end
     end
 
-    function chunk:drawGroundTiles(x, y)
+    function chunk:draw(x, y, scale)
         for i = 1, #self.groundTiles do
             for j = 1, #self.groundTiles[i] do
                 love.graphics.setColor(self.groundTiles[i][j], self.groundTiles[i][j], self.groundTiles[i][j])
-                love.graphics.rectangle('fill', x + (j - 1) * 10, y + (i - 1) * 10, 10, 10)
+                love.graphics.rectangle('fill', x + (j - 1) * scale, y + (i - 1) * scale, scale, scale)
             end
         end
     end
