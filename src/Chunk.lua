@@ -1,4 +1,4 @@
-local config = require 'myConf'
+local config = require 'conf'
 
 return function(x, y)
     local chunk = {}

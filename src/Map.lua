@@ -1,4 +1,4 @@
-local config = require 'myConf'
+local config = require 'conf'
 local Chunk = require 'src.Chunk'
 
 return function()

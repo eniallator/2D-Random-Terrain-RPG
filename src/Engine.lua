@@ -1,4 +1,4 @@
-local config = require 'myConf'
+local config = require 'conf'
 MOUSE = require 'src.utils.Mouse'
 KEYS = require 'src.utils.Keys'
 

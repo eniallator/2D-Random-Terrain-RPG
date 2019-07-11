@@ -1,6 +1,6 @@
 require 'src.Engine'
 
-local config, Sprite, player = require 'myConf'
+local config, Sprite, player = require 'conf'
 
 if config.development then
     serialise = require 'src.development.Serialise'
