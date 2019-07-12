@@ -29,8 +29,6 @@ function love.update()
 
     if MOUSE.right.clicked then
         local dest = {
-            -- x = (cameraBox.x - cameraBox.width / 2 + MOUSE.right.pos.x / love.graphics.getWidth() * cameraBox.width) / camera.scale,
-            -- y = (cameraBox.y - cameraBox.height / 2 + MOUSE.right.pos.y / love.graphics.getHeight() * cameraBox.height) / camera.scale
             x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.right.pos.x / love.graphics.getWidth()) * cameraBox.width,
             y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
         }
