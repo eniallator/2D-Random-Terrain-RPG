@@ -3,15 +3,18 @@ local config = require 'conf'
 return function(xOrTarget, y)
     local camera = {}
 
-    if y ~= nil then
-        camera.pos = {x = xOrTarget or 0, y = y or 0}
-    else
-        camera.targetPos = xOrTarget
-    end
+    camera.following = not y
+    camera.pos = camera.following and xOrTarget or {x = xOrTarget, y = y}
     camera.scale = config.initialScale
 
     function camera:setTarget(targetPos)
-        self.targetPos = targetPos
+        self.following = true
+        self.pos = targetPos
+    end
+
+    function camera:setPos(x, y)
+        self.following = false
+        self.pos = {x = x, y = y}
     end
 
     function camera:setScale(scale)
@@ -19,18 +22,13 @@ return function(xOrTarget, y)
     end
 
     function camera:getViewBox()
-        local centrePos = self.pos
-        if self.targetPos ~= nil then
-            centrePos = self.targetPos
-        end
-
         local dim = {
             width = love.graphics.getWidth() / self.scale,
             height = love.graphics.getHeight() / self.scale
         }
         return {
-            x = centrePos.x,
-            y = centrePos.y,
+            x = self.pos.x,
+            y = self.pos.y,
             width = dim.width,
             height = dim.height
         }

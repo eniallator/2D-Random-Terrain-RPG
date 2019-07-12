@@ -35,6 +35,14 @@ function love.update()
         player:setDest(dest.x, dest.y)
     end
 
+    if KEYS.recentPressed.t then
+        if camera.following then
+            camera:setPos(cameraBox.x, cameraBox.y)
+        else
+            camera:setTarget(player.drawPos)
+        end
+    end
+
     player:update()
 end
 
