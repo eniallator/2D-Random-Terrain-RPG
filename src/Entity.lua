@@ -47,6 +47,7 @@ return function(sprite, speed, x, y)
     function entity:calcDraw(dt, scale)
         self.drawPos.x = self.pos.x
         self.drawPos.y = self.pos.y
+
         if self.oldPos ~= nil then
             local posDiff = {
                 x = self.pos.x - self.oldPos.x,

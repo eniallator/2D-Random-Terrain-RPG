@@ -1,6 +1,10 @@
-return function(imgPath, frameWidth, frameHeight)
+return function(imgPath, frameWidth, frameHeight, spriteWidth, spriteHeight)
     local sprite = {}
     sprite.spriteSheet = love.graphics.newImage(imgPath)
+    sprite.dim = {
+        width = spriteWidth,
+        height = spriteHeight or spriteWidth
+    }
     sprite.frameDim = {
         width = frameWidth or sprite.spriteSheet:getWidth(),
         height = frameHeight or frameWidth or sprite.spriteSheet:getHeight()
@@ -28,12 +32,18 @@ return function(imgPath, frameWidth, frameHeight)
     end
 
     function sprite:draw(pos, box)
-        -- love.graphics.draw(self.spriteSheet, self:getFrameQuad(), pos.x - self.frameDim.width / 2, pos.y - self.frameDim.height / 2)
+        local scale = {
+            x = sprite.dim.width * love.graphics.getWidth() / box.width / sprite.frameDim.width,
+            y = sprite.dim.height * love.graphics.getHeight() / box.height / sprite.frameDim.height
+        }
         love.graphics.draw(
             self.spriteSheet,
             self:getFrameQuad(),
-            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - self.frameDim.width / 2,
-            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - self.frameDim.height / 2
+            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - self.frameDim.width * scale.x / 2,
+            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - self.frameDim.height * scale.y / 2,
+            0,
+            scale.x,
+            scale.y
         )
     end
 
