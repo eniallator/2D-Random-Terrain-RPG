@@ -10,7 +10,7 @@ return {
     chunkSize = 16,
     tps = 20,
     camera = {
-        initialScale = 30,
+        initialZoom = 30,
         zoomRate = 0.1,
         zoomLimits = {max = 105, min = 6}
     },
