@@ -34,7 +34,7 @@ function love.run()
         if love.update then
             while dt > 1 / config.tps do
                 love.update()
-                MOUSE.updateClicked()
+                MOUSE.updateValues()
                 KEYS.updateRecentPressed()
                 dt = dt - (1 / config.tps)
             end

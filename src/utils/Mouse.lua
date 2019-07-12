@@ -1,6 +1,7 @@
 local mouse = {
     left = {id = 1},
-    right = {id = 2}
+    right = {id = 2},
+    scroll = 0
 }
 
 local function checkClick(isDown, button)
@@ -8,9 +9,10 @@ local function checkClick(isDown, button)
     mouse[button].held = isDown
 end
 
-mouse.updateClicked = function()
+mouse.updateValues = function()
     checkClick(love.mouse.isDown(1), 'left')
     checkClick(love.mouse.isDown(2), 'right')
+    mouse.scroll = 0
 end
 
 local function updateMouseState(isDown, x, y, id)
@@ -21,6 +23,10 @@ end
 
 function love.mousepressed(x, y, button, isTouch)
     updateMouseState(true, x, y, button)
+end
+
+function love.wheelmoved(x, y)
+    mouse.scroll = y
 end
 
 return mouse

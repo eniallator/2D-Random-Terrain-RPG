@@ -44,6 +44,9 @@ function love.update()
     end
 
     player:update()
+
+    camera.scale = camera.scale + camera.scale * MOUSE.scroll * config.zoomRate
+    camera.scale = math.min(config.zoomLimits.max, math.max(config.zoomLimits.min, camera.scale))
 end
 
 function love.draw(dt)
