@@ -23,6 +23,16 @@ function love.load()
 end
 
 function love.update()
+    if KEYS.recentPressed.t then
+        if camera.following then
+            camera:setPos(camera.pos.x, camera.pos.y)
+        else
+            camera:setTarget(player.drawPos)
+        end
+    end
+    camera.scale = camera.scale + camera.scale * MOUSE.scroll * config.zoomRate
+    camera.scale = math.min(config.zoomLimits.max, math.max(config.zoomLimits.min, camera.scale))
+
     local cameraBox = camera:getViewBox()
 
     map:update(cameraBox)
@@ -35,18 +45,7 @@ function love.update()
         player:setDest(dest.x, dest.y)
     end
 
-    if KEYS.recentPressed.t then
-        if camera.following then
-            camera:setPos(cameraBox.x, cameraBox.y)
-        else
-            camera:setTarget(player.drawPos)
-        end
-    end
-
     player:update()
-
-    camera.scale = camera.scale + camera.scale * MOUSE.scroll * config.zoomRate
-    camera.scale = math.min(config.zoomLimits.max, math.max(config.zoomLimits.min, camera.scale))
 end
 
 function love.draw(dt)
