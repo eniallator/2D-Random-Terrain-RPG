@@ -27,17 +27,14 @@ return function(imgPath, frameWidth, frameHeight)
         )
     end
 
-    function sprite:draw(xOrPos, y)
-        local pos = xOrPos
-
-        if y then
-            pos = {
-                x = xOrPos,
-                y = y
-            }
-        end
-
-        love.graphics.draw(self.spriteSheet, self:getFrameQuad(), pos.x - self.frameDim.width / 2, pos.y - self.frameDim.height / 2)
+    function sprite:draw(pos, box)
+        -- love.graphics.draw(self.spriteSheet, self:getFrameQuad(), pos.x - self.frameDim.width / 2, pos.y - self.frameDim.height / 2)
+        love.graphics.draw(
+            self.spriteSheet,
+            self:getFrameQuad(),
+            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - self.frameDim.width / 2,
+            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - self.frameDim.height / 2
+        )
     end
 
     return sprite

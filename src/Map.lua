@@ -6,21 +6,17 @@ return function()
 
     map.data = {}
 
-    function map:update(x, y, width, height)
-        local scale = love.graphics.getWidth() / width
-        local i, j
-
+    function map:update(box)
         local chunkRegion = {
-            startX = math.floor((x - width / 2) / config.chunkSize / scale),
-            endX = math.ceil((x + width / 2) / config.chunkSize / scale),
-            startY = math.floor((y - height / 2) / config.chunkSize / scale),
-            endY = math.ceil((y + height / 2) / config.chunkSize / scale)
+            startX = math.floor((box.x - box.width / 2) / config.chunkSize),
+            endX = math.ceil((box.x + box.width / 2) / config.chunkSize),
+            startY = math.floor((box.y - box.height / 2) / config.chunkSize),
+            endY = math.ceil((box.y + box.height / 2) / config.chunkSize)
         }
 
-        print(serialise(chunkRegion))
-
-        for i = chunkRegion.startX, chunkRegion.endX do
-            for j = chunkRegion.startY, chunkRegion.endY do
+        local i, j
+        for i = chunkRegion.startY, chunkRegion.endY do
+            for j = chunkRegion.startX, chunkRegion.endX do
                 local chunkID = 'x' .. j .. 'y' .. i
 
                 if self.data[chunkID] == nil then
@@ -30,23 +26,26 @@ return function()
         end
     end
 
-    function map:draw(x, y, width, height)
-        local scale = love.graphics.getWidth() / width
-        local i, j
-
+    function map:draw(box)
         local chunkRegion = {
-            startX = math.floor(x / config.chunkSize / scale),
-            endX = math.ceil((x + width) / config.chunkSize / scale),
-            startY = math.floor(y / config.chunkSize / scale),
-            endY = math.ceil((y + height) / config.chunkSize / scale)
+            startX = math.floor((box.x - box.width / 2) / config.chunkSize),
+            endX = math.ceil((box.x + box.width / 2) / config.chunkSize),
+            startY = math.floor((box.y - box.height / 2) / config.chunkSize),
+            endY = math.ceil((box.y + box.height / 2) / config.chunkSize)
         }
 
-        for i = chunkRegion.startX, chunkRegion.endX do
-            for j = chunkRegion.startY, chunkRegion.endY do
+        local i, j
+        for i = chunkRegion.startY, chunkRegion.endY do
+            for j = chunkRegion.startX, chunkRegion.endX do
                 local chunkID = 'x' .. j .. 'y' .. i
 
                 if self.data[chunkID] ~= nil then
-                    self.data[chunkID]:draw(j * config.chunkSize * scale, i * config.chunkSize * scale, scale)
+                    self.data[chunkID]:draw(
+                        ((j * config.chunkSize) - box.x - box.width / 2) / box.width * love.graphics.getWidth(),
+                        ((i * config.chunkSize) - box.y - box.height / 2) / box.height * love.graphics.getHeight(),
+                        config.chunkSize * love.graphics.getWidth() / box.width,
+                        config.chunkSize * love.graphics.getHeight() / box.height
+                    )
                 end
             end
         end

@@ -23,30 +23,32 @@ function love.load()
 end
 
 function love.update()
-    local width, height = love.graphics.getDimensions()
-    local box = camera:getViewBox()
+    local cameraBox = camera:getViewBox()
 
-    map:update(box.x, box.y, box.width, box.height)
+    map:update(cameraBox)
 
     if MOUSE.right.clicked then
-        player:setDest(MOUSE.right.pos.x + box.x - love.graphics.getWidth() / 2, MOUSE.right.pos.y + box.y - love.graphics.getHeight() / 2)
+        local dest = {
+            -- x = (cameraBox.x - cameraBox.width / 2 + MOUSE.right.pos.x / love.graphics.getWidth() * cameraBox.width) / camera.scale,
+            -- y = (cameraBox.y - cameraBox.height / 2 + MOUSE.right.pos.y / love.graphics.getHeight() * cameraBox.height) / camera.scale
+            x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.right.pos.x / love.graphics.getWidth()) * cameraBox.width,
+            y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
+        }
+        player:setDest(dest.x, dest.y)
     end
+
     player:update()
-    --[[
-        1. Get inputs ✔
-        2. Update values ✔
-    ]]
 end
 
 function love.draw(dt)
-    local box = camera:getViewBox()
+    player:calcDraw(dt, camera.scale)
 
-    love.graphics.translate(-box.x + love.graphics.getWidth() / 2, -box.y + love.graphics.getHeight() / 2)
+    local cameraBox = camera:getViewBox()
+
     local width, height = love.graphics.getDimensions()
 
-    map:draw(box.x, box.y, box.width, box.height)
-
-    player:draw(dt)
+    map:draw(cameraBox)
+    player:draw(cameraBox)
     --[[
         1. Draw ground tiles
         2. Draw sprites/tiles above the ground from the back to the front

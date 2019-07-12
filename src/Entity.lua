@@ -25,6 +25,7 @@ return function(sprite, speed, x, y)
         if magnitude <= self.speed then
             nextPos = self.dest
             self.dest = nil
+            print('at destination')
         else
             local normalised = {
                 x = posDiff.x / magnitude,
@@ -44,8 +45,7 @@ return function(sprite, speed, x, y)
         self.pos.y = nextPos.y
     end
 
-    function entity:draw(dt)
-        -- interpolate from oldPos to pos with sprite:draw
+    function entity:calcDraw(dt, scale)
         self.drawPos.x = self.pos.x
         self.drawPos.y = self.pos.y
         if self.oldPos ~= nil then
@@ -56,7 +56,11 @@ return function(sprite, speed, x, y)
             self.drawPos.x = self.oldPos.x + posDiff.x * dt
             self.drawPos.y = self.oldPos.y + posDiff.y * dt
         end
-        self.sprite:draw(self.drawPos)
+    end
+
+    function entity:draw(box)
+        -- interpolate from oldPos to pos with sprite:draw
+        self.sprite:draw(self.drawPos, box)
     end
 
     return entity

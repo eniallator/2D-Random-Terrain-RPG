@@ -14,11 +14,16 @@ return function(x, y)
         end
     end
 
-    function chunk:draw(x, y, scale)
+    function chunk:draw(x, y, width, height)
+        local tileDim = {
+            width = width / config.chunkSize,
+            height = height / config.chunkSize
+        }
+
         for i = 1, #self.groundTiles do
             for j = 1, #self.groundTiles[i] do
                 love.graphics.setColor(self.groundTiles[i][j], self.groundTiles[i][j], self.groundTiles[i][j])
-                love.graphics.rectangle('fill', x + (j - 1) * scale, y + (i - 1) * scale, scale, scale)
+                love.graphics.rectangle('fill', x + (j - 1) * tileDim.width, y + (i - 1) * tileDim.height, tileDim.width, tileDim.height)
             end
         end
     end
