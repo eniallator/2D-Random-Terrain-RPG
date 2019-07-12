@@ -25,7 +25,6 @@ return function(sprite, speed, x, y)
         if magnitude <= self.speed then
             nextPos = self.dest
             self.dest = nil
-            print('at destination')
         else
             local normalised = {
                 x = posDiff.x / magnitude,

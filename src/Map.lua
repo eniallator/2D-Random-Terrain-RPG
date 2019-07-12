@@ -41,8 +41,9 @@ return function()
 
                 if self.data[chunkID] ~= nil then
                     self.data[chunkID]:draw(
-                        ((j * config.chunkSize) - box.x - box.width / 2) / box.width * love.graphics.getWidth(),
-                        ((i * config.chunkSize) - box.y - box.height / 2) / box.height * love.graphics.getHeight(),
+                        ((j * config.chunkSize) - box.x - box.width / 2) / box.width * love.graphics.getWidth() + love.graphics.getWidth(),
+                        ((i * config.chunkSize) - box.y - box.height / 2) / box.height * love.graphics.getHeight() +
+                            love.graphics.getHeight(),
                         config.chunkSize * love.graphics.getWidth() / box.width,
                         config.chunkSize * love.graphics.getHeight() / box.height
                     )
