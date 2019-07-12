@@ -30,8 +30,8 @@ function love.update()
             camera:setTarget(player.drawPos)
         end
     end
-    camera.scale = camera.scale + camera.scale * MOUSE.scroll * config.zoomRate
-    camera.scale = math.min(config.zoomLimits.max, math.max(config.zoomLimits.min, camera.scale))
+    camera.scale = camera.scale + camera.scale * MOUSE.scroll * config.camera.zoomRate
+    camera.scale = math.min(config.camera.zoomLimits.max, math.max(config.camera.zoomLimits.min, camera.scale))
 
     local cameraBox = camera:getViewBox()
 
@@ -56,6 +56,7 @@ function love.draw(dt)
     local width, height = love.graphics.getDimensions()
 
     map:draw(cameraBox)
+    love.graphics.setColor(1, 1, 1)
     player:draw(cameraBox)
     --[[
         1. Draw ground tiles

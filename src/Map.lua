@@ -1,8 +1,11 @@
 local config = require 'conf'
 local Chunk = require 'src.Chunk'
+local TerrainGenerator = require 'src.TerrainGenerator'
 
 return function()
     local map = {}
+
+    map.terrainGenerator = TerrainGenerator(love.timer.getTime())
 
     map.data = {}
 
@@ -20,7 +23,7 @@ return function()
                 local chunkID = 'x' .. j .. 'y' .. i
 
                 if self.data[chunkID] == nil then
-                    self.data[chunkID] = Chunk()
+                    self.data[chunkID] = Chunk(j, i, self.terrainGenerator)
                 end
             end
         end

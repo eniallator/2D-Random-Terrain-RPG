@@ -1,6 +1,6 @@
 local config = require 'conf'
 
-return function(x, y)
+return function(x, y, terrainGenerator)
     local chunk = {}
     chunk.pos = {x = x, y = y}
 
@@ -10,7 +10,7 @@ return function(x, y)
     for i = 1, config.chunkSize do
         table.insert(chunk.groundTiles, {})
         for j = 1, config.chunkSize do
-            table.insert(chunk.groundTiles[i], (i + j - 2) / ((config.chunkSize - 2) * 2))
+            table.insert(chunk.groundTiles[i], terrainGenerator:generate(x * config.chunkSize + j, y * config.chunkSize + i))
         end
     end
 
@@ -22,7 +22,7 @@ return function(x, y)
 
         for i = 1, #self.groundTiles do
             for j = 1, #self.groundTiles[i] do
-                love.graphics.setColor(self.groundTiles[i][j], self.groundTiles[i][j], self.groundTiles[i][j])
+                love.graphics.setColor(self.groundTiles[i][j].r, self.groundTiles[i][j].g, self.groundTiles[i][j].b)
                 love.graphics.rectangle('fill', x + (j - 1) * tileDim.width, y + (i - 1) * tileDim.height, tileDim.width, tileDim.height)
             end
         end

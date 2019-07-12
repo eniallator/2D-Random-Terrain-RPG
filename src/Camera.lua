@@ -5,7 +5,7 @@ return function(xOrTarget, y)
 
     camera.following = not y
     camera.pos = camera.following and xOrTarget or {x = xOrTarget, y = y}
-    camera.scale = config.initialScale
+    camera.scale = config.camera.initialScale
 
     function camera:setTarget(targetPos)
         self.following = true
