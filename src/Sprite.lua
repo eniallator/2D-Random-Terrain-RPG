@@ -37,7 +37,7 @@ return function(imgPath, frameWidth, frameHeight)
             }
         end
 
-        love.graphics.draw(self.spriteSheet, self:getFrameQuad(), pos.x, pos.y)
+        love.graphics.draw(self.spriteSheet, self:getFrameQuad(), pos.x - self.frameDim.width / 2, pos.y - self.frameDim.height / 2)
     end
 
     return sprite

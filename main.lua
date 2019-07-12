@@ -1,31 +1,51 @@
 require 'src.Engine'
 
-local config, Sprite, player = require 'conf'
+-- Config
+local config = require 'conf'
+
+-- Classes
+local Map, Camera
+
+-- Objects
+local player, map, camera
 
 if config.development then
     serialise = require 'src.development.Serialise'
 end
 
 function love.load()
-    Sprite = require 'src.Sprite'
+    Map = require 'src.Map'
+    Camera = require 'src.Camera'
+
     player = require 'src.Player'
+    map = Map()
+    camera = Camera(player.drawPos)
 end
 
 function love.update()
-    --[[
-        1. Get inputs ✔
-        2. Update values
-    ]]
+    local width, height = love.graphics.getDimensions()
+    local box = camera:getViewBox()
+
+    map:update(box.x, box.y, box.width, box.height)
+
     if MOUSE.right.clicked then
-        player:setDest(MOUSE.right.pos.x, MOUSE.right.pos.y)
+        player:setDest(MOUSE.right.pos.x + box.x - love.graphics.getWidth() / 2, MOUSE.right.pos.y + box.y - love.graphics.getHeight() / 2)
     end
     player:update()
+    --[[
+        1. Get inputs ✔
+        2. Update values ✔
+    ]]
 end
 
-local test = (require 'src.chunk')()
-
 function love.draw(dt)
-    test:draw(30, 30, config.initialScale)
+    local box = camera:getViewBox()
+
+    love.graphics.translate(-box.x + love.graphics.getWidth() / 2, -box.y + love.graphics.getHeight() / 2)
+    local width, height = love.graphics.getDimensions()
+
+    map:draw(box.x, box.y, box.width, box.height)
+
     player:draw(dt)
     --[[
         1. Draw ground tiles
@@ -33,8 +53,3 @@ function love.draw(dt)
         3. Draw overlays/UIs
     ]]
 end
-
---[[
-    TODO: Start with the map, and then point and clicking to move around it.
-        then also add a player and then make it smooth to walk around the map
-]]
