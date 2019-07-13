@@ -35,5 +35,11 @@ return {
                 humidity = {min = 0, max = 0.5}
             }
         }
+    },
+    entity = {
+        zombie = {
+            idleTime = {min = 3, max = 7},
+            walkRange = {min = 5, max = 20}
+        }
     }
 }

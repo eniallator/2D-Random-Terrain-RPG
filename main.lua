@@ -5,11 +5,12 @@ local config = require 'conf'
 
 -- Classes
 local Map = require 'src.Map'
-local Camera = require 'src.Camera'
 local Player = require 'src.Player'
+local Zombie = require 'src.Zombie'
+local Camera = require 'src.Camera'
 
 -- Objects
-local map, camera, player
+local map, player, zombie, camera
 
 if config.development then
     serialise = require 'src.development.Serialise'
@@ -18,6 +19,7 @@ end
 function love.load()
     map = Map()
     player = Player(1)
+    zombie = Zombie(3)
     camera = Camera(player.drawPos)
 end
 
@@ -44,10 +46,12 @@ function love.update()
         player:setDest(dest.x, dest.y)
     end
 
+    zombie:update()
     player:update()
 end
 
 function love.draw(dt)
+    zombie:calcDraw(dt, camera.scale)
     player:calcDraw(dt, camera.scale)
 
     local cameraBox = camera:getViewBox()
@@ -56,6 +60,7 @@ function love.draw(dt)
 
     map:draw(cameraBox)
     love.graphics.setColor(1, 1, 1)
+    zombie:draw(cameraBox)
     player:draw(cameraBox)
     --[[
         1. Draw ground tiles
@@ -65,7 +70,10 @@ function love.draw(dt)
 end
 
 --[[
+    - Potentially change the player textures for https://opengameart.org/content/twelve-more-characters-3-free-characters-and-a-child-template
+
     Credits:
     - player textures: https://opengameart.org/content/db16-rpg-character-sprites-v2
-    - all other textures: https://opengameart.org/content/8x8px-34-perspective-tileset
+    - terrain textures: https://opengameart.org/content/8x8px-34-perspective-tileset
+    - zombie textures: https://opengameart.org/content/16x18-zombie-characters-templates-extra-template
 ]]
