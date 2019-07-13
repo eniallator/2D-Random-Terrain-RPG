@@ -28,14 +28,13 @@ return function(spriteWidth, spriteHeight)
         self.frameIndex = 1
     end
 
-    function sprite:nextFrame()
-        self.frameIndex = self.frameIndex + 1
-
+    function sprite:advanceAnimation(numFrames)
+        self.frameIndex = self.frameIndex + numFrames
         local animation = self.animations[self.playingAnimation]
 
-        if #animation.frameRegions > sprite.index then
+        if self.frameIndex > #animation.frameRegions then
             if type(animation.repeating) == 'nil' or animation.repeating then
-                self.frameIndex = 1
+                self.frameIndex = ((self.frameIndex - 1) % #animation.frameRegions) + 1
             elseif self.defaultAnimation ~= nil then
                 self.playingAnimation = self.defaultAnimation
             end
@@ -53,6 +52,10 @@ return function(spriteWidth, spriteHeight)
             x = self.dim.width * love.graphics.getWidth() / box.width / region.width,
             y = self.dim.height * love.graphics.getHeight() / box.height / region.height
         }
+        local inversionOffset = {
+            x = region.invertX and scale.x * region.width or 0,
+            y = region.invertY and scale.y * region.height or 0
+        }
         local quad =
             love.graphics.newQuad(
             region.x,
@@ -65,8 +68,8 @@ return function(spriteWidth, spriteHeight)
         love.graphics.draw(
             animation.spritesheet,
             quad,
-            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2,
-            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2,
+            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2 + inversionOffset.x,
+            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2 + inversionOffset.y,
             region.rotation or 0,
             scale.x * (region.invertX and -1 or 1),
             scale.y * (region.invertY and -1 or 1)
