@@ -12,7 +12,35 @@ return function(speed, width, height)
         self.dest = {x = x, y = y}
     end
 
-    function entity:update()
+    local function updateSprite(self)
+        if not self.dest then
+            if self.sprite.playingAnimation ~= 'idle' then
+                self.sprite:playAnimation('idle')
+            end
+        else
+            local diff = {x = self.pos.x - self.dest.x, y = self.pos.y - self.dest.y}
+            local direction
+
+            if math.abs(diff.x) > math.abs(diff.y) then
+                direction = diff.x < 0 and 'right' or 'left'
+            else
+                direction = diff.y < 0 and 'down' or 'up'
+            end
+
+            if self.sprite.playingAnimation ~= direction then
+                self.sprite:playAnimation(direction)
+            end
+
+            local dist = math.min(self.speed, math.sqrt(diff.x ^ 2 + diff.y ^ 2))
+            self.deltaMoved = self.deltaMoved + dist
+            if self.deltaMoved > self.nextFrameDistance then
+                self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDistance))
+                self.deltaMoved = self.deltaMoved % self.nextFrameDistance
+            end
+        end
+    end
+
+    local function updatePos(self)
         if self.dest == nil then
             self.oldPos = nil
             return
@@ -44,6 +72,11 @@ return function(speed, width, height)
         }
         self.pos.x = nextPos.x
         self.pos.y = nextPos.y
+    end
+
+    function entity:update()
+        updateSprite(self)
+        updatePos(self)
     end
 
     function entity:calcDraw(dt, scale)

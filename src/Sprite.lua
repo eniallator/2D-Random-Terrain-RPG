@@ -24,7 +24,7 @@ return function(spriteWidth, spriteHeight)
     end
 
     function sprite:playAnimation(name)
-        self.playingAnimation = name
+        self.playingAnimation = self.animations[name] and name or self.defaultAnimation
         self.frameIndex = 1
     end
 
