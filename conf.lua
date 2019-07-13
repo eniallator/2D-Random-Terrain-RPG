@@ -15,8 +15,8 @@ return {
         zoomLimits = {max = 105, min = 6}
     },
     terrain = {
-        biomeScale = 100,
-        noiseOffset = 10,
+        biomeScale = 500,
+        noiseOffset = 1000,
         biomeMap = {
             ['Cold Rocky'] = {
                 temperature = {min = 0, max = 0.33},

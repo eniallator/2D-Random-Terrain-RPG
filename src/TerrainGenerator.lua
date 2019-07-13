@@ -14,8 +14,12 @@ return function(randomSeed)
         --     b = love.math.noise(x / config.terrain.biomeScale, y / config.terrain.biomeScale, 2 * config.terrain.noiseOffset)
         -- }
 
-        temperature = love.math.noise(x / config.terrain.biomeScale, y / config.terrain.biomeScale, 0)
-        humidity = love.math.noise(x / config.terrain.biomeScale, y / config.terrain.biomeScale, config.terrain.noiseOffset)
+        temperature = love.math.noise(x / config.terrain.biomeScale, y / config.terrain.biomeScale)
+        humidity =
+            love.math.noise(
+            x / config.terrain.biomeScale + config.terrain.noiseOffset,
+            y / config.terrain.biomeScale + config.terrain.noiseOffset
+        )
 
         for name, data in pairs(config.terrain.biomeMap) do
             if
