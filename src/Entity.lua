@@ -7,6 +7,7 @@ return function(speed, width, height)
     entity.pos = {x = 0, y = 0}
     entity.drawPos = {x = entity.pos.x, y = entity.pos.y}
     entity.speed = speed
+    entity.autoAnimation = true
 
     function entity:setDest(x, y)
         self.dest = {x = x, y = y}
@@ -75,7 +76,9 @@ return function(speed, width, height)
     end
 
     function entity:update()
-        updateSprite(self)
+        if self.autoAnimation then
+            updateSprite(self)
+        end
         updatePos(self)
     end
 
