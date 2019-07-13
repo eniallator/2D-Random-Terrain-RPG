@@ -51,7 +51,8 @@ return function(spriteType)
                 x = (player.spriteType - 1) * player.frameWidth,
                 y = 0,
                 width = player.frameWidth,
-                height = player.frameHeight
+                height = player.frameHeight,
+                invertX = true
             }
         }
     )
@@ -120,7 +121,8 @@ return function(spriteType)
                 x = (player.spriteType - 1) * player.frameWidth,
                 y = 4 * player.frameHeight,
                 width = player.frameWidth,
-                height = player.frameHeight
+                height = player.frameHeight,
+                invertX = true
             }
         }
     )
