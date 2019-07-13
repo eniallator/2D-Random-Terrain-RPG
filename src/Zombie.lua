@@ -9,9 +9,12 @@ local types = {
     {path = ASSETS.textures.entity.zombie.bald, col = 3}
 }
 
-return function(type)
+return function(type, x, y)
     local zombie = Entity(8 / config.tps, 3, 4, 1.5)
     local super = Entity()
+
+    zombie.pos.x = x
+    zombie.pos.y = y
 
     local spritesheet = types[type].path
     local colOffset = (types[type].col - 1) * 3 * spritesheet.width
@@ -46,7 +49,7 @@ return function(type)
                 height = spritesheet.height
             },
             {
-                x = 0,
+                x = colOffset,
                 y = 2 * spritesheet.height,
                 width = spritesheet.width,
                 height = spritesheet.height
@@ -76,7 +79,7 @@ return function(type)
                 height = spritesheet.height
             },
             {
-                x = 0,
+                x = colOffset,
                 y = 1 * spritesheet.height,
                 width = spritesheet.width,
                 height = spritesheet.height
@@ -106,7 +109,7 @@ return function(type)
                 height = spritesheet.height
             },
             {
-                x = 0,
+                x = colOffset,
                 y = 3 * spritesheet.height,
                 width = spritesheet.width,
                 height = spritesheet.height
@@ -136,7 +139,7 @@ return function(type)
                 height = spritesheet.height
             },
             {
-                x = 0,
+                x = colOffset,
                 y = 0,
                 width = spritesheet.width,
                 height = spritesheet.height
@@ -171,6 +174,11 @@ return function(type)
             end
         end
         super.update(self)
+    end
+
+    function zombie:draw(dt, scale, box)
+        super.calcDraw(self, dt, scale)
+        super.draw(self, box)
     end
 
     return zombie

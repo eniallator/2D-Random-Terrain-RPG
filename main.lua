@@ -6,11 +6,10 @@ local config = require 'conf'
 -- Classes
 local Map = require 'src.Map'
 local Player = require 'src.Player'
-local Zombie = require 'src.Zombie'
 local Camera = require 'src.Camera'
 
 -- Objects
-local map, player, zombie, camera
+local map, player, camera
 
 if config.development then
     serialise = require 'src.development.Serialise'
@@ -19,7 +18,6 @@ end
 function love.load()
     map = Map()
     player = Player(1)
-    zombie = Zombie(3)
     camera = Camera(player.drawPos)
 end
 
@@ -46,21 +44,18 @@ function love.update()
         player:setDest(dest.x, dest.y)
     end
 
-    zombie:update()
     player:update()
 end
 
 function love.draw(dt)
-    zombie:calcDraw(dt, camera.scale)
     player:calcDraw(dt, camera.scale)
 
     local cameraBox = camera:getViewBox()
 
     local width, height = love.graphics.getDimensions()
 
-    map:draw(cameraBox)
+    map:draw(dt, camera.scale, cameraBox)
     love.graphics.setColor(1, 1, 1)
-    zombie:draw(cameraBox)
     player:draw(cameraBox)
     --[[
         1. Draw ground tiles

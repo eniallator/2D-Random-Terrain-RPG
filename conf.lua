@@ -37,6 +37,12 @@ return {
         }
     },
     entity = {
+        mob = {
+            cap = 30,
+            spawnChance = 0.1,
+            spawnRadius = 120,
+            despawnRadius = 150
+        },
         zombie = {
             idleTime = {min = 3, max = 7},
             walkRange = {min = 5, max = 20}
