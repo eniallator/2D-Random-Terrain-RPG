@@ -67,5 +67,5 @@ end
 --[[
     Credits:
     - player textures: https://opengameart.org/content/db16-rpg-character-sprites-v2
-    - all other textures: https://opengameart.org/content/roguelike-tiles-large-collection
+    - all other textures: https://opengameart.org/content/8x8px-34-perspective-tileset
 ]]

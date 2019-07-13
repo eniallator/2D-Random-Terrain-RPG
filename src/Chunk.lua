@@ -22,8 +22,15 @@ return function(x, y, terrainGenerator)
 
         for i = 1, #self.groundTiles do
             for j = 1, #self.groundTiles[i] do
-                love.graphics.setColor(self.groundTiles[i][j].r, self.groundTiles[i][j].g, self.groundTiles[i][j].b)
-                love.graphics.rectangle('fill', x + (j - 1) * tileDim.width, y + (i - 1) * tileDim.height, tileDim.width, tileDim.height)
+                love.graphics.draw(
+                    ASSETS.textures.terrain.spritesheet,
+                    self.groundTiles[i][j],
+                    x + (j - 1) * tileDim.width,
+                    y + (i - 1) * tileDim.height,
+                    0,
+                    tileDim.width / 8,
+                    tileDim.height / 8
+                )
             end
         end
     end
