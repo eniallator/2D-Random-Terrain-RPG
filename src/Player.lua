@@ -2,12 +2,9 @@ local config = require 'conf'
 local Entity = require 'src.Entity'
 
 return function(spriteType)
-    local player = Entity(8 / config.tps, 3, 4)
+    local player = Entity(8 / config.tps, 3, 4, 1.5)
 
     player.spriteType = spriteType
-
-    player.deltaMoved = 0
-    player.nextFrameDistance = 1.5
 
     local spritesheet = ASSETS.textures.entity.player
     player.sprite:setDefaultAnimation('idle')

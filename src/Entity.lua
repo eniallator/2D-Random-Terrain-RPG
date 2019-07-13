@@ -1,6 +1,6 @@
 local Sprite = require 'src.Sprite'
 
-return function(speed, width, height)
+return function(speed, width, height, nextFrameDistance)
     local entity = {}
 
     entity.sprite = Sprite(width, height)
@@ -8,6 +8,9 @@ return function(speed, width, height)
     entity.drawPos = {x = entity.pos.x, y = entity.pos.y}
     entity.speed = speed
     entity.autoAnimation = true
+
+    entity.deltaMoved = 0
+    entity.nextFrameDistance = nextFrameDistance
 
     function entity:setDest(x, y)
         self.dest = {x = x, y = y}
