@@ -4,21 +4,20 @@ require 'src.Engine'
 local config = require 'conf'
 
 -- Classes
-local Map, Camera
+local Map = require 'src.Map'
+local Camera = require 'src.Camera'
+local Player = require 'src.Player'
 
 -- Objects
-local player, map, camera
+local map, camera, player
 
 if config.development then
     serialise = require 'src.development.Serialise'
 end
 
 function love.load()
-    Map = require 'src.Map'
-    Camera = require 'src.Camera'
-
-    player = require 'src.Player'
     map = Map()
+    player = Player(1)
     camera = Camera(player.drawPos)
 end
 
@@ -64,3 +63,9 @@ function love.draw(dt)
         3. Draw overlays/UIs
     ]]
 end
+
+--[[
+    Credits:
+    - player textures: https://opengameart.org/content/db16-rpg-character-sprites-v2
+    - all other textures: https://opengameart.org/content/roguelike-tiles-large-collection
+]]

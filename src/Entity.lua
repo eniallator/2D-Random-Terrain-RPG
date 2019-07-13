@@ -1,8 +1,10 @@
-return function(sprite, speed, x, y)
+local Sprite = require 'src.Sprite'
+
+return function(speed, width, height)
     local entity = {}
 
-    entity.sprite = sprite
-    entity.pos = {x = x or 0, y = y or 0}
+    entity.sprite = Sprite(width, height)
+    entity.pos = {x = 0, y = 0}
     entity.drawPos = {x = entity.pos.x, y = entity.pos.y}
     entity.speed = speed
 
