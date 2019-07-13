@@ -9,119 +9,118 @@ return function(spriteType)
     player.deltaMoved = 0
     player.nextFrameDistance = 1.5
 
-    player.frameWidth = 16
-    player.frameHeight = 24
+    local spritesheet = ASSETS.textures.entity.player
     player.sprite:setDefaultAnimation('idle')
     player.sprite:addAnimation(
         'idle',
-        ASSETS.textures.player.spritesheet,
+        spritesheet.img,
         {
             {
-                x = (player.spriteType - 1) * player.frameWidth,
+                x = (player.spriteType - 1) * spritesheet.width,
                 y = 0,
-                width = player.frameWidth,
-                height = player.frameHeight
+                width = spritesheet.width,
+                height = spritesheet.height
             }
         }
     )
     player.sprite:addAnimation(
         'down',
-        ASSETS.textures.player.spritesheet,
+        spritesheet.img,
         {
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
+                x = (player.spriteType - 1) * spritesheet.width,
                 y = 0,
-                width = player.frameWidth,
-                height = player.frameHeight
+                width = spritesheet.width,
+                height = spritesheet.height
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight,
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height,
                 invertX = true
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
+                x = (player.spriteType - 1) * spritesheet.width,
                 y = 0,
-                width = player.frameWidth,
-                height = player.frameHeight,
+                width = spritesheet.width,
+                height = spritesheet.height,
                 invertX = true
             }
         }
     )
     player.sprite:addAnimation(
         'right',
-        ASSETS.textures.player.spritesheet,
+        spritesheet.img,
         {
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 3 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 3 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 2 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 2 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height
             }
         }
     )
     player.sprite:addAnimation(
         'left',
-        ASSETS.textures.player.spritesheet,
+        spritesheet.img,
         {
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 3 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight,
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 3 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height,
                 invertX = true
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 2 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight,
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 2 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height,
                 invertX = true
             }
         }
     )
     player.sprite:addAnimation(
         'up',
-        ASSETS.textures.player.spritesheet,
+        spritesheet.img,
         {
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 5 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 5 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 4 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 4 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 5 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight,
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 5 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height,
                 invertX = true
             },
             {
-                x = (player.spriteType - 1) * player.frameWidth,
-                y = 4 * player.frameHeight,
-                width = player.frameWidth,
-                height = player.frameHeight,
+                x = (player.spriteType - 1) * spritesheet.width,
+                y = 4 * spritesheet.height,
+                width = spritesheet.width,
+                height = spritesheet.height,
                 invertX = true
             }
         }

@@ -23,13 +23,13 @@ return function(x, y, terrainGenerator)
         for i = 1, #self.groundTiles do
             for j = 1, #self.groundTiles[i] do
                 love.graphics.draw(
-                    ASSETS.textures.terrain.spritesheet,
+                    ASSETS.textures.terrain.spritesheet.img,
                     self.groundTiles[i][j],
                     x + (j - 1) * tileDim.width,
                     y + (i - 1) * tileDim.height,
                     0,
-                    tileDim.width / 8,
-                    tileDim.height / 8
+                    tileDim.width / ASSETS.textures.terrain.spritesheet.width,
+                    tileDim.height / ASSETS.textures.terrain.spritesheet.height
                 )
             end
         end

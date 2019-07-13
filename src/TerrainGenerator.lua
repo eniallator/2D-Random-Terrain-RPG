@@ -1,38 +1,38 @@
 local config = require 'conf'
 
-local tileDim = 8
+local spritesheet = ASSETS.textures.terrain.spritesheet
 local tileQuadLookUp = {
     ['Marsh'] = love.graphics.newQuad(
-        1 * tileDim,
-        1 * tileDim,
-        tileDim,
-        tileDim,
-        ASSETS.textures.terrain.spritesheet:getWidth(),
-        ASSETS.textures.terrain.spritesheet:getHeight()
+        1 * spritesheet.width,
+        1 * spritesheet.height,
+        spritesheet.width,
+        spritesheet.height,
+        spritesheet.img:getWidth(),
+        spritesheet.img:getHeight()
     ),
     ['Grassland'] = love.graphics.newQuad(
-        4 * tileDim,
-        1 * tileDim,
-        tileDim,
-        tileDim,
-        ASSETS.textures.terrain.spritesheet:getWidth(),
-        ASSETS.textures.terrain.spritesheet:getHeight()
+        4 * spritesheet.width,
+        1 * spritesheet.height,
+        spritesheet.width,
+        spritesheet.height,
+        spritesheet.img:getWidth(),
+        spritesheet.img:getHeight()
     ),
     ['Desert'] = love.graphics.newQuad(
-        7 * tileDim,
-        1 * tileDim,
-        tileDim,
-        tileDim,
-        ASSETS.textures.terrain.spritesheet:getWidth(),
-        ASSETS.textures.terrain.spritesheet:getHeight()
+        7 * spritesheet.width,
+        1 * spritesheet.height,
+        spritesheet.width,
+        spritesheet.height,
+        spritesheet.img:getWidth(),
+        spritesheet.img:getHeight()
     ),
     ['Snowy'] = love.graphics.newQuad(
-        10 * tileDim,
-        1 * tileDim,
-        tileDim,
-        tileDim,
-        ASSETS.textures.terrain.spritesheet:getWidth(),
-        ASSETS.textures.terrain.spritesheet:getHeight()
+        10 * spritesheet.width,
+        1 * spritesheet.height,
+        spritesheet.width,
+        spritesheet.height,
+        spritesheet.img:getWidth(),
+        spritesheet.img:getHeight()
     )
 }
 
