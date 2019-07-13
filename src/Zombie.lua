@@ -155,12 +155,13 @@ return function(type)
         local cfg = config.entity.zombie
         if self.dest == nil then
             if self.moveTime == nil then
-                self.moveTime = love.timer.getTime() + cfg.idleTime.min + love.math.random() * (cfg.idleTime.max - cfg.idleTime.min)
+                self.moveTime = love.timer.getTime() + cfg.idleTime.min + math.random() * (cfg.idleTime.max - cfg.idleTime.min)
             elseif love.timer.getTime() > self.moveTime then
                 self.moveTime = nil
+                local range = cfg.walkRange.max - cfg.walkRange.min
                 local ranOutput = {
-                    x = love.math.random() * (cfg.walkRange.max - cfg.walkRange.min) - (cfg.walkRange.max - cfg.walkRange.min) / 2,
-                    y = love.math.random() * (cfg.walkRange.max - cfg.walkRange.min) - (cfg.walkRange.max - cfg.walkRange.min) / 2
+                    x = math.random() * range - range / 2,
+                    y = math.random() * range - range / 2
                 }
                 local dest = {
                     x = self.pos.x + ranOutput.x + (ranOutput.x >= 0 and cfg.walkRange.min or -cfg.walkRange.min),
