@@ -1,51 +1,82 @@
-return function(imgPath, frameWidth, frameHeight, spriteWidth, spriteHeight)
+return function(spriteWidth, spriteHeight)
     local sprite = {}
-    sprite.spriteSheet = love.graphics.newImage(imgPath)
+
     sprite.dim = {
         width = spriteWidth,
         height = spriteHeight or spriteWidth
     }
-    sprite.frameDim = {
-        width = frameWidth or sprite.spriteSheet:getWidth(),
-        height = frameHeight or frameWidth or sprite.spriteSheet:getHeight()
-    }
-    sprite.frames = {
-        x = math.floor(sprite.spriteSheet:getWidth() / sprite.frameDim.width),
-        y = math.floor(sprite.spriteSheet:getHeight() / sprite.frameDim.height)
-    }
-    sprite.currFrame = 0
 
-    function sprite:nextFrame()
-        self.currFrame = (self.currFrame + 1) % (self.frames.x * self.frames.y)
+    sprite.animations = {}
+    sprite.defaultAnimation = nil
+    sprite.playingAnimation = nil
+    sprite.frameIndex = 1
+
+    function sprite:addAnimation(name, spritesheet, frameRegions, repeating)
+        self.animations[name] = {
+            spritesheet = spritesheet,
+            frameRegions = frameRegions,
+            repeating = repeating
+        }
     end
 
-    function sprite:getFrameQuad()
-        local pos = {x = self.currFrame % self.frames.x, y = math.floor(self.currFrame / self.frames.y)}
+    function sprite:setDefaultAnimation(name)
+        self.defaultAnimation = name
+    end
 
-        return love.graphics.newQuad(
-            pos.x * sprite.frameDim.width,
-            pos.y * sprite.frameDim.height,
-            sprite.frameDim.width,
-            sprite.frameDim.height,
-            self.spriteSheet:getDimensions()
-        )
+    function sprite:playAnimation(name)
+        self.playingAnimation = name
+        self.frameIndex = 1
+    end
+
+    function sprite:nextFrame()
+        self.frameIndex = self.frameIndex + 1
+
+        local animation = self.animations[self.playingAnimation]
+
+        if #animation.frameRegions > sprite.index then
+            if type(animation.repeating) == 'nil' or animation.repeating then
+                self.frameIndex = 1
+            elseif self.defaultAnimation ~= nil then
+                self.playingAnimation = self.defaultAnimation
+            end
+        end
     end
 
     function sprite:draw(pos, box)
+        if self.playingAnimation == nil then
+            self.playingAnimation = self.defaultAnimation
+        end
+
+        local animation = self.animations[self.playingAnimation]
+        local region = animation.frameRegions[self.frameIndex]
         local scale = {
-            x = sprite.dim.width * love.graphics.getWidth() / box.width / sprite.frameDim.width,
-            y = sprite.dim.height * love.graphics.getHeight() / box.height / sprite.frameDim.height
+            x = self.dim.width * love.graphics.getWidth() / box.width / region.width,
+            y = self.dim.height * love.graphics.getHeight() / box.height / region.height
         }
+        local quad =
+            love.graphics.newQuad(
+            region.x,
+            region.y,
+            region.width,
+            region.height,
+            animation.spritesheet:getWidth(),
+            animation.spritesheet:getHeight()
+        )
         love.graphics.draw(
-            self.spriteSheet,
-            self:getFrameQuad(),
-            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - self.frameDim.width * scale.x / 2,
-            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - self.frameDim.height * scale.y / 2,
-            0,
-            scale.x,
-            scale.y
+            animation.spritesheet,
+            quad,
+            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2,
+            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2,
+            region.rotation or 0,
+            scale.x * (region.invertX and -1 or 1),
+            scale.y * (region.invertY and -1 or 1)
         )
     end
 
     return sprite
 end
+
+--[[
+    TODO:
+    - Make spritesheets able to be replaced with a table of multiple image objects
+]]
