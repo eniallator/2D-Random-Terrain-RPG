@@ -55,13 +55,17 @@ return function(player)
         end
 
         for i = 1, #self.mobs do
-            self.mobs[i]:update()
+            self.mobs[i]:update(self)
         end
     end
 
     function map:update(box)
         createChunks(self, box)
         updateMobs(self, box)
+    end
+
+    function map:getPlayerPos()
+        return self.player.pos
     end
 
     local function drawChunks(self, box)

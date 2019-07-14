@@ -4,7 +4,14 @@ return function(entity, cfg)
     enemyBehaviour.entity = entity
     enemyBehaviour.cfg = cfg
 
+    enemyBehaviour.target = nil
+    enemyBehaviour.status = 'wander'
+
     enemyBehaviour.moveTime = nil
+
+    function enemyBehaviour:attack()
+        self.entity:setDest(self.target.x, self.target.y)
+    end
 
     function enemyBehaviour:wander()
         if self.entity.dest == nil then
@@ -25,6 +32,26 @@ return function(entity, cfg)
                 self.entity:setDest(dest.x, dest.y)
             end
         end
+    end
+
+    function enemyBehaviour:autoUpdate(map)
+        local playerPos = map:getPlayerPos()
+        local distToPlayer = math.sqrt((self.entity.pos.x - playerPos.x) ^ 2 + (self.entity.pos.y - playerPos.y) ^ 2)
+
+        if self.status == 'wander' then
+            if distToPlayer < self.cfg.agroRange.start then
+                self.status = 'attack'
+                self.target = playerPos
+                self.moveTime = nil
+            end
+        elseif self.status == 'attack' then
+            if distToPlayer > self.cfg.agroRange.stop then
+                self.status = 'wander'
+                self.target = nil
+            end
+        end
+
+        enemyBehaviour[self.status](self)
     end
 
     return enemyBehaviour

@@ -49,7 +49,8 @@ return {
         zombie = {
             health = 1000,
             idleTime = {min = 3, max = 7},
-            walkRange = {min = 5, max = 20}
+            walkRange = {min = 5, max = 20},
+            agroRange = {start = 15, stop = 20}
         }
     }
 }

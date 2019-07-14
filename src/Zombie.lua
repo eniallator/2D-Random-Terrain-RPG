@@ -11,7 +11,7 @@ local types = {
 }
 
 return function(type, x, y)
-    local zombie = Entity(8 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
+    local zombie = Entity(5 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
     local super = Entity()
 
     zombie.pos.x = x
@@ -155,8 +155,8 @@ return function(type, x, y)
         }
     )
 
-    function zombie:update()
-        self.behaviour:wander()
+    function zombie:update(map)
+        self.behaviour:autoUpdate(map)
         super.update(self)
     end
 
