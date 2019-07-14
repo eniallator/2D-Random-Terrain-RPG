@@ -3,10 +3,10 @@ local Chunk = require 'src.Chunk'
 local TerrainGenerator = require 'src.TerrainGenerator'
 local Zombie = require 'src.Zombie'
 
-return function(player)
+return function(player, mapSeed)
     local map = {}
 
-    map.terrainGenerator = TerrainGenerator(love.timer.getTime())
+    map.terrainGenerator = TerrainGenerator(mapSeed)
 
     map.chunks = {}
     map.mobs = {}

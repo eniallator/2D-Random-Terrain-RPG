@@ -1,4 +1,9 @@
 local config = require 'conf'
+
+if config.development then
+    serialise = require 'src.development.Serialise'
+end
+
 MOUSE = require 'src.utils.Mouse'
 KEYS = require 'src.utils.Keys'
 ASSETS = require 'src.utils.Assets'
