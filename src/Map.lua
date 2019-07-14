@@ -64,7 +64,7 @@ return function(player)
         updateMobs(self, box)
     end
 
-    function map:draw(dt, scale, box)
+    local function drawChunks(self, box)
         local chunkRegion = {
             startX = math.floor((box.x - box.width / 2) / config.chunkSize),
             endX = math.ceil((box.x + box.width / 2) / config.chunkSize),
@@ -88,7 +88,9 @@ return function(player)
                 end
             end
         end
+    end
 
+    local function drawEntities(self, dt, scale, box)
         self.player:calcDraw(dt, scale)
         self.player:drawShadow(box)
 
@@ -111,6 +113,11 @@ return function(player)
         for i = 1, #sortedDrawables do
             sortedDrawables[i]:draw(box)
         end
+    end
+
+    function map:draw(dt, scale, box)
+        drawChunks(self, box)
+        drawEntities(self, dt, scale, box)
     end
 
     return map
