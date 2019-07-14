@@ -53,6 +53,8 @@ return function(entity, cfg)
                 self.status = 'wander'
                 self.target = nil
             end
+        else
+            self.status = 'wander'
         end
 
         enemyBehaviour[self.status](self)
