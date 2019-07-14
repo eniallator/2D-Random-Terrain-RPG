@@ -1,10 +1,11 @@
-return function(spriteWidth, spriteHeight)
+return function(spriteWidth, spriteHeight, shadow)
     local sprite = {}
 
     sprite.dim = {
         width = spriteWidth,
         height = spriteHeight or spriteWidth
     }
+    sprite.shadow = type(shadow) == 'nil' and true or shadow
 
     sprite.animations = {}
     sprite.defaultAnimation = nil
@@ -56,6 +57,18 @@ return function(spriteWidth, spriteHeight)
             x = region.invertX and scale.x * region.width or 0,
             y = region.invertY and scale.y * region.height or 0
         }
+        local drawPos = {
+            x = (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2,
+            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2
+        }
+
+        if self.shadow then
+            local radius = scale.x * region.width / 2.5
+            love.graphics.setColor(0, 0, 0, 0.3)
+            love.graphics.ellipse('fill', drawPos.x + scale.x * region.width / 2, drawPos.y + scale.y * region.height, radius, radius / 1.5)
+            love.graphics.setColor(1, 1, 1, 1)
+        end
+
         local quad =
             love.graphics.newQuad(
             region.x,
@@ -68,8 +81,8 @@ return function(spriteWidth, spriteHeight)
         love.graphics.draw(
             animation.spritesheet,
             quad,
-            (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2 + inversionOffset.x,
-            (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2 + inversionOffset.y,
+            drawPos.x + inversionOffset.x,
+            drawPos.y + inversionOffset.y,
             region.rotation or 0,
             scale.x * (region.invertX and -1 or 1),
             scale.y * (region.invertY and -1 or 1)
@@ -78,8 +91,3 @@ return function(spriteWidth, spriteHeight)
 
     return sprite
 end
-
---[[
-    TODO:
-    - Make spritesheets able to be replaced with a table of multiple image objects
-]]

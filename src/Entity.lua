@@ -100,7 +100,6 @@ return function(speed, width, height, nextFrameDistance)
     end
 
     function entity:draw(box)
-        -- interpolate from oldPos to pos with sprite:draw
         self.sprite:draw(self.drawPos, box)
     end
 
