@@ -1,5 +1,6 @@
 local config = require 'conf'
 local Entity = require 'src.Entity'
+local EnemyBehaviour = require 'src.EnemyBehaviour'
 
 local types = {
     {path = ASSETS.textures.entity.zombie.knight, col = 1},
@@ -15,6 +16,7 @@ return function(type, x, y)
 
     zombie.pos.x = x
     zombie.pos.y = y
+    zombie.behaviour = EnemyBehaviour(zombie, config.entity.zombie)
 
     local spritesheet = types[type].path
     local colOffset = (types[type].col - 1) * 3 * spritesheet.width
@@ -152,27 +154,9 @@ return function(type, x, y)
             }
         }
     )
-    zombie.moveTime = nil
 
     function zombie:update()
-        local cfg = config.entity.zombie
-        if self.dest == nil then
-            if self.moveTime == nil then
-                self.moveTime = love.timer.getTime() + cfg.idleTime.min + math.random() * (cfg.idleTime.max - cfg.idleTime.min)
-            elseif love.timer.getTime() > self.moveTime then
-                self.moveTime = nil
-                local range = cfg.walkRange.max - cfg.walkRange.min
-                local ranOutput = {
-                    x = math.random() * range - range / 2,
-                    y = math.random() * range - range / 2
-                }
-                local dest = {
-                    x = self.pos.x + ranOutput.x + (ranOutput.x >= 0 and cfg.walkRange.min or -cfg.walkRange.min),
-                    y = self.pos.y + ranOutput.y + (ranOutput.y >= 0 and cfg.walkRange.min or -cfg.walkRange.min)
-                }
-                self:setDest(dest.x, dest.y)
-            end
-        end
+        self.behaviour:wander()
         super.update(self)
     end
 
