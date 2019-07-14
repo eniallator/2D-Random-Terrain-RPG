@@ -37,6 +37,9 @@ return {
         }
     },
     entity = {
+        player = {
+            health = 1000
+        },
         mob = {
             cap = 30,
             spawnChance = 0.1,
@@ -44,6 +47,7 @@ return {
             despawnRadius = 150
         },
         zombie = {
+            health = 1000,
             idleTime = {min = 3, max = 7},
             walkRange = {min = 5, max = 20}
         }

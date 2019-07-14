@@ -10,7 +10,7 @@ local types = {
 }
 
 return function(type, x, y)
-    local zombie = Entity(8 / config.tps, 3, 4, 1.5)
+    local zombie = Entity(8 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
     local super = Entity()
 
     zombie.pos.x = x

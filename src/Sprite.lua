@@ -41,19 +41,18 @@ return function(spriteWidth, spriteHeight)
         end
     end
 
-    function sprite:drawShadow(pos, box)
+    function sprite:getFrameBox(pos, box)
         local spriteDim = {
             width = self.dim.width * love.graphics.getWidth() / box.width,
             height = self.dim.height * love.graphics.getHeight() / box.height
         }
-        local drawPos = {
+
+        return {
             x = (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - spriteDim.width / 2,
-            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - spriteDim.height / 2
+            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - spriteDim.height / 2,
+            width = spriteDim.width,
+            height = spriteDim.height
         }
-        local radius = spriteDim.width / 2.5
-        love.graphics.setColor(0, 0, 0, 0.3)
-        love.graphics.ellipse('fill', drawPos.x + spriteDim.width / 2, drawPos.y + spriteDim.height, radius, radius / 1.5)
-        love.graphics.setColor(1, 1, 1, 1)
     end
 
     function sprite:draw(pos, box)

@@ -1,7 +1,10 @@
 local Sprite = require 'src.Sprite'
 
-return function(speed, width, height, nextFrameDistance)
+return function(speed, width, height, nextFrameDistance, maxHealth)
     local entity = {}
+
+    entity.maxHealth = maxHealth
+    entity.health = entity.maxHealth
 
     entity.sprite = Sprite(width, height)
     entity.pos = {x = 0, y = 0}
@@ -100,11 +103,34 @@ return function(speed, width, height, nextFrameDistance)
     end
 
     function entity:drawShadow(box)
-        self.sprite:drawShadow(self.drawPos, box)
+        local frameBox = self.sprite:getFrameBox(self.drawPos, box)
+        local radius = frameBox.width / 2.5
+        love.graphics.setColor(0, 0, 0, 0.3)
+        love.graphics.ellipse('fill', frameBox.x + frameBox.width / 2, frameBox.y + frameBox.height, radius, radius / 1.5)
+        love.graphics.setColor(1, 1, 1, 1)
+    end
+
+    local function drawHealth(self, box)
+        local frameBox = self.sprite:getFrameBox(self.drawPos, box)
+        local healthBox = {
+            x = frameBox.x,
+            y = frameBox.y - frameBox.height / 4,
+            width = frameBox.width,
+            height = frameBox.height / 10
+        }
+
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.rectangle('fill', healthBox.x, healthBox.y, healthBox.width, healthBox.height)
+        love.graphics.setColor(0, 1, 0)
+        love.graphics.rectangle('fill', healthBox.x, healthBox.y, healthBox.width * self.health / self.maxHealth, healthBox.height)
+        love.graphics.setColor(1, 1, 1)
     end
 
     function entity:draw(box)
         self.sprite:draw(self.drawPos, box)
+        if self.health < self.maxHealth then
+            drawHealth(self, box)
+        end
     end
 
     return entity

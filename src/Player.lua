@@ -2,7 +2,7 @@ local config = require 'conf'
 local Entity = require 'src.Entity'
 
 return function(spriteType)
-    local player = Entity(8 / config.tps, 3, 4, 1.5)
+    local player = Entity(8 / config.tps, 3, 4, 1.5, config.entity.player.health)
 
     player.spriteType = spriteType
 
