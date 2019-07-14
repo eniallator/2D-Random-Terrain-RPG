@@ -131,6 +131,9 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
             height = frameBox.height / 10
         }
 
+        -- love.graphics.setColor(0, 0, 1)
+        -- love.graphics.rectangle('line', frameBox.x, frameBox.y, frameBox.width, frameBox.height)
+
         love.graphics.setColor(1, 0, 0)
         love.graphics.rectangle('fill', healthBox.x, healthBox.y, healthBox.width, healthBox.height)
         love.graphics.setColor(0, 1, 0)

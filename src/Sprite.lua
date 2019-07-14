@@ -49,7 +49,7 @@ return function(spriteWidth, spriteHeight)
 
         return {
             x = (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - spriteDim.width / 2,
-            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - spriteDim.height / 2,
+            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - spriteDim.height,
             width = spriteDim.width,
             height = spriteDim.height
         }
@@ -72,7 +72,7 @@ return function(spriteWidth, spriteHeight)
         }
         local drawPos = {
             x = (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2,
-            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2
+            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y
         }
 
         local quad =

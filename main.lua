@@ -18,7 +18,7 @@ end
 function love.load()
     player = Player(1)
     map = Map(player)
-    camera = Camera(player.drawPos)
+    camera = Camera(player)
 end
 
 function love.update()
@@ -26,7 +26,7 @@ function love.update()
         if camera.following then
             camera:setPos(camera.pos.x, camera.pos.y)
         else
-            camera:setTarget(player.drawPos)
+            camera:setTarget(player)
         end
     end
     camera.scale = camera.scale + camera.scale * MOUSE.scroll * config.camera.zoomRate
