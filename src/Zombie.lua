@@ -12,10 +12,10 @@ local types = {
 
 return function(type, x, y)
     local zombie = Entity(5 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
-    local super = Entity()
+    local super = Entity(5 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
 
-    zombie.pos.x = x
-    zombie.pos.y = y
+    zombie.hitbox.x = x
+    zombie.hitbox.y = y
     zombie.behaviour = EnemyBehaviour(zombie, config.entity.zombie)
 
     local spritesheet = types[type].path

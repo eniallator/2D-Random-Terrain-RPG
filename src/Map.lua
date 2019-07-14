@@ -37,8 +37,8 @@ return function(player)
 
         for i = #self.mobs, 1, -1 do
             local absDiff = {
-                x = math.abs(self.mobs[i].pos.x - box.x),
-                y = math.abs(self.mobs[i].pos.y - box.y)
+                x = math.abs(self.mobs[i].hitbox.x - box.x),
+                y = math.abs(self.mobs[i].hitbox.y - box.y)
             }
             if absDiff.x > cfg.despawnRadius or absDiff.y > cfg.despawnRadius then
                 table.remove(self.mobs, i)
@@ -64,8 +64,8 @@ return function(player)
         updateMobs(self, box)
     end
 
-    function map:getPlayerPos()
-        return self.player.pos
+    function map:getPlayerHitbox()
+        return self.player.hitbox
     end
 
     local function drawChunks(self, box)

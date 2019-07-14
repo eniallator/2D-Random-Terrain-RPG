@@ -10,7 +10,11 @@ return function(entity, cfg)
     enemyBehaviour.moveTime = nil
 
     function enemyBehaviour:attack()
-        self.entity:setDest(self.target.x, self.target.y)
+        if self.entity.hitbox:collide(self.target) then
+            self.entity.dest = nil
+        else
+            self.entity:setDest(self.target.x, self.target.y)
+        end
     end
 
     function enemyBehaviour:wander()
@@ -26,8 +30,8 @@ return function(entity, cfg)
                     y = math.random() * range - range / 2
                 }
                 local dest = {
-                    x = self.entity.pos.x + ranOutput.x + (ranOutput.x >= 0 and self.cfg.walkRange.min or -self.cfg.walkRange.min),
-                    y = self.entity.pos.y + ranOutput.y + (ranOutput.y >= 0 and self.cfg.walkRange.min or -self.cfg.walkRange.min)
+                    x = self.entity.hitbox.x + ranOutput.x + (ranOutput.x >= 0 and self.cfg.walkRange.min or -self.cfg.walkRange.min),
+                    y = self.entity.hitbox.y + ranOutput.y + (ranOutput.y >= 0 and self.cfg.walkRange.min or -self.cfg.walkRange.min)
                 }
                 self.entity:setDest(dest.x, dest.y)
             end
@@ -35,13 +39,13 @@ return function(entity, cfg)
     end
 
     function enemyBehaviour:autoUpdate(map)
-        local playerPos = map:getPlayerPos()
-        local distToPlayer = math.sqrt((self.entity.pos.x - playerPos.x) ^ 2 + (self.entity.pos.y - playerPos.y) ^ 2)
+        local playerHitbox = map:getPlayerHitbox()
+        local distToPlayer = self.entity.hitbox:getDist(playerHitbox)
 
         if self.status == 'wander' then
             if distToPlayer < self.cfg.agroRange.start then
                 self.status = 'attack'
-                self.target = playerPos
+                self.target = playerHitbox
                 self.moveTime = nil
             end
         elseif self.status == 'attack' then

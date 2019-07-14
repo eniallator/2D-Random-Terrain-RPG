@@ -1,4 +1,5 @@
 local Sprite = require 'src.Sprite'
+local Hitbox = require 'src.Hitbox'
 
 return function(speed, width, height, nextFrameDistance, maxHealth)
     local entity = {}
@@ -6,9 +7,10 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
     entity.maxHealth = maxHealth
     entity.health = entity.maxHealth
 
+    entity.spriteDim = {width = width, height = height}
     entity.sprite = Sprite(width, height)
-    entity.pos = {x = 0, y = 0}
-    entity.drawPos = {x = entity.pos.x, y = entity.pos.y}
+    entity.hitbox = Hitbox(0, 0, width * 0.8)
+    entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
     entity.speed = speed
     entity.autoAnimation = true
 
@@ -25,7 +27,7 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
                 self.sprite:playAnimation('idle')
             end
         else
-            local diff = {x = self.pos.x - self.dest.x, y = self.pos.y - self.dest.y}
+            local diff = {x = self.hitbox.x - self.dest.x, y = self.hitbox.y - self.dest.y}
             local direction
 
             if math.abs(diff.x) > math.abs(diff.y) then
@@ -54,8 +56,8 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
         end
 
         local posDiff, nextPos = {
-            x = self.dest.x - self.pos.x,
-            y = self.dest.y - self.pos.y
+            x = self.dest.x - self.hitbox.x,
+            y = self.dest.y - self.hitbox.y
         }
         local magnitude = math.sqrt(posDiff.x ^ 2 + posDiff.y ^ 2)
 
@@ -68,17 +70,17 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
                 y = posDiff.y / magnitude
             }
             nextPos = {
-                x = self.pos.x + normalised.x * self.speed,
-                y = self.pos.y + normalised.y * self.speed
+                x = self.hitbox.x + normalised.x * self.speed,
+                y = self.hitbox.y + normalised.y * self.speed
             }
         end
 
         self.oldPos = {
-            x = self.pos.x,
-            y = self.pos.y
+            x = self.hitbox.x,
+            y = self.hitbox.y
         }
-        self.pos.x = nextPos.x
-        self.pos.y = nextPos.y
+        self.hitbox.x = nextPos.x
+        self.hitbox.y = nextPos.y
     end
 
     function entity:update()
@@ -89,13 +91,13 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
     end
 
     function entity:calcDraw(dt, scale)
-        self.drawPos.x = self.pos.x
-        self.drawPos.y = self.pos.y
+        self.drawPos.x = self.hitbox.x
+        self.drawPos.y = self.hitbox.y
 
         if self.oldPos ~= nil then
             local posDiff = {
-                x = self.pos.x - self.oldPos.x,
-                y = self.pos.y - self.oldPos.y
+                x = self.hitbox.x - self.oldPos.x,
+                y = self.hitbox.y - self.oldPos.y
             }
             self.drawPos.x = self.oldPos.x + posDiff.x * dt
             self.drawPos.y = self.oldPos.y + posDiff.y * dt
@@ -103,10 +105,20 @@ return function(speed, width, height, nextFrameDistance, maxHealth)
     end
 
     function entity:drawShadow(box)
+        local scale = {
+            x = love.graphics.getWidth() / box.width,
+            y = love.graphics.getHeight() / box.height
+        }
+
         local frameBox = self.sprite:getFrameBox(self.drawPos, box)
-        local radius = frameBox.width / 2.5
         love.graphics.setColor(0, 0, 0, 0.3)
-        love.graphics.ellipse('fill', frameBox.x + frameBox.width / 2, frameBox.y + frameBox.height, radius, radius / 1.5)
+        love.graphics.ellipse(
+            'fill',
+            frameBox.x + self.spriteDim.width / 2 * scale.x,
+            frameBox.y + self.spriteDim.height * scale.y,
+            self.hitbox.diameter / 2 * scale.x,
+            self.hitbox.diameter / 2 * scale.y / 1.5
+        )
         love.graphics.setColor(1, 1, 1, 1)
     end
 
