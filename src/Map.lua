@@ -3,13 +3,14 @@ local Chunk = require 'src.Chunk'
 local TerrainGenerator = require 'src.TerrainGenerator'
 local Zombie = require 'src.Zombie'
 
-return function()
+return function(player)
     local map = {}
 
     map.terrainGenerator = TerrainGenerator(love.timer.getTime())
 
     map.chunks = {}
     map.mobs = {}
+    map.player = player
 
     local function createChunks(self, box)
         local chunkRegion = {
@@ -88,9 +89,27 @@ return function()
             end
         end
 
+        self.player:calcDraw(dt, scale)
+        self.player:drawShadow(box)
+
         local i
         for i = 1, #self.mobs do
-            self.mobs[i]:draw(dt, scale, box)
+            self.mobs[i]:calcDraw(dt, scale)
+            self.mobs[i]:drawShadow(box)
+        end
+
+        local sortedDrawables = {self.player}
+
+        for i = 1, #self.mobs do
+            local j = 1
+            while sortedDrawables[j] and sortedDrawables[j].drawPos.y < self.mobs[i].drawPos.y do
+                j = j + 1
+            end
+            table.insert(sortedDrawables, j, self.mobs[i])
+        end
+
+        for i = 1, #sortedDrawables do
+            sortedDrawables[i]:draw(box)
         end
     end
 

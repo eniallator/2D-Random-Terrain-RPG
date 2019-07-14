@@ -4,20 +4,20 @@ require 'src.Engine'
 local config = require 'conf'
 
 -- Classes
-local Map = require 'src.Map'
 local Player = require 'src.Player'
+local Map = require 'src.Map'
 local Camera = require 'src.Camera'
 
 -- Objects
-local map, player, camera
+local player, map, camera
 
 if config.development then
     serialise = require 'src.development.Serialise'
 end
 
 function love.load()
-    map = Map()
     player = Player(1)
+    map = Map(player)
     camera = Camera(player.drawPos)
 end
 
@@ -48,15 +48,9 @@ function love.update()
 end
 
 function love.draw(dt)
-    player:calcDraw(dt, camera.scale)
-
     local cameraBox = camera:getViewBox()
 
-    local width, height = love.graphics.getDimensions()
-
     map:draw(dt, camera.scale, cameraBox)
-    love.graphics.setColor(1, 1, 1)
-    player:draw(cameraBox)
     --[[
         1. Draw ground tiles
         2. Draw sprites/tiles above the ground from the back to the front

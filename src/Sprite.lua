@@ -1,11 +1,10 @@
-return function(spriteWidth, spriteHeight, shadow)
+return function(spriteWidth, spriteHeight)
     local sprite = {}
 
     sprite.dim = {
         width = spriteWidth,
         height = spriteHeight or spriteWidth
     }
-    sprite.shadow = type(shadow) == 'nil' and true or shadow
 
     sprite.animations = {}
     sprite.defaultAnimation = nil
@@ -42,6 +41,21 @@ return function(spriteWidth, spriteHeight, shadow)
         end
     end
 
+    function sprite:drawShadow(pos, box)
+        local spriteDim = {
+            width = self.dim.width * love.graphics.getWidth() / box.width,
+            height = self.dim.height * love.graphics.getHeight() / box.height
+        }
+        local drawPos = {
+            x = (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - spriteDim.width / 2,
+            y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - spriteDim.height / 2
+        }
+        local radius = spriteDim.width / 2.5
+        love.graphics.setColor(0, 0, 0, 0.3)
+        love.graphics.ellipse('fill', drawPos.x + spriteDim.width / 2, drawPos.y + spriteDim.height, radius, radius / 1.5)
+        love.graphics.setColor(1, 1, 1, 1)
+    end
+
     function sprite:draw(pos, box)
         if self.playingAnimation == nil then
             self.playingAnimation = self.defaultAnimation
@@ -61,13 +75,6 @@ return function(spriteWidth, spriteHeight, shadow)
             x = (pos.x - box.x + box.width / 2) / box.width * love.graphics.getWidth() - region.width * scale.x / 2,
             y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y / 2
         }
-
-        if self.shadow then
-            local radius = scale.x * region.width / 2.5
-            love.graphics.setColor(0, 0, 0, 0.3)
-            love.graphics.ellipse('fill', drawPos.x + scale.x * region.width / 2, drawPos.y + scale.y * region.height, radius, radius / 1.5)
-            love.graphics.setColor(1, 1, 1, 1)
-        end
 
         local quad =
             love.graphics.newQuad(

@@ -176,10 +176,5 @@ return function(type, x, y)
         super.update(self)
     end
 
-    function zombie:draw(dt, scale, box)
-        super.calcDraw(self, dt, scale)
-        super.draw(self, box)
-    end
-
     return zombie
 end

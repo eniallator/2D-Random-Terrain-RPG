@@ -99,6 +99,10 @@ return function(speed, width, height, nextFrameDistance)
         end
     end
 
+    function entity:drawShadow(box)
+        self.sprite:drawShadow(self.drawPos, box)
+    end
+
     function entity:draw(box)
         self.sprite:draw(self.drawPos, box)
     end
