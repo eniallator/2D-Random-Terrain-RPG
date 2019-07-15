@@ -1,3 +1,4 @@
+local OrderedTable = require 'src.utils.OrderedTable'
 local Button = require 'src.gui.Button'
 local CharacterDisplay = require 'src.gui.CharacterDisplay'
 
@@ -7,7 +8,7 @@ return function()
     local grid = {}
 
     grid.componentData = {}
-    grid.weights = {x = {}, y = {}}
+    grid.weights = {x = OrderedTable(), y = OrderedTable()}
     grid.initialisedComponents = {}
     grid.padding = {x = 0, y = 0}
 
@@ -25,8 +26,8 @@ return function()
                     if j > #row or x.value < row[j].x then
                         data = {x = x.value, type = componentType, args = args}
                         table.insert(row, j, data)
-                        self.weights.x[x.value] = x.weight or self.weights.x[x.value]
-                        self.weights.y[y.value] = y.weight or self.weights.y[y.value]
+                        self.weights.x:add(x.value, x.weight or self.weights.x:get(x.value))
+                        self.weights.y:add(y.value, y.weight or self.weights.y:get(y.value))
                         return
                     end
                 end
@@ -39,43 +40,31 @@ return function()
         self.padding.y = y or x
     end
 
-    local function summedOffsets(tbl)
-        local sumTbl = {}
-        local sum = 0
-        for key, val in pairs(tbl) do
-            sumTbl[key] = sum
-            sum = sum + val
-        end
-        return sumTbl
-    end
-
-    local function sumTbl(tbl)
-        local sum = 0
-        for key, val in pairs(tbl) do
-            sum = sum + val
-        end
-        return sum
+    local function runningTotalReducer(acc, val, priority)
+        acc.tbl[priority] = acc.total
+        acc.total = acc.total + val
+        return acc
     end
 
     function grid:init(x, y, width, height)
         self.initialisedComponents = {}
 
-        local totalWeights = {
-            x = sumTbl(self.weights.x),
-            y = sumTbl(self.weights.y)
-        }
-        local weightOffsets = {
-            x = summedOffsets(self.weights.x),
-            y = summedOffsets(self.weights.y)
-        }
+        local runningWeightSums = {}
+        local totalWeights = {}
+
+        local xWeights = self.weights.x:reduce(runningTotalReducer, {total = 0, tbl = {}})
+        local yWeights = self.weights.y:reduce(runningTotalReducer, {total = 0, tbl = {}})
+
+        runningWeightSums.x, totalWeights.x = xWeights.tbl, xWeights.total
+        runningWeightSums.y, totalWeights.y = yWeights.tbl, yWeights.total
 
         for _, row in ipairs(self.componentData) do
             for _, data in ipairs(row) do
                 local box = {
-                    x = x + weightOffsets.x[data.x] / totalWeights.x * width + self.padding.x / 2,
-                    y = y + weightOffsets.y[row.y] / totalWeights.y * width + self.padding.y / 2,
-                    width = self.weights.x[data.x] / totalWeights.x * width - self.padding.x,
-                    height = self.weights.y[row.y] / totalWeights.y * height - self.padding.y
+                    x = x + runningWeightSums.x[data.x] / totalWeights.x * width + self.padding.x / 2,
+                    y = y + runningWeightSums.y[row.y] / totalWeights.y * width + self.padding.y / 2,
+                    width = self.weights.x:get(data.x) / totalWeights.x * width - self.padding.x,
+                    height = self.weights.y:get(row.y) / totalWeights.y * height - self.padding.y
                 }
                 local component = components[data.type](box, unpack(data.args))
                 table.insert(self.initialisedComponents, component)
