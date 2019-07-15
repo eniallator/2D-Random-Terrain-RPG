@@ -1,7 +1,7 @@
 local config = require 'conf'
 local Entity = require 'src.Entity'
 
-return function(spriteType)
+return function(spriteType, nickname)
     local player =
         Entity(
         {
@@ -9,11 +9,13 @@ return function(spriteType)
             width = 3,
             height = 4,
             nextFrameDistance = 1.5,
-            maxHealth = config.entity.player.health
+            maxHealth = config.entity.player.health,
+            label = nickname
         }
     )
 
     player.spriteType = spriteType
+    player.nickname = nickname
 
     local spritesheet = ASSETS.textures.entity.player
     player.sprite:setDefaultAnimation('idle')

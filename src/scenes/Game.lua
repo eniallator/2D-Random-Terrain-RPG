@@ -4,10 +4,10 @@ local Player = require 'src.Player'
 local Map = require 'src.Map'
 local Camera = require 'src.Camera'
 
-return function(playerType, mapSeed)
+return function(playerData, mapSeed)
     local game = Scene()
 
-    game.player = Player(playerType or 1)
+    game.player = Player(playerData.sprite, playerData.nickname)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 

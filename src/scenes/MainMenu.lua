@@ -5,7 +5,7 @@ return function(selectedSprite, nickname)
     local mainMenu = Scene()
 
     mainMenu.selectedSprite = selectedSprite or 1
-    mainMenu.nickname = nickname or 'default'
+    mainMenu.nickname = nickname or 'player'
 
     mainMenu.menu = Grid()
 
@@ -30,7 +30,7 @@ return function(selectedSprite, nickname)
         {
             'Play',
             function()
-                return {setScene = {name = 'game', args = {mainMenu.selectedSprite, mainMenu.nickname}}}
+                return {setScene = {name = 'game', args = {{sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname}}}}
             end,
             {r = 0, g = 0.7, b = 0}
         }

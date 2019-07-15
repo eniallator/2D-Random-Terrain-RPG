@@ -13,6 +13,7 @@ return function(args)
     entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
     entity.speed = args.speed
     entity.autoAnimation = true
+    entity.label = args.label
 
     entity.deltaMoved = 0
     entity.nextFrameDistance = args.nextFrameDistance
@@ -131,9 +132,6 @@ return function(args)
             height = frameBox.height / 10
         }
 
-        -- love.graphics.setColor(0, 0, 1)
-        -- love.graphics.rectangle('line', frameBox.x, frameBox.y, frameBox.width, frameBox.height)
-
         love.graphics.setColor(1, 0, 0)
         love.graphics.rectangle('fill', healthBox.x, healthBox.y, healthBox.width, healthBox.height)
         love.graphics.setColor(0, 1, 0)
@@ -141,10 +139,36 @@ return function(args)
         love.graphics.setColor(1, 1, 1)
     end
 
+    local function drawLabel(self, box, offset)
+        local displayLabel = ' ' .. self.label .. ' '
+        local font = love.graphics.getFont()
+        local vertPadding = 10
+
+        local frameBox = self.sprite:getFrameBox(self.drawPos, box)
+        local labelBox = {
+            x = frameBox.x + frameBox.width / 2 - font:getWidth(displayLabel) / 2,
+            y = frameBox.y - frameBox.height / 12 - font:getHeight(displayLabel) - box.height / 20,
+            width = font:getWidth(displayLabel),
+            height = font:getHeight(displayLabel) + vertPadding
+        }
+
+        if offset then
+            labelBox.y = labelBox.y - frameBox.height / 4
+        end
+
+        love.graphics.setColor(0, 0, 0, 0.4)
+        love.graphics.rectangle('fill', labelBox.x, labelBox.y - vertPadding / 2, labelBox.width, labelBox.height)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.print(displayLabel, labelBox.x, labelBox.y)
+    end
+
     function entity:draw(box)
         self.sprite:draw(self.drawPos, box)
         if self.health < self.maxHealth then
-            drawHealth(self, box)
+            drawHealth(self, frameBox, box)
+        end
+        if type(self.label) == 'string' and #self.label > 0 then
+            drawLabel(self, box, self.health < self.maxHealth)
         end
     end
 
