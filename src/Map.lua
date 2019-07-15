@@ -1,4 +1,5 @@
 local config = require 'conf'
+local OrderedTable = require 'src.utils.OrderedTable'
 local Chunk = require 'src.Chunk'
 local TerrainGenerator = require 'src.TerrainGenerator'
 local Zombie = require 'src.Zombie'
@@ -98,25 +99,22 @@ return function(player, mapSeed)
         self.player:calcDraw(dt, scale)
         self.player:drawShadow(box)
 
-        local i
-        for i = 1, #self.mobs do
-            self.mobs[i]:calcDraw(dt, scale)
-            self.mobs[i]:drawShadow(box)
+        for _, mob in ipairs(self.mobs) do
+            mob:calcDraw(dt, scale)
+            mob:drawShadow(box)
         end
 
-        local sortedDrawables = {self.player}
+        local sortedDrawables = OrderedTable()
+        sortedDrawables:add(self.player.drawPos.y, self.player)
+        for _, mob in ipairs(self.mobs) do
+            sortedDrawables:add(mob.drawPos.y, mob)
+        end
 
-        for i = 1, #self.mobs do
-            local j = 1
-            while sortedDrawables[j] and sortedDrawables[j].drawPos.y < self.mobs[i].drawPos.y do
-                j = j + 1
+        sortedDrawables:iterate(
+            function(drawable)
+                drawable:draw(box)
             end
-            table.insert(sortedDrawables, j, self.mobs[i])
-        end
-
-        for i = 1, #sortedDrawables do
-            sortedDrawables[i]:draw(box)
-        end
+        )
     end
 
     function map:draw(dt, scale, box)
