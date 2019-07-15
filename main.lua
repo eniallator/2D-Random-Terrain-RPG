@@ -7,7 +7,7 @@ local SceneManager = require 'src.scenes.SceneManager'
 local sceneManager
 
 function love.load()
-    sceneManager = SceneManager()
+    sceneManager = SceneManager('mainMenu')
 end
 
 function love.update()

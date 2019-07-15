@@ -1,8 +1,10 @@
 local OrderedTable = require 'src.utils.OrderedTable'
 local Button = require 'src.gui.Button'
 local CharacterDisplay = require 'src.gui.CharacterDisplay'
+local TextInput = require 'src.gui.TextInput'
+local Label = require 'src.gui.Label'
 
-local components = {button = Button, characterDisplay = CharacterDisplay}
+local components = {button = Button, characterDisplay = CharacterDisplay, textInput = TextInput, label = Label}
 
 return function()
     local grid = {}
@@ -26,8 +28,8 @@ return function()
                     if j > #row or x.value < row[j].x then
                         data = {x = x.value, type = componentType, args = args}
                         table.insert(row, j, data)
-                        self.weights.x:add(x.value, x.weight or self.weights.x:get(x.value))
-                        self.weights.y:add(y.value, y.weight or self.weights.y:get(y.value))
+                        self.weights.x:add(x.value, x.weight or self.weights.x:get(x.value) or 1)
+                        self.weights.y:add(y.value, y.weight or self.weights.y:get(y.value) or 1)
                         return
                     end
                 end
@@ -66,7 +68,12 @@ return function()
                     width = self.weights.x:get(data.x) / totalWeights.x * width - self.padding.x,
                     height = self.weights.y:get(row.y) / totalWeights.y * height - self.padding.y
                 }
-                local component = components[data.type](box, unpack(data.args))
+                local component
+                if type(data.args) == 'table' then
+                    component = components[data.type](box, unpack(data.args))
+                else
+                    component = components[data.type](box, data.args)
+                end
                 table.insert(self.initialisedComponents, component)
             end
         end

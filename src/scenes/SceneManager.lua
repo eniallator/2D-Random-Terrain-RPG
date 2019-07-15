@@ -1,14 +1,16 @@
-local Game = require 'src.scenes.Game'
 local MainMenu = require 'src.scenes.MainMenu'
+local CharacterSelect = require 'src.scenes.CharacterSelect'
+local Game = require 'src.scenes.Game'
 
-return function()
+return function(initialScene)
     local sceneManager = {}
 
     sceneManager.sceneList = {
         game = Game,
-        mainMenu = MainMenu
+        mainMenu = MainMenu,
+        characterSelect = CharacterSelect
     }
-    sceneManager.currentScene = MainMenu()
+    sceneManager.currentScene = sceneManager.sceneList[initialScene]()
 
     function sceneManager:update()
         local returnData, i = self.currentScene:update()
@@ -17,7 +19,11 @@ return function()
             for i = 1, #returnData do
                 if returnData[i].setScene then
                     local nextScene = returnData[i].setScene
-                    self.currentScene = self.sceneList[nextScene.name](nextScene.args and unpack(nextScene.args) or nil)
+                    if type(nextScene.args) == 'table' then
+                        self.currentScene = self.sceneList[nextScene.name](unpack(nextScene.args))
+                    else
+                        self.currentScene = self.sceneList[nextScene.name](nextScene.args)
+                    end
                 end
             end
         end

@@ -5,8 +5,8 @@ return function(box, selected)
     characterDisplay.selected = selected or 1
 
     function characterDisplay:update(state)
-        if type(state.selectedPlayer) == 'number' and state.selectedPlayer ~= self.selected then
-            self.selected = state.selectedPlayer
+        if type(state.selectedSprite) == 'number' and state.selectedSprite ~= self.selected then
+            self.selected = state.selectedSprite
         end
     end
 

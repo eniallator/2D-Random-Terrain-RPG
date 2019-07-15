@@ -1,6 +1,9 @@
+love.keyboard.setKeyRepeat(true)
+
 local keys = {
     state = {},
-    recentPressed = {}
+    recentPressed = {},
+    textString = ''
 }
 
 local function updateKeyState(key, newMode)
@@ -14,6 +17,10 @@ keys.updateRecentPressed = function()
 end
 
 function love.keypressed(key)
+    if key == 'backspace' and #keys.textString > 0 then
+        keys.textString = keys.textString:sub(1, #keys.textString - 1)
+    end
+
     if not keys.state[key] then
         keys.recentPressed[key] = true
     end
@@ -26,6 +33,7 @@ end
 
 function love.textinput(text)
     keys.textInput = text
+    keys.textString = keys.textString .. text
 end
 
 return keys
