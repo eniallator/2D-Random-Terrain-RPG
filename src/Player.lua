@@ -2,7 +2,16 @@ local config = require 'conf'
 local Entity = require 'src.Entity'
 
 return function(spriteType)
-    local player = Entity(8 / config.tps, 3, 4, 1.5, config.entity.player.health)
+    local player =
+        Entity(
+        {
+            speed = 8 / config.tps,
+            width = 3,
+            height = 4,
+            nextFrameDistance = 1.5,
+            maxHealth = config.entity.player.health
+        }
+    )
 
     player.spriteType = spriteType
 

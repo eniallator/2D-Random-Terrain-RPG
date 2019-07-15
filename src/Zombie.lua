@@ -11,8 +11,15 @@ local types = {
 }
 
 return function(type, x, y)
-    local zombie = Entity(5 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
-    local super = Entity(5 / config.tps, 3, 4, 1.5, config.entity.zombie.health)
+    local zombieArgs = {
+        speed = 5 / config.tps,
+        width = 3,
+        height = 4,
+        nextFrameDistance = 1.5,
+        maxHealth = config.entity.player.health
+    }
+    local zombie = Entity(zombieArgs)
+    local super = Entity(zombieArgs)
 
     zombie.hitbox.x = x
     zombie.hitbox.y = y

@@ -1,21 +1,21 @@
 local Sprite = require 'src.Sprite'
 local Hitbox = require 'src.Hitbox'
 
-return function(speed, width, height, nextFrameDistance, maxHealth)
+return function(args)
     local entity = {}
 
-    entity.maxHealth = maxHealth
+    entity.maxHealth = args.maxHealth
     entity.health = entity.maxHealth
 
-    entity.spriteDim = {width = width, height = height}
-    entity.sprite = Sprite(width, height)
-    entity.hitbox = Hitbox(0, 0, width * 0.8)
+    entity.spriteDim = {width = args.width, height = args.height}
+    entity.sprite = Sprite(args.width, args.height)
+    entity.hitbox = Hitbox(0, 0, args.width * 0.8)
     entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
-    entity.speed = speed
+    entity.speed = args.speed
     entity.autoAnimation = true
 
     entity.deltaMoved = 0
-    entity.nextFrameDistance = nextFrameDistance
+    entity.nextFrameDistance = args.nextFrameDistance
 
     function entity:setDest(x, y)
         self.dest = {x = x, y = y}
