@@ -7,13 +7,18 @@ return function(entity, cfg)
     enemyBehaviour.target = nil
     enemyBehaviour.status = 'wander'
 
+    enemyBehaviour.attackCooldown = nil
     enemyBehaviour.moveTime = nil
 
     function enemyBehaviour:attack()
-        if self.entity.hitbox:collide(self.target) then
+        if self.entity.hitbox:getDist(self.target.hitbox) <= cfg.attack.range or self.entity.hitbox:collide(self.target.hitbox) then
             self.entity.dest = nil
+            if self.attackCooldown == nil then
+                self.target:damage(cfg.attack.damage)
+                self.attackCooldown = love.timer.getTime() + cfg.attack.cooldown
+            end
         else
-            self.entity:setDest(self.target.x, self.target.y)
+            self.entity:setDest(self.target.hitbox.x, self.target.hitbox.y)
         end
     end
 
@@ -39,13 +44,17 @@ return function(entity, cfg)
     end
 
     function enemyBehaviour:autoUpdate(map)
-        local playerHitbox = map:getPlayerHitbox()
-        local distToPlayer = self.entity.hitbox:getDist(playerHitbox)
+        local player = map:getPlayer()
+        local distToPlayer = self.entity.hitbox:getDist(player.hitbox)
+
+        if self.attackCooldown ~= nil and love.timer.getTime() >= self.attackCooldown then
+            self.attackCooldown = nil
+        end
 
         if self.status == 'wander' then
             if distToPlayer < self.cfg.agroRange.start then
                 self.status = 'attack'
-                self.target = playerHitbox
+                self.target = player
                 self.moveTime = nil
             end
         elseif self.status == 'attack' then

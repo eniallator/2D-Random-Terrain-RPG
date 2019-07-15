@@ -6,6 +6,7 @@ return function(args)
 
     entity.maxHealth = args.maxHealth
     entity.health = entity.maxHealth
+    entity.alive = true
 
     entity.spriteDim = {width = args.width, height = args.height}
     entity.sprite = Sprite(args.width, args.height)
@@ -91,6 +92,13 @@ return function(args)
         updatePos(self)
     end
 
+    function entity:damage(amount)
+        self.health = math.max(self.health - amount, 0)
+        if self.health == 0 then
+            self.alive = false
+        end
+    end
+
     function entity:calcDraw(dt, scale)
         self.drawPos.x = self.hitbox.x
         self.drawPos.y = self.hitbox.y
@@ -165,7 +173,7 @@ return function(args)
     function entity:draw(box)
         self.sprite:draw(self.drawPos, box)
         if self.health < self.maxHealth then
-            drawHealth(self, frameBox, box)
+            drawHealth(self, box)
         end
         if type(self.label) == 'string' and #self.label > 0 then
             drawLabel(self, box, self.health < self.maxHealth)

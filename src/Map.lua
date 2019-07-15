@@ -65,8 +65,8 @@ return function(player, mapSeed)
         updateMobs(self, box)
     end
 
-    function map:getPlayerHitbox()
-        return self.player.hitbox
+    function map:getPlayer()
+        return self.player
     end
 
     local function drawChunks(self, box)

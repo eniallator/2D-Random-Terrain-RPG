@@ -48,6 +48,11 @@ return {
         },
         zombie = {
             health = 1000,
+            attack = {
+                cooldown = 0.5,
+                range = 1,
+                damage = 50
+            },
             idleTime = {min = 3, max = 7},
             walkRange = {min = 5, max = 20},
             agroRange = {start = 15, stop = 20}
