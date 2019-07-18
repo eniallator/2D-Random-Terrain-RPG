@@ -14,7 +14,7 @@ return function(playerData, mapSeed)
     function game:update()
         if KEYS.recentPressed.t then
             if self.camera.following then
-                self.camera:setPos(self.camera.pos.x, self.camera.pos.y)
+                self.camera:setPos(self.camera.target.hitbox.x, self.camera.target.hitbox.y - self.camera.target.sprite.dim.height / 2)
             else
                 self.camera:setTarget(self.player)
             end
@@ -23,6 +23,13 @@ return function(playerData, mapSeed)
         self.camera.scale = math.min(config.camera.zoomLimits.max, math.max(config.camera.zoomLimits.min, self.camera.scale))
 
         local cameraBox = self.camera:getViewBox()
+        if MOUSE.left.clicked then
+            local dest = {
+                x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.left.pos.x / love.graphics.getWidth()) * cameraBox.width,
+                y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.left.pos.y / love.graphics.getHeight()) * cameraBox.height
+            }
+            self.player.class:attack(self.map, self.player, dest)
+        end
 
         self.map:update(cameraBox)
 
@@ -32,14 +39,6 @@ return function(playerData, mapSeed)
                 y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
             }
             self.player:setDest(dest.x, dest.y)
-        end
-
-        if MOUSE.left.clicked then
-            local dest = {
-                x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.left.pos.x / love.graphics.getWidth()) * cameraBox.width,
-                y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.left.pos.y / love.graphics.getHeight()) * cameraBox.height
-            }
-            self.player.class:attack(self.map, self.player, dest)
         end
 
         self.player:update()

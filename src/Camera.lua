@@ -3,7 +3,8 @@ local config = require 'conf'
 return function(xOrTarget, y)
     local camera = {}
 
-    if not y then
+    camera.following = not y
+    if camera.following then
         camera.target = xOrTarget
     else
         camera.pos = {x = xOrTarget, y = y}
@@ -13,11 +14,13 @@ return function(xOrTarget, y)
     function camera:setTarget(target)
         self.pos = nil
         self.target = target
+        self.following = true
     end
 
     function camera:setPos(x, y)
         self.target = nil
         self.pos = {x = x, y = y}
+        self.following = false
     end
 
     function camera:setScale(scale)
