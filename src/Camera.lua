@@ -32,7 +32,7 @@ return function(xOrTarget, y)
         if self.target ~= nil then
             return {
                 x = self.target.drawPos.x,
-                y = self.target.drawPos.y - self.target.spriteDim.height / 2,
+                y = self.target.drawPos.y - self.target.sprite.dim.height / 2,
                 width = dim.width,
                 height = dim.height
             }

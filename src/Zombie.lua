@@ -15,7 +15,7 @@ return function(type, x, y)
         speed = 5 / config.tps,
         width = 3,
         height = 4,
-        nextFrameDistance = 1.5,
+        nextFrameDist = 1.5,
         maxHealth = config.entity.player.health
     }
     local zombie = Entity(zombieArgs)

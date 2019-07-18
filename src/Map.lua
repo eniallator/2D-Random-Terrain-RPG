@@ -11,6 +11,7 @@ return function(player, mapSeed)
 
     map.chunks = {}
     map.mobs = {}
+    map.projectiles = {}
     map.player = player
 
     local function createChunks(self, box)
@@ -41,7 +42,7 @@ return function(player, mapSeed)
                 x = math.abs(self.mobs[i].hitbox.x - box.x),
                 y = math.abs(self.mobs[i].hitbox.y - box.y)
             }
-            if absDiff.x > cfg.despawnRadius or absDiff.y > cfg.despawnRadius then
+            if absDiff.x > cfg.despawnRadius or absDiff.y > cfg.despawnRadius or not self.mobs[i].alive then
                 table.remove(self.mobs, i)
             end
         end
@@ -55,14 +56,31 @@ return function(player, mapSeed)
             table.insert(self.mobs, Zombie(zombieType, spawnPos.x, spawnPos.y))
         end
 
-        for i = 1, #self.mobs do
-            self.mobs[i]:update(self)
+        for _, mob in ipairs(self.mobs) do
+            mob:update(self)
+        end
+    end
+
+    local function updateProjectiles(self, box)
+        for _, projectile in ipairs(self.projectiles) do
+            projectile:update(self.mobs)
+        end
+
+        for i = #self.projectiles, 1, -1 do
+            if not self.projectiles[i].alive then
+                table.remove(self.projectiles, i)
+            end
         end
     end
 
     function map:update(box)
         createChunks(self, box)
+        updateProjectiles(self, box)
         updateMobs(self, box)
+    end
+
+    function map:addProjectile(projectile)
+        table.insert(self.projectiles, projectile)
     end
 
     function map:getPlayer()
@@ -95,19 +113,28 @@ return function(player, mapSeed)
         end
     end
 
-    local function drawEntities(self, dt, scale, box)
-        self.player:calcDraw(dt, scale)
+    local function drawDrawables(self, dt, box)
+        self.player:calcDraw(dt)
         self.player:drawShadow(box)
 
         for _, mob in ipairs(self.mobs) do
-            mob:calcDraw(dt, scale)
+            mob:calcDraw(dt)
             mob:drawShadow(box)
+        end
+
+        for _, projectile in ipairs(self.projectiles) do
+            projectile:calcDraw(dt)
         end
 
         local sortedDrawables = OrderedTable()
         sortedDrawables:add(self.player.drawPos.y, self.player)
+
         for _, mob in ipairs(self.mobs) do
             sortedDrawables:add(mob.drawPos.y, mob)
+        end
+
+        for _, projectile in ipairs(self.projectiles) do
+            sortedDrawables:add(projectile.drawPos.y, projectile)
         end
 
         sortedDrawables:iterate(
@@ -117,9 +144,9 @@ return function(player, mapSeed)
         )
     end
 
-    function map:draw(dt, scale, box)
+    function map:draw(dt, box)
         drawChunks(self, box)
-        drawEntities(self, dt, scale, box)
+        drawDrawables(self, dt, box)
     end
 
     return map

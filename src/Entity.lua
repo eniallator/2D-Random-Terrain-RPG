@@ -8,7 +8,6 @@ return function(args)
     entity.health = entity.maxHealth
     entity.alive = true
 
-    entity.spriteDim = {width = args.width, height = args.height}
     entity.sprite = Sprite(args.width, args.height)
     entity.hitbox = Hitbox(0, 0, args.width * 0.8)
     entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
@@ -17,7 +16,7 @@ return function(args)
     entity.label = args.label
 
     entity.deltaMoved = 0
-    entity.nextFrameDistance = args.nextFrameDistance
+    entity.nextFrameDist = args.nextFrameDist
 
     function entity:setDest(x, y)
         self.dest = {x = x, y = y}
@@ -44,9 +43,9 @@ return function(args)
 
             local dist = math.min(self.speed, math.sqrt(diff.x ^ 2 + diff.y ^ 2))
             self.deltaMoved = self.deltaMoved + dist
-            if self.deltaMoved > self.nextFrameDistance then
-                self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDistance))
-                self.deltaMoved = self.deltaMoved % self.nextFrameDistance
+            if self.deltaMoved > self.nextFrameDist then
+                self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDist))
+                self.deltaMoved = self.deltaMoved % self.nextFrameDist
             end
         end
     end
@@ -99,17 +98,13 @@ return function(args)
         end
     end
 
-    function entity:calcDraw(dt, scale)
+    function entity:calcDraw(dt)
         self.drawPos.x = self.hitbox.x
         self.drawPos.y = self.hitbox.y
 
         if self.oldPos ~= nil then
-            local posDiff = {
-                x = self.hitbox.x - self.oldPos.x,
-                y = self.hitbox.y - self.oldPos.y
-            }
-            self.drawPos.x = self.oldPos.x + posDiff.x * dt
-            self.drawPos.y = self.oldPos.y + posDiff.y * dt
+            self.drawPos.x = self.oldPos.x + (self.hitbox.x - self.oldPos.x) * dt
+            self.drawPos.y = self.oldPos.y + (self.hitbox.y - self.oldPos.y) * dt
         end
     end
 
@@ -123,8 +118,8 @@ return function(args)
         love.graphics.setColor(0, 0, 0, 0.3)
         love.graphics.ellipse(
             'fill',
-            frameBox.x + self.spriteDim.width / 2 * scale.x,
-            frameBox.y + self.spriteDim.height * scale.y,
+            frameBox.x + self.sprite.dim.width / 2 * scale.x,
+            frameBox.y + self.sprite.dim.height * scale.y,
             self.hitbox.diameter / 2 * scale.x,
             self.hitbox.diameter / 2 * scale.y / 1.5
         )

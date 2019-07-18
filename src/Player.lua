@@ -1,5 +1,6 @@
 local config = require 'conf'
 local Entity = require 'src.Entity'
+local Mage = require 'src.class.Mage'
 
 return function(spriteType, nickname)
     local player =
@@ -8,11 +9,13 @@ return function(spriteType, nickname)
             speed = 8 / config.tps,
             width = 3,
             height = 4,
-            nextFrameDistance = 1.5,
+            nextFrameDist = 1.5,
             maxHealth = config.entity.player.health,
             label = nickname
         }
     )
+
+    player.class = Mage()
 
     player.spriteType = spriteType
     player.nickname = nickname

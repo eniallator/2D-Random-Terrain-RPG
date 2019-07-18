@@ -18,7 +18,7 @@ return function(selectedSprite, nickname)
         {
             'Select Character',
             function()
-                return {setScene = {name = 'characterSelect', args = {mainMenu.selectedSprite}}}
+                return {setScene = {name = 'characterSelect', args = {mainMenu.selectedSprite, mainMenu.nickname}}}
             end,
             {r = 0, g = 0.7, b = 0}
         }

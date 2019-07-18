@@ -34,13 +34,21 @@ return function(playerData, mapSeed)
             self.player:setDest(dest.x, dest.y)
         end
 
+        if MOUSE.left.clicked then
+            local dest = {
+                x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.left.pos.x / love.graphics.getWidth()) * cameraBox.width,
+                y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.left.pos.y / love.graphics.getHeight()) * cameraBox.height
+            }
+            self.player.class:attack(self.map, self.player, dest)
+        end
+
         self.player:update()
     end
 
     function game:draw(dt)
         local cameraBox = self.camera:getViewBox()
 
-        self.map:draw(dt, self.camera.scale, cameraBox)
+        self.map:draw(dt, cameraBox)
     end
 
     return game

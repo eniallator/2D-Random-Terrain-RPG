@@ -36,6 +36,21 @@ return {
             }
         }
     },
+    projectile = {
+        whirlwind = {
+            damage = 100,
+            range = 50
+        }
+    },
+    class = {
+        mage = {
+            attack = {
+                cooldown = 0.2,
+                damage = 100,
+                range = 50
+            }
+        }
+    },
     entity = {
         player = {
             health = 1000
