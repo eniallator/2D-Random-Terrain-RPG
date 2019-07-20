@@ -64,7 +64,7 @@ return function()
             for _, data in ipairs(row) do
                 local box = {
                     x = x + runningWeightSums.x[data.x] / totalWeights.x * width + self.padding.x / 2,
-                    y = y + runningWeightSums.y[row.y] / totalWeights.y * width + self.padding.y / 2,
+                    y = y + runningWeightSums.y[row.y] / totalWeights.y * height + self.padding.y / 2,
                     width = self.weights.x:get(data.x) / totalWeights.x * width - self.padding.x,
                     height = self.weights.y:get(row.y) / totalWeights.y * height - self.padding.y
                 }
