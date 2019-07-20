@@ -19,9 +19,9 @@ return function(initialScene)
         local returnData, i = self.currentScene:update()
 
         if type(returnData) == 'table' then
-            for i = 1, #returnData do
-                if returnData[i].setScene then
-                    local nextScene = returnData[i].setScene
+            for _, data in ipairs(returnData) do
+                if data.setScene then
+                    local nextScene = data.setScene
                     if type(nextScene.args) == 'table' then
                         self.currentScene = sceneList[nextScene.name](unpack(nextScene.args))
                     else

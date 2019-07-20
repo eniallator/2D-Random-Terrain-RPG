@@ -11,7 +11,9 @@ return function(playerData, mapSeed)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
-    function game:update()
+    game.paused = false
+
+    local function updateGame(self)
         if KEYS.recentPressed.t then
             if self.camera.following then
                 self.camera:setPos(self.camera.target.hitbox.x, self.camera.target.hitbox.y - self.camera.target.sprite.dim.height / 2)
@@ -44,9 +46,26 @@ return function(playerData, mapSeed)
         self.player:update()
     end
 
+    function game:update()
+        if not self.player.alive then
+            self.paused = true
+        end
+
+        if not self.paused then
+            updateGame(self)
+        end
+    end
+
     function game:draw(dt)
+        if self.player.alive then
+            love.graphics.setShader()
+        else
+            love.graphics.setShader(ASSETS.shaders.blackAndWhite)
+        end
+
         local cameraBox = self.camera:getViewBox()
 
+        dt = not self.paused and dt or 1
         self.map:draw(dt, cameraBox)
     end
 

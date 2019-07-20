@@ -1,6 +1,9 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
 return {
+    shaders = {
+        blackAndWhite = love.graphics.newShader('src/shaders/BlackAndWhite.frag')
+    },
     textures = {
         icons = {
             gameIcon = love.graphics.newImage('assets/textures/icons/game-icon.png')
