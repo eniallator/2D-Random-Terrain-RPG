@@ -1,10 +1,10 @@
 local OrderedTable = require 'src.utils.OrderedTable'
 
 local components = {
-    button = require 'src.gui.Button',
-    characterDisplay = require 'src.gui.CharacterDisplay',
-    textInput = require 'src.gui.TextInput',
-    label = require 'src.gui.Label'
+    button = require 'src.gui.components.Button',
+    characterDisplay = require 'src.gui.components.CharacterDisplay',
+    textInput = require 'src.gui.components.TextInput',
+    label = require 'src.gui.components.Label'
 }
 
 return function()

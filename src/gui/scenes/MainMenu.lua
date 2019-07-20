@@ -1,8 +1,8 @@
-local BaseScene = require 'src.scenes.BaseScene'
+local BaseGui = require 'src.gui.BaseGui'
 local Grid = require 'src.gui.Grid'
 
 return function(selectedSprite, nickname)
-    local mainMenu = BaseScene()
+    local mainMenu = BaseGui()
 
     mainMenu.selectedSprite = selectedSprite or 1
     mainMenu.nickname = nickname or 'player'

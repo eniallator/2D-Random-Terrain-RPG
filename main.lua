@@ -1,7 +1,7 @@
 require 'src.Engine'
 
 -- Classes
-local SceneManager = require 'src.scenes.SceneManager'
+local SceneManager = require 'src.gui.SceneManager'
 
 -- Objects
 local sceneManager
