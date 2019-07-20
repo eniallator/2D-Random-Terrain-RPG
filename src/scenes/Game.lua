@@ -60,7 +60,7 @@ return function(playerData, mapSeed)
         if self.player.alive then
             love.graphics.setShader()
         else
-            love.graphics.setShader(ASSETS.shaders.blackAndWhite)
+            love.graphics.setShader(SHADERS.blackAndWhite)
         end
 
         local cameraBox = self.camera:getViewBox()

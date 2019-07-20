@@ -7,6 +7,7 @@ end
 MOUSE = require 'src.utils.Mouse'
 KEYS = require 'src.utils.Keys'
 ASSETS = require 'src.utils.Assets'
+SHADERS = require 'src.utils.Shaders'
 
 -- Modifying from: https://bitbucket.org/rude/love/src/default/src/scripts/boot.lua#lines-578:619
 function love.run()
