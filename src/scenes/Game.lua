@@ -1,11 +1,11 @@
 local config = require 'conf'
-local Scene = require 'src.scenes.Scene'
+local BaseScene = require 'src.scenes.BaseScene'
 local Player = require 'src.Player'
 local Map = require 'src.Map'
 local Camera = require 'src.Camera'
 
 return function(playerData, mapSeed)
-    local game = Scene()
+    local game = BaseScene()
 
     game.player = Player(playerData.sprite, playerData.nickname)
     game.map = Map(game.player, mapSeed or love.timer.getTime())

@@ -1,7 +1,7 @@
 return function()
-    local scene = {}
+    local baseScene = {}
 
-    function scene:updateMenu(menu, state)
+    function baseScene:updateMenu(menu, state)
         local returnData = {}
         for _, component in ipairs(menu:getComponents()) do
             if type(component.update) == 'function' then
@@ -14,7 +14,7 @@ return function()
         return #returnData > 0 and returnData or nil
     end
 
-    function scene:drawMenu(menu, dt)
+    function baseScene:drawMenu(menu, dt)
         for _, component in ipairs(menu:getComponents()) do
             if type(component.draw) == 'function' then
                 component:draw(dt)
@@ -22,13 +22,13 @@ return function()
         end
     end
 
-    function scene:update()
+    function baseScene:update()
         error('Scene has not implemented update function yet!')
     end
 
-    function scene:draw(dt)
+    function baseScene:draw(dt)
         error('Scene has not implemented draw function yet!')
     end
 
-    return scene
+    return baseScene
 end

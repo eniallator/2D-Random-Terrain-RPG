@@ -1,5 +1,5 @@
 local config = require 'conf'
-local Whirlwind = require 'src.projectile.Whirlwind'
+local Whirlwind = require 'src.projectiles.Whirlwind'
 
 return function()
     local mage = {}

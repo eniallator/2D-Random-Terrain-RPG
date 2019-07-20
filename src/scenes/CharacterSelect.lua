@@ -1,8 +1,8 @@
-local Scene = require 'src.scenes.Scene'
+local BaseScene = require 'src.scenes.BaseScene'
 local Grid = require 'src.gui.Grid'
 
 return function(selectedSprite, nickname)
-    local characterSelect = Scene()
+    local characterSelect = BaseScene()
 
     characterSelect.selectedSprite = selectedSprite or 1
     characterSelect.nickname = nickname or 'default'
