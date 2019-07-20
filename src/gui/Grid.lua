@@ -1,10 +1,11 @@
 local OrderedTable = require 'src.utils.OrderedTable'
-local Button = require 'src.gui.Button'
-local CharacterDisplay = require 'src.gui.CharacterDisplay'
-local TextInput = require 'src.gui.TextInput'
-local Label = require 'src.gui.Label'
 
-local components = {button = Button, characterDisplay = CharacterDisplay, textInput = TextInput, label = Label}
+local components = {
+    button = require 'src.gui.Button',
+    characterDisplay = require 'src.gui.CharacterDisplay',
+    textInput = require 'src.gui.TextInput',
+    label = require 'src.gui.Label'
+}
 
 return function()
     local grid = {}

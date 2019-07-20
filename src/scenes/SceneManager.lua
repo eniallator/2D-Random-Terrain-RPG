@@ -1,16 +1,13 @@
-local MainMenu = require 'src.scenes.MainMenu'
-local CharacterSelect = require 'src.scenes.CharacterSelect'
-local Game = require 'src.scenes.Game'
+local sceneList = {
+    mainMenu = require 'src.scenes.MainMenu',
+    characterSelect = require 'src.scenes.CharacterSelect',
+    game = require 'src.scenes.Game'
+}
 
 return function(initialScene)
     local sceneManager = {}
 
-    sceneManager.sceneList = {
-        game = Game,
-        mainMenu = MainMenu,
-        characterSelect = CharacterSelect
-    }
-    sceneManager.currentScene = sceneManager.sceneList[initialScene]()
+    sceneManager.currentScene = sceneList[initialScene]()
 
     function sceneManager:resize(width, height)
         if type(self.currentScene.resize) == 'function' then
@@ -26,9 +23,9 @@ return function(initialScene)
                 if returnData[i].setScene then
                     local nextScene = returnData[i].setScene
                     if type(nextScene.args) == 'table' then
-                        self.currentScene = self.sceneList[nextScene.name](unpack(nextScene.args))
+                        self.currentScene = sceneList[nextScene.name](unpack(nextScene.args))
                     else
-                        self.currentScene = self.sceneList[nextScene.name](nextScene.args)
+                        self.currentScene = sceneList[nextScene.name](nextScene.args)
                     end
                 end
             end
