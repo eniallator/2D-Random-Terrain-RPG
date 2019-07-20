@@ -36,13 +36,15 @@ return function(selectedSprite, nickname)
         }
     )
 
-    local minDim = math.min(love.graphics.getDimensions())
-    mainMenu.menu:setPadding(minDim / 40, minDim / 60)
-    local border = {
-        x = love.graphics.getWidth() / 4,
-        y = love.graphics.getHeight() / 5
-    }
-    mainMenu.menu:init(border.x, border.y, love.graphics.getWidth() - border.x * 2, love.graphics.getHeight() - border.y * 2)
+    function mainMenu:resize(width, height)
+        local minDim = math.min(width, height)
+        mainMenu.menu:setPadding(minDim / 40, minDim / 60)
+        local border = {
+            x = width / 4,
+            y = height / 5
+        }
+        mainMenu.menu:init(border.x, border.y, width - border.x * 2, height - border.y * 2)
+    end
 
     function mainMenu:update()
         return self:updateMenu(self.menu, {selectedSprite = self.selectedSprite})
@@ -51,6 +53,8 @@ return function(selectedSprite, nickname)
     function mainMenu:draw(dt)
         self:drawMenu(self.menu, dt)
     end
+
+    mainMenu:resize(love.graphics.getDimensions())
 
     return mainMenu
 end

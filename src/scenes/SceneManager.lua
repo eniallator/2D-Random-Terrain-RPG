@@ -12,6 +12,12 @@ return function(initialScene)
     }
     sceneManager.currentScene = sceneManager.sceneList[initialScene]()
 
+    function sceneManager:resize(width, height)
+        if type(self.currentScene.resize) == 'function' then
+            self.currentScene:resize(width, height)
+        end
+    end
+
     function sceneManager:update()
         local returnData, i = self.currentScene:update()
 

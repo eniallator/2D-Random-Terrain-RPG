@@ -10,6 +10,10 @@ function love.load()
     sceneManager = SceneManager('mainMenu')
 end
 
+function love.resize(width, height)
+    sceneManager:resize(width, height)
+end
+
 function love.update()
     sceneManager:update()
 end
