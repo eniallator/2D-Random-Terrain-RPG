@@ -1,6 +1,7 @@
 local config = require 'conf'
 local BaseGui = require 'src.gui.BaseGui'
 local Escape = require 'src.gui.overlays.Escape'
+local Death = require 'src.gui.overlays.Death'
 
 local Player = require 'src.Player'
 local Map = require 'src.Map'
@@ -13,7 +14,7 @@ return function(playerData, mapSeed)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
-    game.escape = nil
+    game.pauseOverlay = nil
     game.paused = false
 
     local function updateGame(self)
@@ -50,27 +51,31 @@ return function(playerData, mapSeed)
     end
 
     function game:resize(width, height)
-        if self.escape ~= nil then
-            self.escape:resize(width, height)
+        if self.pauseOverlay ~= nil then
+            self.pauseOverlay:resize(width, height)
         end
     end
 
     function game:update()
         if not self.player.alive then
-            self.paused = true
+            if not self.paused then
+                self.paused = true
+                self.pauseOverlay = Death()
+            end
         elseif KEYS.recentPressed.escape then
             if not self.paused then
-                self.escape = Escape()
+                self.pauseOverlay = Escape()
             else
-                self.escape = nil
+                self.pauseOverlay = nil
             end
             self.paused = not self.paused
         end
 
         if not self.paused then
             updateGame(self)
-        elseif self.escape ~= nil then
-            return self.escape:update({selectedPlayer = self.player.spriteType, playerNickname = self.player.nickname})
+        end
+        if self.pauseOverlay ~= nil then
+            return self.pauseOverlay:update({selectedPlayer = self.player.spriteType, playerNickname = self.player.nickname})
         end
     end
 
@@ -86,8 +91,8 @@ return function(playerData, mapSeed)
         dt = not self.paused and dt or 1
         self.map:draw(dt, cameraBox)
 
-        if self.escape ~= nil then
-            self.escape:draw()
+        if self.pauseOverlay ~= nil then
+            self.pauseOverlay:draw()
         end
     end
 
