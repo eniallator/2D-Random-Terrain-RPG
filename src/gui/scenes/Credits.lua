@@ -1,20 +1,6 @@
 local BaseGui = require 'src.gui.BaseGui'
 local Grid = require 'src.gui.Grid'
-
-local creditsData = {
-    ['Programming'] = {
-        ['Everything'] = {author = 'eniallator', links = {github = 'https://github.com/eniallator/2D-Random-Terrain-RPG'}}
-    },
-    ['Art'] = {
-        ['Player'] = {author = 'usr_share', links = {website = 'https://opengameart.org/content/db16-rpg-character-sprites-v2'}},
-        ['Zombie'] = {
-            author = 'CharlesGabriel',
-            links = {website = 'https://opengameart.org/content/16x18-zombie-characters-templates-extra-template'}
-        },
-        ['Terrain'] = {author = 'TearOfTheStar', links = {website = 'https://opengameart.org/content/8x8px-34-perspective-tileset'}},
-        ['Whirlwind'] = {author = 'Spring', links = {website = 'https://opengameart.org/content/whirlwind'}}
-    }
-}
+local creditsData = require 'credits'
 
 return function(selectedSprite, nickname)
     local credits = BaseGui()
@@ -23,7 +9,7 @@ return function(selectedSprite, nickname)
     credits.mainMenuData = {selectedSprite, nickname}
 
     local currY = 1
-    for category, data in pairs(creditsData) do
+    for category, _ in pairs(creditsData) do
         credits.menu:addComponent(
             'button',
             {value = 1},
@@ -31,6 +17,7 @@ return function(selectedSprite, nickname)
             {
                 category,
                 function()
+                    return {setScene = {name = 'creditsCategory', args = {category, credits.mainMenuData}}}
                 end,
                 {r = 0, g = 0.7, b = 0}
             }

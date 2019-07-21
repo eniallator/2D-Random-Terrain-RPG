@@ -3,7 +3,10 @@ love.graphics.setDefaultFilter('nearest', 'nearest')
 return {
     textures = {
         icons = {
-            gameIcon = love.graphics.newImage('assets/textures/icons/game-icon.png')
+            game = love.graphics.newImage('assets/textures/icons/game.png'),
+            website = love.graphics.newImage('assets/textures/icons/website.png'),
+            github = love.graphics.newImage('assets/textures/icons/github.png'),
+            twitter = love.graphics.newImage('assets/textures/icons/twitter.png')
         },
         entity = {
             player = {img = love.graphics.newImage('assets/textures/entity/player.png'), width = 16, height = 24},

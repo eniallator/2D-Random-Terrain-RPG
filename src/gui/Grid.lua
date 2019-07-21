@@ -4,7 +4,8 @@ local components = {
     button = require 'src.gui.components.Button',
     characterDisplay = require 'src.gui.components.CharacterDisplay',
     textInput = require 'src.gui.components.TextInput',
-    label = require 'src.gui.components.Label'
+    label = require 'src.gui.components.Label',
+    credits = require 'src.gui.components.Credits'
 }
 
 return function()
