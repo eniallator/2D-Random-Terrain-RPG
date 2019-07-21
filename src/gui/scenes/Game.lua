@@ -1,5 +1,7 @@
 local config = require 'conf'
 local BaseGui = require 'src.gui.BaseGui'
+local Escape = require 'src.gui.overlays.Escape'
+
 local Player = require 'src.Player'
 local Map = require 'src.Map'
 local Camera = require 'src.Camera'
@@ -11,6 +13,7 @@ return function(playerData, mapSeed)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
+    game.escape = nil
     game.paused = false
 
     local function updateGame(self)
@@ -46,13 +49,28 @@ return function(playerData, mapSeed)
         self.player:update()
     end
 
+    function game:resize(width, height)
+        if self.escape ~= nil then
+            self.escape:resize(width, height)
+        end
+    end
+
     function game:update()
         if not self.player.alive then
             self.paused = true
+        elseif KEYS.recentPressed.escape then
+            if not self.paused then
+                self.escape = Escape()
+            else
+                self.escape = nil
+            end
+            self.paused = not self.paused
         end
 
         if not self.paused then
             updateGame(self)
+        elseif self.escape ~= nil then
+            return self.escape:update({selectedPlayer = self.player.spriteType, playerNickname = self.player.nickname})
         end
     end
 
@@ -67,6 +85,10 @@ return function(playerData, mapSeed)
 
         dt = not self.paused and dt or 1
         self.map:draw(dt, cameraBox)
+
+        if self.escape ~= nil then
+            self.escape:draw()
+        end
     end
 
     return game

@@ -7,12 +7,12 @@ return function(box, text, onClick, bgColour, textColour)
     button.bgColour = bgColour or {r = 0.5, g = 0.5, b = 0.5}
     button.textColour = textColour or {r = 1, g = 1, b = 1}
 
-    function button:update()
+    function button:update(state)
         if
             MOUSE.left.clicked and (self.box.x <= MOUSE.left.pos.x and MOUSE.left.pos.x < self.box.x + self.box.width) and
                 (self.box.y <= MOUSE.left.pos.y and MOUSE.left.pos.y < self.box.y + self.box.height)
          then
-            return self.onClick()
+            return self.onClick(state)
         end
     end
 

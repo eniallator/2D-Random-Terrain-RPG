@@ -38,12 +38,12 @@ return function(selectedSprite, nickname)
 
     function mainMenu:resize(width, height)
         local minDim = math.min(width, height)
-        mainMenu.menu:setPadding(minDim / 40, minDim / 60)
+        self.menu:setPadding(minDim / 40, minDim / 60)
         local border = {
             x = width / 4,
             y = height / 5
         }
-        mainMenu.menu:init(border.x, border.y, width - border.x * 2, height - border.y * 2)
+        self.menu:init(border.x, border.y, width - border.x * 2, height - border.y * 2)
     end
 
     function mainMenu:update()
