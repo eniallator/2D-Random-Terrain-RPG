@@ -35,6 +35,18 @@ return function(selectedSprite, nickname)
             {r = 0, g = 0.7, b = 0}
         }
     )
+    mainMenu.menu:addComponent(
+        'button',
+        {value = 1},
+        {value = 5, weight = 1},
+        {
+            'Credits',
+            function()
+                return {setScene = {name = 'credits', args = {mainMenu.selectedSprite, mainMenu.nickname}}}
+            end,
+            {r = 0, g = 0.7, b = 0}
+        }
+    )
 
     function mainMenu:resize(width, height)
         local minDim = math.min(width, height)
