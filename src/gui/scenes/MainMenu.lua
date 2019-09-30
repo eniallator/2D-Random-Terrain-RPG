@@ -32,7 +32,9 @@ return function(selectedSprite, nickname)
             function()
                 return {setScene = {name = 'game', args = {{sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname}}}}
             end,
-            {r = 0, g = 0.7, b = 0}
+            {r = 0, g = mainMenu.selectedSprite == nil and 0.3 or 0.7, b = 0},
+            {r = 1, g = 1, b = 1},
+            mainMenu.selectedSprite == nil
         }
     )
     mainMenu.menu:addComponent(
