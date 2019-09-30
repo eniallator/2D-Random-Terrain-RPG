@@ -2,7 +2,7 @@ return function(box, selected)
     local characterDisplay = {}
 
     characterDisplay.box = box
-    characterDisplay.selected = selected or 1
+    characterDisplay.selected = selected
 
     function characterDisplay:update(state)
         if type(state.selectedSprite) == 'number' and state.selectedSprite ~= self.selected then
@@ -11,34 +11,34 @@ return function(box, selected)
     end
 
     function characterDisplay:draw()
-        local spritesheet = ASSETS.textures.entity.player
+        local imgToDraw = self.selected ~= nil and ASSETS.textures.entity.player.types or ASSETS.textures.entity.player.unknown
         local quad =
             love.graphics.newQuad(
-            (self.selected - 1) * spritesheet.width,
+            self.selected ~= nil and (self.selected - 1) * imgToDraw.width or 0,
             0,
-            spritesheet.width,
-            spritesheet.height,
-            spritesheet.img:getDimensions()
+            imgToDraw.width,
+            imgToDraw.height,
+            imgToDraw.img:getDimensions()
         )
-        local imgRatio = spritesheet.width / spritesheet.height
+        local imgRatio = imgToDraw.width / imgToDraw.height
         local boxRatio = self.box.width / self.box.height
         local padding = {
             x = 0,
             y = 0
         }
         if imgRatio > boxRatio then
-            padding.y = self.box.height - self.box.width / spritesheet.width * spritesheet.height
+            padding.y = self.box.height - self.box.width / imgToDraw.width * imgToDraw.height
         elseif imgRatio < boxRatio then
-            padding.x = self.box.width - self.box.height / spritesheet.height * spritesheet.width
+            padding.x = self.box.width - self.box.height / imgToDraw.height * imgToDraw.width
         end
         love.graphics.draw(
-            spritesheet.img,
+            imgToDraw.img,
             quad,
             self.box.x + padding.x / 2,
             self.box.y + padding.y / 2,
             0,
-            (self.box.width - padding.x) / spritesheet.width,
-            (self.box.height - padding.y) / spritesheet.height
+            (self.box.width - padding.x) / imgToDraw.width,
+            (self.box.height - padding.y) / imgToDraw.height
         )
     end
 

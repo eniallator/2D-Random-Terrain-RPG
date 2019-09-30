@@ -20,7 +20,7 @@ return function(spriteType, nickname)
     player.spriteType = spriteType
     player.nickname = nickname
 
-    local spritesheet = ASSETS.textures.entity.player
+    local spritesheet = ASSETS.textures.entity.player.types
     player.sprite:setDefaultAnimation('idle')
     player.sprite:addAnimation(
         'idle',

@@ -4,7 +4,7 @@ local Grid = require 'src.gui.Grid'
 return function(selectedSprite, nickname)
     local characterSelect = BaseGui()
 
-    characterSelect.selectedSprite = selectedSprite or 1
+    characterSelect.selectedSprite = selectedSprite
     characterSelect.nickname = nickname or 'default'
 
     characterSelect.menu = Grid()
@@ -15,7 +15,11 @@ return function(selectedSprite, nickname)
         {
             '<',
             function()
-                characterSelect.selectedSprite = (characterSelect.selectedSprite - 2) % 12 + 1
+                if characterSelect.selectedSprite == nil then
+                    characterSelect.selectedSprite = 12
+                else
+                    characterSelect.selectedSprite = (characterSelect.selectedSprite - 2) % 12 + 1
+                end
             end,
             {r = 0, g = 0.7, b = 0}
         }
@@ -28,7 +32,11 @@ return function(selectedSprite, nickname)
         {
             '>',
             function()
-                characterSelect.selectedSprite = characterSelect.selectedSprite % 12 + 1
+                if characterSelect.selectedSprite == nil then
+                    characterSelect.selectedSprite = 1
+                else
+                    characterSelect.selectedSprite = characterSelect.selectedSprite % 12 + 1
+                end
             end,
             {r = 0, g = 0.7, b = 0}
         }

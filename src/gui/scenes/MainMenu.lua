@@ -4,7 +4,7 @@ local Grid = require 'src.gui.Grid'
 return function(selectedSprite, nickname)
     local mainMenu = BaseGui()
 
-    mainMenu.selectedSprite = selectedSprite or 1
+    mainMenu.selectedSprite = selectedSprite or nil
     mainMenu.nickname = nickname or 'player'
 
     mainMenu.menu = Grid()
