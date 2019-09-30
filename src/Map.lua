@@ -87,6 +87,10 @@ return function(player, mapSeed)
         return self.player
     end
 
+    function map:getChunk(x, y)
+        return self.chunks['x' .. x .. 'y' .. y]
+    end
+
     local function drawChunks(self, box)
         local chunkRegion = {
             startX = math.floor((box.x - box.width / 2) / config.chunkSize),

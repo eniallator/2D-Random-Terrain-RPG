@@ -14,25 +14,33 @@ return {
         zoomRate = 0.1,
         zoomLimits = {max = 105, min = 6}
     },
+    minimap = {
+        dotsPerChunkAxis = 2,
+        radius = 20
+    },
     terrain = {
         biomeScale = 200,
         noiseOffset = 1000,
         biomeMap = {
             ['Marsh'] = {
                 temperature = {min = 0.5, max = 1},
-                humidity = {min = 0.5, max = 1}
+                humidity = {min = 0.5, max = 1},
+                minimapColour = {r = 0.29296875, g = 0.25390625, b = 0.14453125}
             },
             ['Grassland'] = {
                 temperature = {min = 0, max = 0.5},
-                humidity = {min = 0.5, max = 1}
+                humidity = {min = 0.5, max = 1},
+                minimapColour = {r = 0.234375, g = 0.37109375, b = 0.08203125}
             },
             ['Desert'] = {
                 temperature = {min = 0.5, max = 1},
-                humidity = {min = 0, max = 0.5}
+                humidity = {min = 0, max = 0.5},
+                minimapColour = {r = 0.87890625, g = 0.8203125, b = 0.515625}
             },
             ['Snowy'] = {
                 temperature = {min = 0, max = 0.5},
-                humidity = {min = 0, max = 0.5}
+                humidity = {min = 0, max = 0.5},
+                minimapColour = {r = 0.921875, g = 0.984375, b = 0.99609375}
             }
         }
     },

@@ -24,7 +24,7 @@ return function(x, y, terrainGenerator)
             for j = 1, #self.groundTiles[i] do
                 love.graphics.draw(
                     ASSETS.textures.terrain.spritesheet.img,
-                    self.groundTiles[i][j],
+                    self.groundTiles[i][j].quad,
                     x + (j - 1) * tileDim.width,
                     y + (i - 1) * tileDim.height,
                     0,
@@ -33,6 +33,21 @@ return function(x, y, terrainGenerator)
                 )
             end
         end
+    end
+
+    function chunk:getMinimapDots()
+        local spacing = math.floor(config.chunkSize / config.minimap.dotsPerChunkAxis)
+
+        local dots = {}
+
+        for i = math.floor(spacing / 2), config.chunkSize, spacing do
+            table.insert(dots, {})
+            for j = math.floor(spacing / 2), config.chunkSize, spacing do
+                table.insert(dots[i], self.groundTiles[i][j].minimapColour)
+            end
+        end
+
+        return dots
     end
 
     return chunk

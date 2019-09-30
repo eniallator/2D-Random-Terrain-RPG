@@ -56,7 +56,7 @@ return function(randomSeed)
                 (data.temperature.min <= temperature and temperature <= data.temperature.max) and
                     (data.humidity.min <= humidity and humidity <= data.humidity.max)
              then
-                return tileQuadLookUp[name]
+                return {quad = tileQuadLookUp[name], minimapColour = data.minimapColour}
             end
         end
     end
