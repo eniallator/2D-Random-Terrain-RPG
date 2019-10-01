@@ -8,14 +8,15 @@ return function(box, text, bgColour, textColour)
 
     function label:draw()
         local font = love.graphics.getFont()
+        text = self.text[1] or self.text
 
         love.graphics.setColor(self.bgColour.r, self.bgColour.g, self.bgColour.b)
         love.graphics.rectangle('fill', self.box.x, self.box.y, self.box.width, self.box.height)
         love.graphics.setColor(self.textColour.r, self.textColour.g, self.textColour.b)
         love.graphics.print(
-            self.text,
-            self.box.x + self.box.width / 2 - font:getWidth(self.text) / 2,
-            self.box.y + self.box.height / 2 - font:getHeight(self.text) / 2
+            text,
+            self.box.x + self.box.width / 2 - font:getWidth(text) / 2,
+            self.box.y + self.box.height / 2 - font:getHeight(text) / 2
         )
     end
 
