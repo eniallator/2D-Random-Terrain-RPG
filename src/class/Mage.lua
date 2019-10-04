@@ -9,8 +9,8 @@ return function()
 
     function mage:attack(map, entity, toPos)
         local newTime = love.timer.getTime() + cfg.attack.cooldown
-        if mage.lastAttackTime < newTime then
-            mage.lastAttackTime = newTime
+        if self.lastAttackTime < newTime then
+            self.lastAttackTime = newTime
             local diff = {
                 x = toPos.x - entity.hitbox.x,
                 y = toPos.y - entity.hitbox.y
@@ -19,7 +19,7 @@ return function()
                 x = diff.x / (math.abs(diff.x) + math.abs(diff.y)),
                 y = diff.y / (math.abs(diff.x) + math.abs(diff.y))
             }
-            local whirlwind = Whirlwind(entity.hitbox, directionNorm)
+            local whirlwind = Whirlwind(entity.hitbox, directionNorm, {range = cfg.range, damage = cfg.damage})
             map:addProjectile(whirlwind)
         end
     end

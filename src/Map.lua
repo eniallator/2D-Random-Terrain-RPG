@@ -87,6 +87,18 @@ return function(player, mapSeed)
         return self.player
     end
 
+    function map:getMobsOverlapping(hitbox)
+        local overlappingMobs = {}
+
+        for _, mob in pairs(self.mobs) do
+            if mob.hitbox:collide(hitbox) then
+                table.insert(overlappingMobs, mob)
+            end
+        end
+
+        return overlappingMobs
+    end
+
     local function drawChunks(self, box)
         local chunkRegion = {
             startX = math.floor((box.x - box.width / 2) / config.chunkSize),

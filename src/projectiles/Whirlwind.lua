@@ -2,9 +2,7 @@ local config = require 'conf'
 local Hitbox = require 'src.Hitbox'
 local BaseProjectile = require 'src.projectiles.BaseProjectile'
 
-return function(fromPos, directionNorm)
-    local cfg = config.projectile.whirlwind
-
+return function(fromPos, directionNorm, cfg)
     local whirlwind =
         BaseProjectile(
         {

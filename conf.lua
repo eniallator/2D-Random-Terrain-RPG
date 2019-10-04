@@ -36,12 +36,6 @@ return {
             }
         }
     },
-    projectile = {
-        whirlwind = {
-            damage = 100,
-            range = 50
-        }
-    },
     class = {
         mage = {
             attack = {
@@ -49,6 +43,14 @@ return {
                 damage = 100,
                 range = 50
             }
+        },
+        healer = {
+            attack = {
+                cooldown = 0.3,
+                damage = 20
+            },
+            targetRadius = 5,
+            maxTargets = 4
         }
     },
     entity = {
