@@ -19,7 +19,7 @@ return function()
                 x = diff.x / (math.abs(diff.x) + math.abs(diff.y)),
                 y = diff.y / (math.abs(diff.x) + math.abs(diff.y))
             }
-            local whirlwind = Whirlwind(entity.hitbox, directionNorm, {range = cfg.range, damage = cfg.damage})
+            local whirlwind = Whirlwind(entity.hitbox, directionNorm, {range = cfg.attack.range, damage = cfg.attack.damage})
             map:addProjectile(whirlwind)
         end
     end
