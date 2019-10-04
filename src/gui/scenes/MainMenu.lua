@@ -41,13 +41,15 @@ return function(selectedSprite, nickname, class)
                 return {
                     setScene = {
                         name = 'game',
-                        args = {{sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname, class = mainMenu.selectedClass}}
+                        args = {
+                            {sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname, class = ClassLookup[mainMenu.selectedClass]}
+                        }
                     }
                 }
             end,
-            {r = 0, g = mainMenu.selectedSprite == nil and 0.3 or 0.7, b = 0},
+            {r = 0, g = (mainMenu.selectedSprite == nil or mainMenu.selectedClass == nil) and 0.3 or 0.7, b = 0},
             {r = 1, g = 1, b = 1},
-            mainMenu.selectedSprite == nil
+            mainMenu.selectedSprite == nil or mainMenu.selectedClass == nil
         }
     )
     mainMenu.menu:addComponent(

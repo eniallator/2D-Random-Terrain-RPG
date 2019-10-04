@@ -2,7 +2,7 @@ local config = require 'conf'
 local Entity = require 'src.Entity'
 local Mage = require 'src.class.Mage'
 
-return function(spriteType, nickname)
+return function(spriteType, nickname, class)
     local player =
         Entity(
         {
@@ -15,7 +15,7 @@ return function(spriteType, nickname)
         }
     )
 
-    player.class = Mage()
+    player.class = class.init()
 
     player.spriteType = spriteType
     player.nickname = nickname

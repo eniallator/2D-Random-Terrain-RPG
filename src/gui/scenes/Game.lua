@@ -10,7 +10,7 @@ local Camera = require 'src.Camera'
 return function(playerData, mapSeed)
     local game = BaseGui()
 
-    game.player = Player(playerData.sprite, playerData.nickname)
+    game.player = Player(playerData.sprite, playerData.nickname, playerData.class)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
