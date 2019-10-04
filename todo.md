@@ -1,5 +1,9 @@
 # RPG To-do List
 
+## Character Selection
+
+- Instead of having pre-made sprites, make a character selector for different body part selection
+
 ## Procedural Textures
 
 - Look into procedural texture generation so it's easier to make new textures
@@ -7,9 +11,11 @@
 
 ## Classes
 
+- Modify the existing class system to work with multiple abilities instead of the one
+
 ### New Classes
 
-- Make classes including warrior, archer, healer, etc.
+- Make classes including warrior, archer, etc.
 
 ### Weapons
 

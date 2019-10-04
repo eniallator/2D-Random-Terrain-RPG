@@ -44,7 +44,7 @@ return {
                 range = 50
             }
         },
-        healer = {
+        cleric = {
             attack = {
                 cooldown = 0.3,
                 damage = 20

@@ -3,12 +3,12 @@ local Targetter = require 'src.projectiles.Targetter'
 local Hitbox = require 'src.Hitbox'
 
 return function()
-    local healer = {}
-    local cfg = config.class.healer
+    local cleric = {}
+    local cfg = config.class.cleric
 
-    healer.lastAttackTime = love.timer.getTime()
+    cleric.lastAttackTime = love.timer.getTime()
 
-    function healer:attack(map, entity, toPos)
+    function cleric:attack(map, entity, toPos)
         local newTime = love.timer.getTime() + cfg.attack.cooldown
         if self.lastAttackTime < newTime then
             self.lastAttackTime = newTime
@@ -22,5 +22,5 @@ return function()
         end
     end
 
-    return healer
+    return cleric
 end
