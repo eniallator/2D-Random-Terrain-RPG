@@ -39,10 +39,18 @@ return function(playerData, mapSeed)
 
         self.map:update(cameraBox)
 
-        if MOUSE.right.clicked then
+        local nextDir = {
+            x = (KEYS.state.d and 1 or 0) - (KEYS.state.a and 1 or 0),
+            y = (KEYS.state.s and 1 or 0) - (KEYS.state.w and 1 or 0)
+        }
+        if nextDir.x ~= 0 or nextDir.y ~= 0 then
+            local posOffset = {
+                x = nextDir.x / (math.abs(nextDir.x) + math.abs(nextDir.y)) * self.player.speed,
+                y = nextDir.y / (math.abs(nextDir.x) + math.abs(nextDir.y)) * self.player.speed
+            }
             local dest = {
-                x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.right.pos.x / love.graphics.getWidth()) * cameraBox.width,
-                y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
+                x = self.player.hitbox.x + posOffset.x,
+                y = self.player.hitbox.y + posOffset.y
             }
             self.player:setDest(dest.x, dest.y)
         end
