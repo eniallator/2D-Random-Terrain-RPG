@@ -17,7 +17,6 @@ return function(playerData, mapSeed)
 
     game.pauseOverlay = nil
     game.paused = false
-    local abilityKeys = {'lctrl', 'rctrl'}
 
     local function updateGame(self)
         if KEYS.recentPressed.t then
@@ -32,21 +31,17 @@ return function(playerData, mapSeed)
 
         local cameraBox = self.camera:getViewBox()
 
-        for _, key in ipairs(abilityKeys) do
-            if KEYS.state[key] then
-                local i
-                for i = 1, 9 do
-                    if KEYS.recentPressed[tostring(i)] then
-                        local mousePos = {}
-                        mousePos.x, mousePos.y = love.mouse.getPosition()
-                        local toPos = {
-                            x = (cameraBox.x - cameraBox.width / 2) + (mousePos.x / love.graphics.getWidth()) * cameraBox.width,
-                            y = (cameraBox.y - cameraBox.height / 2) + (mousePos.y / love.graphics.getHeight()) * cameraBox.height
-                        }
-                        self.player.class:useAbility(i, {map = self.map, entity = self.player, toPos = toPos})
-                        break
-                    end
-                end
+        local i
+        for i = 1, 9 do
+            if KEYS.recentPressed[tostring(i)] then
+                local mousePos = {}
+                mousePos.x, mousePos.y = love.mouse.getPosition()
+                local toPos = {
+                    x = (cameraBox.x - cameraBox.width / 2) + (mousePos.x / love.graphics.getWidth()) * cameraBox.width,
+                    y = (cameraBox.y - cameraBox.height / 2) + (mousePos.y / love.graphics.getHeight()) * cameraBox.height
+                }
+                self.player.class:useAbility(i, {map = self.map, entity = self.player, toPos = toPos})
+                break
             end
         end
 
