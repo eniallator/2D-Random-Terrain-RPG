@@ -1,14 +1,16 @@
+local BaseClass = require 'src.class.BaseClass'
 local config = require 'conf'
 
 return function()
-    local warrior = {}
+    local warrior = BaseClass()
     local cfg = config.class.warrior
 
-    warrior.lastAttackTime = love.timer.getTime()
-
-    function warrior:attack(map, entity, toPos)
-        print('warrior attacked')
-    end
+    warrior:addAbility(
+        function(meta, args)
+            print('warrior attacked')
+        end,
+        {}
+    )
 
     return warrior
 end

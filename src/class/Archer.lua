@@ -1,14 +1,16 @@
+local BaseClass = require 'src.class.BaseClass'
 local config = require 'conf'
 
 return function()
-    local archer = {}
+    local archer = BaseClass()
     local cfg = config.class.archer
 
-    archer.lastAttackTime = love.timer.getTime()
-
-    function archer:attack(map, entity, toPos)
-        print('archer attacked')
-    end
+    archer:addAbility(
+        function(meta, args)
+            print('Archer attacked')
+        end,
+        {}
+    )
 
     return archer
 end

@@ -34,7 +34,7 @@ return function(playerData, mapSeed)
                 x = (cameraBox.x - cameraBox.width / 2) + (MOUSE.left.pos.x / love.graphics.getWidth()) * cameraBox.width,
                 y = (cameraBox.y - cameraBox.height / 2) + (MOUSE.left.pos.y / love.graphics.getHeight()) * cameraBox.height
             }
-            self.player.class:attack(self.map, self.player, dest)
+            self.player.class:useAbility(1, {map = self.map, entity = self.player, toPos = dest})
         end
 
         self.map:update(cameraBox)
