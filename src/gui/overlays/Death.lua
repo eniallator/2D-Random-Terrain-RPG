@@ -13,7 +13,7 @@ return function()
             'Return to Menu',
             function(state)
                 love.graphics.setShader()
-                return {setScene = {name = 'mainMenu', args = {state.selectedPlayer, state.playerNickname}}}
+                return {setScene = {name = 'mainMenu', args = {state.selectedPlayer, state.playerNickname, state.class}}}
             end,
             {r = 0.5, g = 0.5, b = 0.5}
         }

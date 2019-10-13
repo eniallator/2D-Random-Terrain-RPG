@@ -4,13 +4,14 @@ local Escape = require 'src.gui.overlays.Escape'
 local Death = require 'src.gui.overlays.Death'
 
 local Player = require 'src.Player'
+local ClassLookup = require 'src.class.ClassLookup'
 local Map = require 'src.Map'
 local Camera = require 'src.Camera'
 
 return function(playerData, mapSeed)
     local game = BaseGui()
 
-    game.player = Player(playerData.sprite, playerData.nickname, playerData.class)
+    game.player = Player(playerData.sprite, playerData.nickname, ClassLookup[playerData.class])
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
@@ -75,7 +76,9 @@ return function(playerData, mapSeed)
             updateGame(self)
         end
         if self.pauseOverlay ~= nil then
-            return self.pauseOverlay:update({selectedPlayer = self.player.spriteType, playerNickname = self.player.nickname})
+            return self.pauseOverlay:update(
+                {selectedPlayer = self.player.spriteType, playerNickname = self.player.nickname, class = playerData.class}
+            )
         end
     end
 

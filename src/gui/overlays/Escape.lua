@@ -12,7 +12,7 @@ return function()
         {
             'Exit to Menu',
             function(state)
-                return {setScene = {name = 'mainMenu', args = {state.selectedPlayer, state.playerNickname}}}
+                return {setScene = {name = 'mainMenu', args = {state.selectedPlayer, state.playerNickname, state.class}}}
             end,
             {r = 0, g = 0.7, b = 0}
         }

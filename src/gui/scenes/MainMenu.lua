@@ -42,7 +42,7 @@ return function(selectedSprite, nickname, class)
                     setScene = {
                         name = 'game',
                         args = {
-                            {sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname, class = ClassLookup[mainMenu.selectedClass]}
+                            {sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname, class = mainMenu.selectedClass}
                         }
                     }
                 }
