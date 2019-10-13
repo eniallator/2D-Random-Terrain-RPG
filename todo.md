@@ -11,8 +11,6 @@
 
 ## Classes
 
-- Modify the existing class system to work with multiple abilities instead of the one
-
 ### New Classes
 
 - Make classes including warrior, archer, etc.
