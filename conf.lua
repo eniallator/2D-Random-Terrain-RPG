@@ -57,6 +57,9 @@ return {
         player = {
             health = 1000
         },
+        item = {
+            dim = 6
+        },
         mob = {
             cap = 30,
             spawnChance = 0.1,
