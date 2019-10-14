@@ -9,7 +9,7 @@ return function(args)
     entity.alive = true
 
     entity.sprite = Sprite(args.width, args.height)
-    entity.hitbox = Hitbox(0, 0, args.width * 0.8)
+    entity.hitbox = Hitbox(args.x or 0, args.y or 0, args.width * 0.8)
     entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
     entity.speed = args.speed
     entity.autoAnimation = true
