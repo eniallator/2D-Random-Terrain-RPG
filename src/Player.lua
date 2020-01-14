@@ -1,6 +1,7 @@
 local config = require 'conf'
 local Entity = require 'src.Entity'
 local Mage = require 'src.class.Mage'
+local BaseInventory = require 'src.items.BaseInventory'
 
 return function(spriteType, nickname, class)
     local player =
@@ -19,6 +20,7 @@ return function(spriteType, nickname, class)
 
     player.spriteType = spriteType
     player.nickname = nickname
+    player.inventory = BaseInventory(45)
 
     local spritesheet = ASSETS.textures.entity.player.types
     player.sprite:setDefaultAnimation('idle')

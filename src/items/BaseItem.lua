@@ -10,6 +10,7 @@ local function BaseItem(args)
     baseItem.imgRegion = args.imgRegion
     baseItem.onGround = args.onGround or false
     baseItem.stack = args.stack or 1
+    baseItem.type = args.type
 
     baseItem.entity =
         Entity(
@@ -33,7 +34,7 @@ local function BaseItem(args)
     end
 
     function baseItem:pickup(inventory)
-        -- inventory:addItem(self)
+        inventory:addItem(self)
         self.onGround = false
         self.entity.hitbox.x = nil
         self.entity.hitbox.y = nil
@@ -59,9 +60,16 @@ local function BaseItem(args)
         return newItem
     end
 
+    function baseItem:combineStack(otherStack)
+        if self.type == otherStack.type then
+            self.stack = self.stack + otherStack.stack
+            return true
+        end
+    end
+
     function baseItem:draw(box)
         if self.onGround then
-            self.entity:draw()
+            self.entity:draw(box)
         else
             love.graphics.draw(self.img, self.quad, box.x, box.y, 0, box.width / self.img:getWidth(), box.width / self.img:getHeight())
         end

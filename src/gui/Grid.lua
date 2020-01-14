@@ -5,7 +5,8 @@ local components = {
     characterDisplay = require 'src.gui.components.CharacterDisplay',
     textInput = require 'src.gui.components.TextInput',
     label = require 'src.gui.components.Label',
-    credits = require 'src.gui.components.Credits'
+    credits = require 'src.gui.components.Credits',
+    inventory = require 'src.gui.components.Inventory'
 }
 
 return function()

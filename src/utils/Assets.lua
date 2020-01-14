@@ -18,6 +18,9 @@ return {
                 bald = {img = love.graphics.newImage('assets/textures/entity/zombie/bald.png'), width = 16, height = 18}
             }
         },
+        inventory = {
+            inventorySquare = love.graphics.newImage('assets/textures/inventory/inventorySquare.png')
+        },
         projectile = {
             whirlwind = {img = love.graphics.newImage('assets/textures/projectile/whirlwind.png'), width = 16, height = 19}
         },
