@@ -1,3 +1,4 @@
+local LayeredSprite = require 'src.LayeredSprite'
 local Sprite = require 'src.Sprite'
 local Hitbox = require 'src.Hitbox'
 
@@ -8,7 +9,14 @@ return function(args)
     entity.health = entity.maxHealth
     entity.alive = true
 
-    entity.sprite = Sprite(args.width, args.height)
+    entity.layeredSprite = args.layeredSprite
+
+    if args.layeredSprite then
+        entity.sprite = LayeredSprite(args.width, args.height)
+    else
+        entity.sprite = Sprite(args.width, args.height)
+    end
+
     entity.hitbox = Hitbox(args.x or 0, args.y or 0, args.width * 0.8)
     entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
     entity.speed = args.speed

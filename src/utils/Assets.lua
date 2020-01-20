@@ -10,8 +10,10 @@ return {
         },
         entity = {
             player = {
-                types = {img = love.graphics.newImage('assets/textures/entity/player/types.png'), width = 16, height = 24},
-                unknown = {img = love.graphics.newImage('assets/textures/entity/player/unknown.png'), width = 16, height = 24}
+                unknown = {img = love.graphics.newImage('assets/textures/entity/player/unknown.png'), width = 16, height = 24},
+                body = {img = love.graphics.newImage('assets/textures/entity/player/playerBody.png'), width = 16, height = 24},
+                hair = {img = love.graphics.newImage('assets/textures/entity/player/playerHair.png'), width = 16, height = 24},
+                eyes = {img = love.graphics.newImage('assets/textures/entity/player/playerEyes.png'), width = 16, height = 24},
             },
             zombie = {
                 knight = {img = love.graphics.newImage('assets/textures/entity/zombie/knight.png'), width = 16, height = 20},
@@ -20,6 +22,9 @@ return {
         },
         inventory = {
             inventorySquare = love.graphics.newImage('assets/textures/inventory/inventorySquare.png')
+        },
+        items = {
+            emeraldSword = love.graphics.newImage('assets/textures/items/emeraldSword.png')
         },
         projectile = {
             whirlwind = {img = love.graphics.newImage('assets/textures/projectile/whirlwind.png'), width = 16, height = 19}

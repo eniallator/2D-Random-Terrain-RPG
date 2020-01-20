@@ -6,7 +6,7 @@ local function BaseItem(args)
     local baseItem = {}
 
     baseItem.img = args.img
-    baseItem.quad = love.graphics.newQuad(args.imgRegion.x, args.imgRegion.y, args.imgRegion.width, args.imgRegion.height))
+    baseItem.quad = love.graphics.newQuad(args.imgRegion.x, args.imgRegion.y, args.imgRegion.width, args.imgRegion.height)
     baseItem.imgRegion = args.imgRegion
     baseItem.onGround = args.onGround or false
     baseItem.stack = args.stack or 1
