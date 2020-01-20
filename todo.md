@@ -1,9 +1,5 @@
 # RPG To-do List
 
-## Character Selection
-
-- Instead of having pre-made sprites, make a character selector for different body part selection
-
 ## Procedural Textures
 
 - Look into procedural texture generation so it's easier to make new textures
