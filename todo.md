@@ -48,10 +48,11 @@
 ## skills
 
 - Player overall level is the average of all skills
+- Potentially have the skill's perks discovery based, so if you use items in a specific order/specific types of items/specific spells you can discover new things in the skill
 
 ### Types Of Skill
 
-- Including: chopping, foraging, mining, blacksmithing, crafting, weapon mastery (potentially on the weapon item itself, and also on the player?), armour mastery (same with weapon mastery), traveller
+- Including: woodcutting, foraging, mining, blacksmithing, crafting, weapon mastery (potentially on the weapon item itself, and also on the player?), armour mastery (same with weapon mastery), traveller
 
 ### Experience
 
