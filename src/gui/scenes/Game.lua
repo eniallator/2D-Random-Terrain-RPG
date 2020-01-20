@@ -103,7 +103,7 @@ return function(playerData, mapSeed)
 
         if self.pauseOverlay ~= nil then
             return self.pauseOverlay:update(
-                {selectedPlayer = self.player.spriteType, playerNickname = self.player.nickname, class = playerData.class}
+                {spriteData = playerData.spriteData, playerNickname = self.player.nickname, class = playerData.class}
             )
         end
     end
