@@ -1,7 +1,7 @@
 local BaseGui = require 'src.gui.BaseGui'
 local Grid = require 'src.gui.Grid'
 
-return function(spriteData, nickname, selectedClass, key, title)
+return function(spriteData, nickname, selectedClass, key, title, initialValue)
     local colourPicker = BaseGui()
 
     colourPicker.menu = Grid()
@@ -11,6 +11,12 @@ return function(spriteData, nickname, selectedClass, key, title)
         g = 1,
         b = 1
     }
+
+    if initialValue then
+        RGBOutput.r = initialValue.r
+        RGBOutput.g = initialValue.g
+        RGBOutput.b = initialValue.b
+    end
 
     colourPicker.menu:addComponent(
         'label',
