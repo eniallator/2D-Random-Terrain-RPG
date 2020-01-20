@@ -15,8 +15,20 @@ return function(spriteWidth, spriteHeight)
         self.animations[name] = {
             spritesheet = spritesheet,
             frameRegions = frameRegions,
-            repeating = repeating
+            repeating = repeating,
+            quads = {}
         }
+        for i = 1, #frameRegions do
+            local region = frameRegions[i]
+            table.insert(self.animations[name].quads, love.graphics.newQuad(
+                region.x,
+                region.y,
+                region.width,
+                region.height,
+                spritesheet:getWidth(),
+                spritesheet:getHeight()
+            ))
+        end
     end
 
     function sprite:setDefaultAnimation(name)
@@ -75,18 +87,9 @@ return function(spriteWidth, spriteHeight)
             y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y
         }
 
-        local quad =
-            love.graphics.newQuad(
-            region.x,
-            region.y,
-            region.width,
-            region.height,
-            animation.spritesheet:getWidth(),
-            animation.spritesheet:getHeight()
-        )
         love.graphics.draw(
             animation.spritesheet,
-            quad,
+            animation.quads[self.frameIndex],
             drawPos.x + inversionOffset.x,
             drawPos.y + inversionOffset.y,
             region.rotation or 0,
