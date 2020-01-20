@@ -44,7 +44,7 @@ return function(spriteWidth, spriteHeight)
         }
 
         for _, spritesheetData in ipairs(animation.spritesheetData) do
-            love.graphics.setColor(spritesheetData.tint.r, spritesheetData.tint.g, spritesheetData.tint.b, spritesheetData.tint.a)
+            love.graphics.setColor(spritesheetData.tint.r, spritesheetData.tint.g, spritesheetData.tint.b, spritesheetData.tint.a or 1)
             love.graphics.draw(
                 spritesheetData.spritesheet.img,
                 animation.quads[self.frameIndex],

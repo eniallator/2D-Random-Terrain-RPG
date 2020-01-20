@@ -3,7 +3,8 @@ local sceneList = {
     characterSelect = require 'src.gui.scenes.CharacterSelect',
     game = require 'src.gui.scenes.Game',
     credits = require 'src.gui.scenes.Credits',
-    creditsCategory = require 'src.gui.scenes.CreditsCategory'
+    creditsCategory = require 'src.gui.scenes.CreditsCategory',
+    colourPicker = require 'src.gui.scenes.ColourPicker'
 }
 
 return function(initialScene)

@@ -3,7 +3,7 @@ local Entity = require 'src.Entity'
 local Mage = require 'src.class.Mage'
 local BaseInventory = require 'src.items.BaseInventory'
 
-return function(spriteType, nickname, class)
+return function(spriteData, nickname, class)
     local player =
         Entity(
         {
@@ -26,15 +26,15 @@ return function(spriteType, nickname, class)
     local spritesheets = {
         {
             spritesheet = ASSETS.textures.entity.player.body,
-            tint = {r = 1, g = 1, b = 1, a = 1}
+            tint = {r = 1, g = 1, b = 1}
         },
         {
             spritesheet = ASSETS.textures.entity.player.hair,
-            tint = {r = 1, g = 0, b = 0, a = 1}
+            tint = spriteData.hair
         },
         {
             spritesheet = ASSETS.textures.entity.player.eyes,
-            tint = {r = 0, g = 1, b = 0, a = 1}
+            tint = spriteData.eyes
         }
     }
 

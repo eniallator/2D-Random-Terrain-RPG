@@ -2,10 +2,13 @@ local BaseGui = require 'src.gui.BaseGui'
 local Grid = require 'src.gui.Grid'
 local ClassLookup = require 'src.class.ClassLookup'
 
-return function(selectedSprite, nickname, class)
+return function(spriteData, nickname, class)
     local mainMenu = BaseGui()
 
-    mainMenu.selectedSprite = selectedSprite or nil
+    mainMenu.spriteData = spriteData or {
+        hair = {r = 0.8235294117647058, g = 0.49019607843137253, b = 0.17254901960784313},
+        eyes = {r = 0, g = 0, b = 0}
+    }
     mainMenu.nickname = nickname or 'player'
     mainMenu.selectedClass = class
 
@@ -17,7 +20,7 @@ return function(selectedSprite, nickname, class)
     end
 
     mainMenu.menu:addComponent('label', {value = 1}, {value = 1, weight = 1}, mainMenu.nickname)
-    mainMenu.menu:addComponent('characterDisplay', {value = 1}, {value = 2, weight = 4}, {mainMenu.selectedSprite, mainMenu.nickname})
+    mainMenu.menu:addComponent('characterDisplay', {value = 1}, {value = 2, weight = 4}, {mainMenu.spriteData, mainMenu.nickname})
     mainMenu.menu:addComponent('label', {value = 1}, {value = 3, weight = 1}, className)
     mainMenu.menu:addComponent(
         'button',
@@ -26,7 +29,7 @@ return function(selectedSprite, nickname, class)
         {
             'Select Character',
             function()
-                return {setScene = {name = 'characterSelect', args = {mainMenu.selectedSprite, mainMenu.nickname, mainMenu.selectedClass}}}
+                return {setScene = {name = 'characterSelect', args = {mainMenu.spriteData, mainMenu.nickname, mainMenu.selectedClass}}}
             end,
             {r = 0, g = 0.7, b = 0}
         }
@@ -42,14 +45,14 @@ return function(selectedSprite, nickname, class)
                     setScene = {
                         name = 'game',
                         args = {
-                            {sprite = mainMenu.selectedSprite, nickname = mainMenu.nickname, class = mainMenu.selectedClass}
+                            {spriteData = mainMenu.spriteData, nickname = mainMenu.nickname, class = mainMenu.selectedClass}
                         }
                     }
                 }
             end,
-            {r = 0, g = (mainMenu.selectedSprite == nil or mainMenu.selectedClass == nil) and 0.3 or 0.7, b = 0},
+            {r = 0, g = mainMenu.selectedClass == nil and 0.3 or 0.7, b = 0},
             {r = 1, g = 1, b = 1},
-            mainMenu.selectedSprite == nil or mainMenu.selectedClass == nil
+            mainMenu.selectedClass == nil
         }
     )
     mainMenu.menu:addComponent(
@@ -59,7 +62,7 @@ return function(selectedSprite, nickname, class)
         {
             'Credits',
             function()
-                return {setScene = {name = 'credits', args = {mainMenu.selectedSprite, mainMenu.nickname, mainMenu.selectedClass}}}
+                return {setScene = {name = 'credits', args = {mainMenu.spriteData, mainMenu.nickname, mainMenu.selectedClass}}}
             end,
             {r = 0, g = 0.7, b = 0}
         }
@@ -76,7 +79,7 @@ return function(selectedSprite, nickname, class)
     end
 
     function mainMenu:update()
-        return self:updateMenu(self.menu, {selectedSprite = self.selectedSprite})
+        return self:updateMenu(self.menu, {spriteData = self.spriteData})
     end
 
     function mainMenu:draw(dt)

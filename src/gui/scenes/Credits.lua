@@ -2,11 +2,11 @@ local BaseGui = require 'src.gui.BaseGui'
 local Grid = require 'src.gui.Grid'
 local creditsData = require 'credits'
 
-return function(selectedSprite, nickname, selectedClass)
+return function(spriteData, nickname, selectedClass)
     local credits = BaseGui()
     credits.menu = Grid()
 
-    credits.mainMenuData = {selectedSprite, nickname, selectedClass}
+    credits.mainMenuData = {spriteData, nickname, selectedClass}
 
     local currY = 1
     for category, _ in pairs(creditsData) do

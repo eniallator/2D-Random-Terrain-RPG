@@ -31,6 +31,7 @@ return {
         },
         terrain = {
             spritesheet = {img = love.graphics.newImage('assets/textures/terrain/spritesheet.png'), width = 8, height = 8}
-        }
+        },
+        whiteSquare = love.graphics.newImage('assets/textures/whiteSquare.png')
     }
 }
