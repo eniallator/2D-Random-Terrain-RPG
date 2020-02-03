@@ -26,13 +26,13 @@ return function(inventory)
         --     x = width / 3,
         --     y = height * 7 / 16
         -- }
-        -- self.menu:init(border.x, border.y * 1.5, width - border.x * 2, height - border.y * 2)
+        -- self.menu:bakeComponents(border.x, border.y * 1.5, width - border.x * 2, height - border.y * 2)
 
         local dim = {
             width = width / 1.5,
             height = height / 1.4
         }
-        self.menu:init(width / 2 - dim.width / 2, height / 2 - dim.height / 2, dim.width, dim.height)
+        self.menu:bakeComponents(width / 2 - dim.width / 2, height / 2 - dim.height / 2, dim.width, dim.height)
     end
 
     function playerInventory:update(state)

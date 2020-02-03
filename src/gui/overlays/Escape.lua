@@ -25,7 +25,7 @@ return function()
             x = width / 3,
             y = height * 7 / 16
         }
-        self.menu:init(border.x, border.y * 1.5, width - border.x * 2, height - border.y * 2)
+        self.menu:bakeComponents(border.x, border.y * 1.5, width - border.x * 2, height - border.y * 2)
     end
 
     function escape:update(state)

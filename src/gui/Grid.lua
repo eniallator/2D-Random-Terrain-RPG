@@ -52,7 +52,7 @@ return function()
         return acc
     end
 
-    function grid:init(x, y, width, height)
+    function grid:bakeComponents(x, y, width, height)
         self.initialisedComponents = {}
 
         local runningWeightSums = {}

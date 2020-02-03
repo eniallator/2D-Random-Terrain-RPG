@@ -120,7 +120,7 @@ return function(spriteData, nickname, selectedClass, key, colour)
             x = width / 4,
             y = height / 5
         }
-        self.menu:init(border.x, border.y, width - border.x * 2, height - border.y * 2)
+        self.menu:bakeComponents(border.x, border.y, width - border.x * 2, height - border.y * 2)
     end
 
     function characterSelect:update()
