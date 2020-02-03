@@ -18,24 +18,9 @@ return function(spriteData, nickname, selectedClass, key, title, initialValue)
         RGBOutput.b = initialValue.b
     end
 
-    colourPicker.menu:addComponent(
-        'label',
-        {value = 1, weight = 1},
-        {value = 1, weight = 1},
-        {title}
-    )
-    colourPicker.menu:addComponent(
-        'colourPicker',
-        {value = 1, weight = 1},
-        {value = 2, weight = 5},
-        {RGBOutput}
-    )
-    colourPicker.menu:addComponent(
-        'label',
-        {value = 1, weight = 1},
-        {value = 3, weight = 1},
-        {'', RGBOutput}
-    )
+    colourPicker.menu:addComponent('label', {value = 1, weight = 1}, {value = 1, weight = 1}, {title})
+    colourPicker.menu:addComponent('colourPicker', {value = 1, weight = 1}, {value = 2, weight = 5}, {RGBOutput})
+    colourPicker.menu:addComponent('label', {value = 1, weight = 1}, {value = 3, weight = 1}, {'', RGBOutput})
     colourPicker.menu:addComponent(
         'button',
         {value = 1, weight = 1},

@@ -35,7 +35,14 @@ return function(spriteData, nickname, selectedClass, key, colour)
                 return {
                     setScene = {
                         name = 'colourPicker',
-                        args = {characterSelect.spriteData, characterSelect.nickname, characterSelect.selectedClass, 'eyes', 'Eye Colour', characterSelect.spriteData.eyes}
+                        args = {
+                            characterSelect.spriteData,
+                            characterSelect.nickname,
+                            characterSelect.selectedClass,
+                            'eyes',
+                            'Eye Colour',
+                            characterSelect.spriteData.eyes
+                        }
                     }
                 }
             end,
@@ -53,7 +60,14 @@ return function(spriteData, nickname, selectedClass, key, colour)
                 return {
                     setScene = {
                         name = 'colourPicker',
-                        args = {characterSelect.spriteData, characterSelect.nickname, characterSelect.selectedClass, 'hair', 'Hair Colour', characterSelect.spriteData.hair}
+                        args = {
+                            characterSelect.spriteData,
+                            characterSelect.nickname,
+                            characterSelect.selectedClass,
+                            'hair',
+                            'Hair Colour',
+                            characterSelect.spriteData.hair
+                        }
                     }
                 }
             end,

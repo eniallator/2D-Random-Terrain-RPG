@@ -5,10 +5,12 @@ local ClassLookup = require 'src.class.ClassLookup'
 return function(spriteData, nickname, class)
     local mainMenu = BaseGui()
 
-    mainMenu.spriteData = spriteData or {
-        hair = {r = 0.8235294117647058, g = 0.49019607843137253, b = 0.17254901960784313},
-        eyes = {r = 0, g = 0, b = 0}
-    }
+    mainMenu.spriteData =
+        spriteData or
+        {
+            hair = {r = 0.8235294117647058, g = 0.49019607843137253, b = 0.17254901960784313},
+            eyes = {r = 0, g = 0, b = 0}
+        }
     mainMenu.nickname = nickname or 'player'
     mainMenu.selectedClass = class
 
@@ -20,7 +22,12 @@ return function(spriteData, nickname, class)
     end
 
     mainMenu.menu:addComponent('label', {value = 1}, {value = 1, weight = 1}, mainMenu.nickname)
-    mainMenu.menu:addComponent('characterDisplay', {value = 1}, {value = 2, weight = 4}, {mainMenu.spriteData, mainMenu.nickname})
+    mainMenu.menu:addComponent(
+        'characterDisplay',
+        {value = 1},
+        {value = 2, weight = 4},
+        {mainMenu.spriteData, mainMenu.nickname}
+    )
     mainMenu.menu:addComponent('label', {value = 1}, {value = 3, weight = 1}, className)
     mainMenu.menu:addComponent(
         'button',
@@ -29,7 +36,12 @@ return function(spriteData, nickname, class)
         {
             'Select Character',
             function()
-                return {setScene = {name = 'characterSelect', args = {mainMenu.spriteData, mainMenu.nickname, mainMenu.selectedClass}}}
+                return {
+                    setScene = {
+                        name = 'characterSelect',
+                        args = {mainMenu.spriteData, mainMenu.nickname, mainMenu.selectedClass}
+                    }
+                }
             end,
             {r = 0, g = 0.7, b = 0}
         }
@@ -45,7 +57,11 @@ return function(spriteData, nickname, class)
                     setScene = {
                         name = 'game',
                         args = {
-                            {spriteData = mainMenu.spriteData, nickname = mainMenu.nickname, class = mainMenu.selectedClass}
+                            {
+                                spriteData = mainMenu.spriteData,
+                                nickname = mainMenu.nickname,
+                                class = mainMenu.selectedClass
+                            }
                         }
                     }
                 }
@@ -62,7 +78,12 @@ return function(spriteData, nickname, class)
         {
             'Credits',
             function()
-                return {setScene = {name = 'credits', args = {mainMenu.spriteData, mainMenu.nickname, mainMenu.selectedClass}}}
+                return {
+                    setScene = {
+                        name = 'credits',
+                        args = {mainMenu.spriteData, mainMenu.nickname, mainMenu.selectedClass}
+                    }
+                }
             end,
             {r = 0, g = 0.7, b = 0}
         }
