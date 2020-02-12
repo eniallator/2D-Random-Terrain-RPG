@@ -8,7 +8,7 @@ return function(spriteData, nickname, class)
     mainMenu.spriteData =
         spriteData or
         {
-            hair = {r = 0.8235294117647058, g = 0.49019607843137253, b = 0.17254901960784313},
+            hair = {r = 210 / 255, g = 125 / 255, b = 44 / 255},
             eyes = {r = 0, g = 0, b = 0}
         }
     mainMenu.nickname = nickname or 'player'
