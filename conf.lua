@@ -1,6 +1,6 @@
 function love.conf(t)
     t.window.resizable = true
-    t.window.icon = 'assets/textures/icons/game.png'
+    t.window.icon = 'client/assets/textures/icons/game.png'
     t.title = '2D RPG'
     t.console = true
 end
@@ -8,6 +8,9 @@ end
 return {
     development = true,
     chunkSize = 16,
+    playerChunkRadius = 5,
+    maxChunksToSend = 10,
+    mapSeed = 1234,
     tps = 20,
     camera = {
         initialZoom = 30,
@@ -15,24 +18,28 @@ return {
         zoomLimits = {max = 105, min = 6}
     },
     terrain = {
-        biomeScale = 200,
+        biomeScale = 100,
         noiseOffset = 1000,
         biomeMap = {
-            ['Marsh'] = {
+            {
                 temperature = {min = 0.5, max = 1},
-                humidity = {min = 0.5, max = 1}
+                humidity = {min = 0.5, max = 1},
+                name = 'Marsh'
             },
-            ['Grassland'] = {
+            {
                 temperature = {min = 0, max = 0.5},
-                humidity = {min = 0.5, max = 1}
+                humidity = {min = 0.5, max = 1},
+                name = 'Grassland'
             },
-            ['Desert'] = {
+            {
                 temperature = {min = 0.5, max = 1},
-                humidity = {min = 0, max = 0.5}
+                humidity = {min = 0, max = 0.5},
+                name = 'Desert'
             },
-            ['Snowy'] = {
+            {
                 temperature = {min = 0, max = 0.5},
-                humidity = {min = 0, max = 0.5}
+                humidity = {min = 0, max = 0.5},
+                name = 'Snowy'
             }
         }
     },
@@ -47,7 +54,8 @@ return {
         cleric = {
             attack = {
                 cooldown = 0.3,
-                damage = 20
+                damage = 30,
+                range = 70
             },
             targetRadius = 5,
             maxTargets = 4
@@ -77,5 +85,9 @@ return {
             walkRange = {min = 5, max = 20},
             agroRange = {start = 15, stop = 20}
         }
+    },
+    communication = {
+        address = 'localhost',
+        port = 3000
     }
 }

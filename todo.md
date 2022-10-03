@@ -1,5 +1,16 @@
 # RPG To-do List
 
+## Multiplayer Refactor
+
+- Server handles all map interactions, apart from:
+  - Firing a projectile
+    - May need some sort of event queue for this, which gets things removed from the received state, and added to the local state
+  - Any player interactions like movement/animation changes
+    - Progression through an animation can be client side, although may need to be synced depending on the animation
+  - Have singleplayer/multiplayer options on the main menu, where you can connect to another server in multiplayer
+- Order of game elements:
+  - Map first. Get it being sent across, that way it's the foundation
+
 ## Procedural Textures
 
 - Look into procedural texture generation so it's easier to make new textures
@@ -69,8 +80,6 @@
 ## Crafting System
 
 - Make a crafting system for players to craft weapons/armour/other items
-
-## Multiplayer
 
 ### Unique Attacks
 
