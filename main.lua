@@ -19,9 +19,7 @@ function love.load()
             spriteData = {
                 hair = {r = 210 / 255, g = 125 / 255, b = 44 / 255},
                 eyes = {r = 0, g = 0, b = 0}
-            },
-            class = 'mage',
-            nickname = 'eniallator'
+            }
         }
     )
 end

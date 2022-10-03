@@ -1,6 +1,7 @@
 local config = require 'conf'
 local OrderedTable = require 'common.utils.OrderedTable'
 local Chunk = require 'client.Chunk'
+local Player = require 'client.Player'
 -- local Zombie = require 'client.Zombie'
 
 return function(player, mapSeed)
@@ -10,13 +11,7 @@ return function(player, mapSeed)
     map.mobs = {}
     map.projectiles = {}
     map.player = player
-
-    local function setChunks(self, receivedChunks, idTable)
-        for id, chunkData in receivedChunks.subTablePairs() do
-            self.chunks[id] = Chunk(chunkData)
-            idTable[id] = 1
-        end
-    end
+    map.connectedPlayers = {}
 
     local function updateMobs(self, box)
         local cfg, i = config.entity.mob
@@ -58,8 +53,22 @@ return function(player, mapSeed)
     end
 
     function map:update(localNetworkState, receivedNetworkState, box)
-        if receivedNetworkState and receivedNetworkState.environment.chunks then
-            setChunks(self, receivedNetworkState.environment.chunks, localNetworkState.environment.chunkIds)
+        if receivedNetworkState then
+            -- Updating local chunks
+            if receivedNetworkState.environment.chunks then
+                for id, chunkData in receivedNetworkState.environment.chunks.subTablePairs() do
+                    self.chunks[id] = Chunk(chunkData)
+                    localNetworkState.environment.chunkIds[id] = 1
+                end
+            end
+
+            -- Updating players
+            for id, player in receivedNetworkState.players.subTablePairs() do
+                if self.connectedPlayers[id] == nil then
+                    self.connectedPlayers[id] = Player(player.spriteData, player.nickname, nil, false)
+                end
+                self.connectedPlayers[id]:update(player)
+            end
         end
         -- print(localNetworkState.environment.chunkIds:serialiseUpdates(-1, true))
         -- updateProjectiles(self, box)
@@ -115,34 +124,33 @@ return function(player, mapSeed)
     end
 
     local function drawDrawables(self, dt, box)
+        local sortedDrawables = OrderedTable()
         self.player:calcDraw(dt)
         self.player:drawShadow(box)
+        sortedDrawables:add(self.player.drawPos.y, self.player)
+
+        for id, player in pairs(self.connectedPlayers) do
+            player:calcDraw(dt)
+            player:drawShadow(box)
+            sortedDrawables:add(player.drawPos.y, player)
+        end
 
         -- for _, mob in ipairs(self.mobs) do
         --     mob:calcDraw(dt)
         --     mob:drawShadow(box)
-        -- end
-
-        -- for _, projectile in ipairs(self.projectiles) do
-        --     projectile:calcDraw(dt)
-        -- end
-
-        -- local sortedDrawables = OrderedTable()
-        -- sortedDrawables:add(self.player.drawPos.y, self.player)
-
-        -- for _, mob in ipairs(self.mobs) do
         --     sortedDrawables:add(mob.drawPos.y, mob)
         -- end
 
         -- for _, projectile in ipairs(self.projectiles) do
+        --     projectile:calcDraw(dt)
         --     sortedDrawables:add(projectile.drawPos.y, projectile)
         -- end
 
-        -- sortedDrawables:iterate(
-        --     function(drawable)
-        --         drawable:draw(box)
-        --     end
-        -- )
+        sortedDrawables:iterate(
+            function(drawable)
+                drawable:draw(box)
+            end
+        )
     end
 
     function map:draw(localNetworkState, receivedNetworkState, dt, box)

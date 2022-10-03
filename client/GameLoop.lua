@@ -15,7 +15,6 @@ return function(menuState)
         Player(menuState.spriteData, menuState.nickname, classLookup[classLookup.indices[menuState.class]], true)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
-    game.camera:setPos(0, 0)
 
     game.pauseOverlay = nil
     game.overlay = nil
@@ -74,6 +73,8 @@ return function(menuState)
         end
 
         self.player:update()
+        localNetworkState.player.pos.x = self.player.hitbox.x
+        localNetworkState.player.pos.y = self.player.hitbox.y
     end
 
     function game:resize(width, height)

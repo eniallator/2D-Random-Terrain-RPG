@@ -17,7 +17,9 @@ return function(spriteData, nickname, class, isLocal)
         }
     )
 
-    -- player.class = class.init()
+    -- if class ~= nil then
+    --     player.class = class.init()
+    -- end
 
     player.spriteType = 1 or spriteType
     player.nickname = nickname

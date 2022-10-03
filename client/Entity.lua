@@ -32,12 +32,18 @@ return function(args)
     end
 
     local function updateSprite(self)
-        if not self.dest then
+        if
+            self.isLocal and not self.dest or
+                not self.isLocal and
+                    (self.oldPos == nil or self.hitbox.x == self.oldPos.x and self.hitbox.y == self.oldPos.y)
+         then
             if self.sprite.playingAnimation ~= 'idle' then
                 self.sprite:playAnimation('idle')
             end
         else
-            local diff = {x = self.hitbox.x - self.dest.x, y = self.hitbox.y - self.dest.y}
+            local diff =
+                self.isLocal and {x = self.hitbox.x - self.dest.x, y = self.hitbox.y - self.dest.y} or
+                {x = self.oldPos.x - self.hitbox.x, y = self.oldPos.y - self.hitbox.y}
             local direction
 
             if math.abs(diff.x) > math.abs(diff.y) then
@@ -50,7 +56,9 @@ return function(args)
                 self.sprite:playAnimation(direction)
             end
 
-            local dist = math.min(self.speed, math.sqrt(diff.x ^ 2 + diff.y ^ 2))
+            local dist =
+                self.isLocal and math.min(self.speed, math.sqrt(diff.x ^ 2 + diff.y ^ 2)) or
+                math.sqrt(diff.x ^ 2 + diff.y ^ 2)
             self.deltaMoved = self.deltaMoved + dist
             if self.deltaMoved > self.nextFrameDist then
                 self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDist))

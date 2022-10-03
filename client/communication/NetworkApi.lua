@@ -16,10 +16,6 @@ return function(initialLocalState)
         end
         local data, msg = self.udp:receive()
         while data do
-            if self.serverTickAge > 5 then
-                print(data)
-                error()
-            end
             local headers, payload = packet.deserialise(data)
             self.id, self.serverTickAge, self.serverLastClientTickAge =
                 headers.id,

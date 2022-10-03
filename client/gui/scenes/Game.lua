@@ -7,17 +7,12 @@ local BaseGui = require 'client.gui.BaseGui'
 return function(menuState)
     local game = BaseGui()
 
-    if menuState.multiplayer == nil then
-        -- Want to save data before killing thread, so will wait until it's done
-        local serverThread = love.thread.newThread('server/Engine.lua')
-        serverThread:start()
-    end
-
-    game.gameLoop = GameLoop(menuState)
     game.networkApi =
         NetworkApi(
         {
             player = {
+                nickname = menuState.nickname,
+                spriteData = menuState.spriteData,
                 pos = {
                     x = 0,
                     y = 0
@@ -28,12 +23,22 @@ return function(menuState)
             }
         }
     )
+
+    if menuState.multiplayer ~= nil then
+        game.networkApi:connect(menuState.multiplayer.address, menuState.multiplayer.port)
+    else
+        -- Want to save data before killing thread, so will wait until it's done
+        local serverThread = love.thread.newThread('server/Engine.lua')
+        serverThread:start()
+
+        game.networkApi:connect(config.communication.address, config.communication.port)
+    end
+
+    game.gameLoop = GameLoop(menuState)
     game.tickLength = 1 / config.tps
     game.lastClockTime = os.clock()
     game.dtAccumulated = 0
     game.age = 0
-
-    game.networkApi:connect(config.communication.address, config.communication.port)
 
     function game:updateInputs()
         -- no op since they need to be updated after the update tick

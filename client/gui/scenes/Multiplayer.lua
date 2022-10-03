@@ -9,14 +9,14 @@ return function(state)
 
     multiplayer.menu:addComponent('label', {value = 1}, {value = 1, weight = 1}, "Enter the server's address:")
     multiplayer.menu:addComponent(
-        'input',
+        'textInput',
         {value = 2},
         {value = 1, weight = 1},
         {{tbl = state.multiplayer, key = 'address'}, {r = 0.3, g = 0.3, b = 0.3}}
     )
     multiplayer.menu:addComponent('label', {value = 1}, {value = 2, weight = 1}, 'Port:')
     multiplayer.menu:addComponent(
-        'input',
+        'textInput',
         {value = 2},
         {value = 2, weight = 1},
         {{tbl = state.multiplayer, key = 'port'}, {r = 0.3, g = 0.3, b = 0.3}}
@@ -46,7 +46,7 @@ return function(state)
             {r = 0, g = 0.7, b = 0},
             nil,
             function(state)
-                return #state.multiplayer.address > 0 and #state.multiplayer.port > 0
+                return state.multiplayer ~= nil and #state.multiplayer.address == 0 and #state.multiplayer.port == 0
             end
         }
     )
@@ -62,7 +62,7 @@ return function(state)
     end
 
     function multiplayer:update(state)
-        self:updateMenu(state)
+        self:updateMenu(self.menu, state)
     end
 
     function multiplayer:draw(dt)
