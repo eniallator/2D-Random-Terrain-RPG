@@ -25,7 +25,7 @@ return function(box, textLocation, bgColour, selectedBgColour, textColour)
 
         if self.selected then
             if not self.previousState then
-                KEYS.textString = self.location[self.locationKey]
+                KEYS.textString = self.location[self.locationKey] or ''
             end
             self.location[self.locationKey] = KEYS.textString
         end
@@ -33,6 +33,7 @@ return function(box, textLocation, bgColour, selectedBgColour, textColour)
     end
 
     function textInput:draw()
+        local text = self.location[self.locationKey] or ''
         local font = love.graphics.getFont()
 
         local bgColour = self.selected and self.selectedBgColour or self.bgColour
@@ -41,9 +42,9 @@ return function(box, textLocation, bgColour, selectedBgColour, textColour)
         love.graphics.rectangle('fill', self.box.x, self.box.y, self.box.width, self.box.height)
         love.graphics.setColor(self.textColour.r, self.textColour.g, self.textColour.b)
         love.graphics.print(
-            self.location[self.locationKey],
-            self.box.x + self.box.width / 2 - font:getWidth(self.location[self.locationKey]) / 2,
-            self.box.y + self.box.height / 2 - font:getHeight(self.location[self.locationKey]) / 2
+            text,
+            self.box.x + self.box.width / 2 - font:getWidth(text) / 2,
+            self.box.y + self.box.height / 2 - font:getHeight(text) / 2
         )
     end
 

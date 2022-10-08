@@ -77,7 +77,7 @@ return function(state)
             '>',
             function()
                 local index
-                if characterSelect.selectedClass == nil then
+                if state.class == nil then
                     index = 1
                 else
                     index = classLookup.indices[state.class] % #classLookup + 1
