@@ -33,7 +33,7 @@ return function(args)
 
     local function updateSprite(self)
         if
-            self.isLocal and not self.dest or
+            self.isLocal and (not self.dest or self.dest.x == self.hitbox.x and self.dest.y == self.hitbox.y) or
                 not self.isLocal and
                     (self.oldPos == nil or self.hitbox.x == self.oldPos.x and self.hitbox.y == self.oldPos.y)
          then
@@ -68,23 +68,31 @@ return function(args)
     end
 
     local function updatePos(self, networkState)
+        local dest = not self.isLocal and networkState.pos.dest or self.dest
+
+        if not dest or dest.x == self.hitbox.x and dest.y == self.hitbox.y then
+            self.oldPos = nil
+            return
+        end
+
         local nextPos
-        if self.isLocal then
-            if self.dest == nil then
-                self.oldPos = nil
-                return
-            end
-
-            local posDiff = {
-                x = self.dest.x - self.hitbox.x,
-                y = self.dest.y - self.hitbox.y
+        if not self.isLocal and networkState.pos.dest ~= nil and self.lastUpdate ~= networkState.pos.dest:getLastAge() then
+            self.lastUpdate = networkState.pos.dest.getLastAge()
+            nextPos = {
+                x = networkState.pos.current.x,
+                y = networkState.pos.current.y
             }
-            local magnitude = math.sqrt(posDiff.x ^ 2 + posDiff.y ^ 2)
+        else
+            local posDiff = {
+                x = dest.x - self.hitbox.x,
+                y = dest.y - self.hitbox.y
+            }
+            local sqrMagnitude = posDiff.x ^ 2 + posDiff.y ^ 2
 
-            if magnitude <= self.speed then
-                nextPos = self.dest
-                self.dest = nil
+            if sqrMagnitude <= self.speed ^ 2 then
+                nextPos = dest
             else
+                local magnitude = math.sqrt(sqrMagnitude)
                 local normalised = {
                     x = posDiff.x / magnitude,
                     y = posDiff.y / magnitude
@@ -94,11 +102,6 @@ return function(args)
                     y = self.hitbox.y + normalised.y * self.speed
                 }
             end
-        else
-            nextPos = {
-                x = networkState.pos.x,
-                y = networkState.pos.y
-            }
         end
 
         self.oldPos = {

@@ -53,6 +53,10 @@ local function SynchronisedMetaTable(class, initialAge)
         ['nil'] = true
     }
 
+    function mt.getLastAge()
+        return mt.__data[AGE_KEY]
+    end
+
     function mt.__index(tbl, key)
         local metaPrefix = 'meta_'
         if tostring(key):sub(1, #metaPrefix) == metaPrefix then
@@ -209,8 +213,11 @@ local function SynchronisedTable(initialData, initialAge)
             subTable:setAge(age)
         end
     end
-    function synchronisedTable:getAge()
+    function synchronisedTable:getNewAge()
         return mt.__newAge
+    end
+    function synchronisedTable:getLastAge()
+        return mt.getLastAge()
     end
 
     function synchronisedTable:dataPairs()

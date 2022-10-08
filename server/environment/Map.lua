@@ -80,10 +80,18 @@ return function(mapSeed)
         if connectionsReceivedState then
             for id, connection in connectionsReceivedState.subTablePairs() do
                 local chunkRegion = {
-                    startX = math.floor(connection.state.player.pos.x / config.chunkSize - config.playerChunkRadius),
-                    startY = math.floor(connection.state.player.pos.y / config.chunkSize - config.playerChunkRadius),
-                    endX = math.ceil(connection.state.player.pos.x / config.chunkSize + config.playerChunkRadius),
-                    endY = math.ceil(connection.state.player.pos.y / config.chunkSize + config.playerChunkRadius)
+                    startX = math.floor(
+                        connection.state.player.pos.current.x / config.chunkSize - config.playerChunkRadius
+                    ),
+                    startY = math.floor(
+                        connection.state.player.pos.current.y / config.chunkSize - config.playerChunkRadius
+                    ),
+                    endX = math.ceil(
+                        connection.state.player.pos.current.x / config.chunkSize + config.playerChunkRadius
+                    ),
+                    endY = math.ceil(
+                        connection.state.player.pos.current.y / config.chunkSize + config.playerChunkRadius
+                    )
                 }
 
                 connectionsLocalState[id].environment.lastSent = connection.lastServerTickAge

@@ -14,8 +14,14 @@ return function(menuState)
                 nickname = menuState.nickname,
                 spriteData = menuState.spriteData,
                 pos = {
-                    x = 0,
-                    y = 0
+                    current = {
+                        x = 0,
+                        y = 0
+                    },
+                    dest = {
+                        x = 0,
+                        y = 0
+                    }
                 }
             },
             environment = {

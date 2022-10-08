@@ -70,11 +70,13 @@ return function(menuState)
                     (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
             }
             self.player:setDest(dest.x, dest.y)
+            localNetworkState.player.pos.dest.x = dest.x
+            localNetworkState.player.pos.dest.y = dest.y
         end
 
         self.player:update()
-        localNetworkState.player.pos.x = self.player.hitbox.x
-        localNetworkState.player.pos.y = self.player.hitbox.y
+        localNetworkState.player.pos.current.x = self.player.hitbox.x
+        localNetworkState.player.pos.current.y = self.player.hitbox.y
     end
 
     function game:resize(width, height)

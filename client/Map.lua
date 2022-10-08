@@ -65,12 +65,11 @@ return function(player, mapSeed)
             -- Updating players
             for id, player in receivedNetworkState.players.subTablePairs() do
                 if self.connectedPlayers[id] == nil then
-                    self.connectedPlayers[id] = Player(player.spriteData, player.nickname, nil, false)
+                    self.connectedPlayers[id] = Player(player.spriteData, player.nickname)
                 end
                 self.connectedPlayers[id]:update(player)
             end
         end
-        -- print(localNetworkState.environment.chunkIds:serialiseUpdates(-1, true))
         -- updateProjectiles(self, box)
         -- updateMobs(self, box)
     end

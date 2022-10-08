@@ -8,8 +8,6 @@ return function()
     main.map = Map(config.mapSeed)
 
     function main:updateTick(connectionsLocalState, connectionsReceivedState)
-        -- All server-side game logic happening here
-        self.map:update(connectionsLocalState, connectionsReceivedState)
         for id, state in connectionsLocalState.subTablePairs() do
             for otherId, connection in connectionsReceivedState.subTablePairs() do
                 if id ~= otherId then
@@ -17,6 +15,8 @@ return function()
                 end
             end
         end
+
+        self.map:update(connectionsLocalState, connectionsReceivedState)
     end
 
     return main
