@@ -1,3 +1,5 @@
+local StringBuilder = require 'common.utils.StringBuilder'
+
 local function serialiseValue(value)
     if type(value) == 'string' then
         return '"' .. value:gsub('(["\\])', '\\%1') .. '"'
@@ -94,36 +96,45 @@ local function SynchronisedMetaTable(class, initialAge)
         end
     end
 
-    function mt.serialiseUpdates(age, force)
-        local dataStr = ''
-        if age <= mt.__data[AGE_KEY] or force then
-            dataStr = ''
-            for key, value in pairs(mt.__data or {}) do
-                if #dataStr > 0 then
-                    dataStr = dataStr .. ','
-                end
-                dataStr = dataStr .. key .. '=' .. serialiseValue(value)
+    function mt.serialiseUpdates(age, force, updatesBuilder)
+        local hasDataUpdates = false
+        for key, value in pairs((age <= mt.__data[AGE_KEY] or force) and mt.__data or {}) do
+            if hasDataUpdates then
+                updatesBuilder:add(',')
+            else
+                updatesBuilder:add('{')
             end
-            if dataStr ~= '' then
-                dataStr = '{' .. dataStr .. '}'
-            end
+            hasDataUpdates = true
+            updatesBuilder:add(key)
+            updatesBuilder:add('=')
+            updatesBuilder:add(serialiseValue(value))
         end
-        local subTablesStr = ''
+        if hasDataUpdates then
+            updatesBuilder:add('}')
+        end
+        local hasSubTableUpdates = false
         for key, value in pairs(mt.__subTables or {}) do
-            local serialisedValue = value
+            local subTableBuilder = StringBuilder()
             if value == SUB_TABLE_DELETED then
                 mt.__subTables[key] = nil
+                subTableBuilder:add(value)
             else
-                serialisedValue = value.meta_serialiseUpdates(age, force) or ''
+                value.meta_serialiseUpdates(age, force, subTableBuilder)
             end
-            if serialisedValue ~= '' then
-                if subTablesStr ~= '' then
-                    subTablesStr = subTablesStr .. ','
+            if subTableBuilder.length > 0 then
+                if hasSubTableUpdates then
+                    updatesBuilder:add(',')
+                else
+                    updatesBuilder:add('[')
                 end
-                subTablesStr = subTablesStr .. key .. serialisedValue
+                hasSubTableUpdates = true
+                updatesBuilder:add(key)
+                updatesBuilder:add(subTableBuilder:build())
             end
         end
-        return dataStr .. (subTablesStr == '' and '' or '[' .. subTablesStr .. ']')
+        if hasSubTableUpdates then
+            updatesBuilder:add(']')
+        end
     end
 
     function mt.deserialiseUpdates(str, age, i)
@@ -228,7 +239,9 @@ local function SynchronisedTable(initialData, initialAge)
     end
 
     function synchronisedTable:serialiseUpdates(age, force)
-        return mt.serialiseUpdates(age, force)
+        local updatesBuilder = StringBuilder()
+        mt.serialiseUpdates(age, force, updatesBuilder)
+        return updatesBuilder:build()
     end
 
     function synchronisedTable:deserialiseUpdates(updatesString, age)
