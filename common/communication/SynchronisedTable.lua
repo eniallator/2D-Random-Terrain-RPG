@@ -114,22 +114,20 @@ local function SynchronisedMetaTable(class, initialAge)
         end
         local hasSubTableUpdates = false
         for key, value in pairs(mt.__subTables or {}) do
-            local subTableBuilder = StringBuilder()
+            updatesBuilder:add(hasSubTableUpdates and ',' or '[')
+            updatesBuilder:add(key)
             if value == SUB_TABLE_DELETED then
                 mt.__subTables[key] = nil
-                subTableBuilder:add(value)
-            else
-                value.meta_serialiseUpdates(age, force, subTableBuilder)
-            end
-            if subTableBuilder.length > 0 then
-                if hasSubTableUpdates then
-                    updatesBuilder:add(',')
-                else
-                    updatesBuilder:add('[')
-                end
+                updatesBuilder:add(value)
                 hasSubTableUpdates = true
-                updatesBuilder:add(key)
-                updatesBuilder:add(subTableBuilder:build())
+            else
+                local lengthBefore = updatesBuilder.length
+                value.meta_serialiseUpdates(age, force, updatesBuilder)
+                if updatesBuilder.length == lengthBefore then
+                    updatesBuilder:removeLast(2)
+                else
+                    hasSubTableUpdates = true
+                end
             end
         end
         if hasSubTableUpdates then
