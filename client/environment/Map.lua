@@ -1,6 +1,6 @@
 local config = require 'conf'
 local OrderedTable = require 'common.utils.OrderedTable'
-local Chunk = require 'client.Chunk'
+local Chunk = require 'client.environment.Chunk'
 local Player = require 'client.Player'
 -- local Zombie = require 'client.Zombie'
 

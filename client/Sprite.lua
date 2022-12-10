@@ -13,6 +13,7 @@ return function(spriteWidth, spriteHeight)
 
     function sprite:addAnimation(name, spritesheet, frameRegions, repeating)
         self.animations[name] = {
+            name = name,
             spritesheet = spritesheet,
             frameRegions = frameRegions,
             repeating = repeating,
@@ -20,14 +21,17 @@ return function(spriteWidth, spriteHeight)
         }
         for i = 1, #frameRegions do
             local region = frameRegions[i]
-            table.insert(self.animations[name].quads, love.graphics.newQuad(
-                region.x,
-                region.y,
-                region.width,
-                region.height,
-                spritesheet:getWidth(),
-                spritesheet:getHeight()
-            ))
+            table.insert(
+                self.animations[name].quads,
+                love.graphics.newQuad(
+                    region.x,
+                    region.y,
+                    region.width,
+                    region.height,
+                    spritesheet:getWidth(),
+                    spritesheet:getHeight()
+                )
+            )
         end
     end
 
@@ -35,9 +39,12 @@ return function(spriteWidth, spriteHeight)
         self.defaultAnimation = name
     end
 
-    function sprite:playAnimation(name)
-        self.playingAnimation = self.animations[name] and name or self.defaultAnimation
-        self.frameIndex = 1
+    function sprite:playAnimation(name, force)
+        local nextAnimation = name or self.defaultAnimation
+        if force or self.playingAnimation == nil or nextAnimation ~= self.playingAnimation.name then
+            self.playingAnimation = self.animations[name] and name or self.defaultAnimation
+            self.frameIndex = 1
+        end
     end
 
     function sprite:advanceAnimation(numFrames)

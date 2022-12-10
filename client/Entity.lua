@@ -37,9 +37,7 @@ return function(args)
                 not self.isLocal and
                     (self.oldPos == nil or self.hitbox.x == self.oldPos.x and self.hitbox.y == self.oldPos.y)
          then
-            if self.sprite.playingAnimation ~= 'idle' then
-                self.sprite:playAnimation('idle')
-            end
+            self.sprite:playAnimation()
         else
             local diff =
                 self.isLocal and {x = self.hitbox.x - self.dest.x, y = self.hitbox.y - self.dest.y} or
@@ -52,9 +50,7 @@ return function(args)
                 direction = diff.y < 0 and 'down' or 'up'
             end
 
-            if self.sprite.playingAnimation ~= direction then
-                self.sprite:playAnimation(direction)
-            end
+            self.sprite:playAnimation(direction)
 
             local dist =
                 self.isLocal and math.min(self.speed, math.sqrt(diff.x ^ 2 + diff.y ^ 2)) or

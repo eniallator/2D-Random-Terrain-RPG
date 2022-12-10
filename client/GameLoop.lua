@@ -5,7 +5,7 @@ local BaseGui = require 'client.gui.BaseGui'
 -- local PlayerInventory = require 'client.gui.overlays.PlayerInventory'
 
 local Player = require 'client.Player'
-local Map = require 'client.Map'
+local Map = require 'client.environment.Map'
 local classLookup = require 'client.class.ClassLookup'
 local Camera = require 'client.Camera'
 
