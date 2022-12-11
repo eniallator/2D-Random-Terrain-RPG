@@ -52,6 +52,27 @@ return function(player, mapSeed)
         end
     end
 
+    function map:cleanupOldChunks(chunkRadius)
+        local centerX = self.player.hitbox.x / config.chunkSize
+        local centerY = self.player.hitbox.y / config.chunkSize
+
+        for chunkId, _ in pairs(self.chunks) do
+            local xStr, yStr = chunkId:match('x([n%d]+)y([n%d]+)')
+            local x, y =
+                xStr:sub(1, 1) == 'n' and -tonumber(xStr:sub(2)) or tonumber(xStr),
+                yStr:sub(1, 1) == 'n' and -tonumber(yStr:sub(2)) or tonumber(yStr)
+
+            -- Simple AABB, however offset by 1 since the server does math.floor for
+            --    the smaller of the two and then math.ceil for the bigger of the two
+            if
+                centerX - chunkRadius - 1 > x or centerX + chunkRadius + 1 < x or centerY - chunkRadius - 1 > y or
+                    centerY + chunkRadius + 1 < y
+             then
+                self.chunks[chunkId] = nil
+            end
+        end
+    end
+
     function map:update(localNetworkState, receivedNetworkState, box)
         if receivedNetworkState then
             -- Updating local chunks
@@ -60,6 +81,7 @@ return function(player, mapSeed)
                     self.chunks[id] = Chunk(chunkData)
                     localNetworkState.environment.chunkIds[id] = 1
                 end
+                self:cleanupOldChunks(receivedNetworkState.environment.playerChunkRadius)
             end
 
             -- Updating players
