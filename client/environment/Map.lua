@@ -1,5 +1,7 @@
 local config = require 'conf'
 local OrderedTable = require 'common.utils.OrderedTable'
+local BinaryBuilder = require 'common.types.BinaryBuilder'
+local posToId = require 'common.utils.posToId'
 local Chunk = require 'client.environment.Chunk'
 local Player = require 'client.Player'
 -- local Zombie = require 'client.Zombie'
@@ -57,10 +59,7 @@ return function(player, mapSeed)
         local centerY = self.player.hitbox.y / config.chunkSize
 
         for chunkId, _ in pairs(self.chunks) do
-            local xStr, yStr = chunkId:match('x([n%d]+)y([n%d]+)')
-            local x, y =
-                xStr:sub(1, 1) == 'n' and -tonumber(xStr:sub(2)) or tonumber(xStr),
-                yStr:sub(1, 1) == 'n' and -tonumber(yStr:sub(2)) or tonumber(yStr)
+            local x, y = posToId.backward(chunkId)
 
             -- Simple AABB, however offset by 1 since the server does math.floor for
             --    the smaller of the two and then math.ceil for the bigger of the two
@@ -71,6 +70,21 @@ return function(player, mapSeed)
                 self.chunks[chunkId] = nil
             end
         end
+    end
+
+    -- TODO: Implement this!
+    function map:getRemainingIds(chunkRadius)
+        local centerX = self.player.hitbox.x / config.chunkSize
+        local centerY = self.player.hitbox.y / config.chunkSize
+
+        local builder = BinaryBuilder()
+        for i = math.floor(centerY - chunkRadius), math.ceil(centerY + chunkRadius) do
+            for j = math.floor(centerX - chunkRadius), math.ceil(centerX + chunkRadius) do
+                local chunkId = posToId.forward(j, i)
+                builder:add(tonumber(self.chunks[chunkId] ~= nil and 1 or 0))
+            end
+        end
+        return builder:build()
     end
 
     function map:update(localNetworkState, receivedNetworkState, box)
@@ -127,11 +141,10 @@ return function(player, mapSeed)
         local i, j
         for i = chunkRegion.startY, chunkRegion.endY do
             for j = chunkRegion.startX, chunkRegion.endX do
-                local chunkID =
-                    'x' .. (j < 0 and 'n' or '') .. math.abs(j) .. 'y' .. (i < 0 and 'n' or '') .. math.abs(i)
+                local chunkId = posToId.forward(j, i)
 
-                if self.chunks[chunkID] ~= nil then
-                    self.chunks[chunkID]:draw(
+                if self.chunks[chunkId] ~= nil then
+                    self.chunks[chunkId]:draw(
                         ((j * config.chunkSize) - box.x - box.width / 2) / box.width * love.graphics.getWidth() +
                             love.graphics.getWidth(),
                         ((i * config.chunkSize) - box.y - box.height / 2) / box.height * love.graphics.getHeight() +

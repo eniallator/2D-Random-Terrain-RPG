@@ -1,7 +1,16 @@
-local StringBuilder = require 'common.utils.StringBuilder'
+local StringBuilder = require 'common.types.StringBuilder'
+local Binary = require 'common.types.Binary'
+
+local oldType = type
+local type = function(val)
+    return val.isBinary and 'binary' or oldType(val)
+end
 
 local function serialiseValue(value)
-    if type(value) == 'string' then
+    local valType = type(value)
+    if valType == 'binary' then
+        return 'b' .. value.length .. 'd' .. value.data
+    elseif valType == 'string' then
         return '"' .. value:gsub('(["\\])', '\\%1') .. '"'
     end
     return tostring(value)
@@ -20,6 +29,12 @@ local function deserialiseValue(str, i)
             char = str:sub(i, i)
         end
         return val:gsub('\\(["\\])', '%1'), i + 1
+    elseif str:sub(i, i) == 'b' then
+        local lengthStr = str:sub(i + 1):match('^b(%d+)')
+        -- 2 to consume both the 'b' and 'd' chars
+        i = i + 2 + #lengthStr
+        local data = str:sub(i, i + math.ceil(lengthStr / 8))
+        return Binary(tonumber(lengthStr), data), i + math.ceil(lengthStr / 8)
     elseif str:sub(i, i + 3) == 'true' or str:sub(i, i + 4) == 'false' then
         local val = str:sub(i, i + 3) == 'true'
         return val, val and i + 4 or i + 5
@@ -52,6 +67,7 @@ local function SynchronisedMetaTable(class, initialAge)
         number = true,
         boolean = true,
         string = true,
+        binary = true,
         ['nil'] = true
     }
 

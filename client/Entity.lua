@@ -1,3 +1,4 @@
+local interpolate = require 'common.utils.interpolate'
 local LayeredSprite = require 'client.LayeredSprite'
 local Sprite = require 'client.Sprite'
 local Hitbox = require 'client.Hitbox'
@@ -127,8 +128,8 @@ return function(args)
         self.drawPos.y = self.hitbox.y
 
         if self.oldPos ~= nil then
-            self.drawPos.x = self.oldPos.x + (self.hitbox.x - self.oldPos.x) * dt
-            self.drawPos.y = self.oldPos.y + (self.hitbox.y - self.oldPos.y) * dt
+            self.drawPos.x = interpolate.linear(dt, self.hitbox.x, self.oldPos.x)
+            self.drawPos.y = interpolate.linear(dt, self.hitbox.y, self.oldPos.y)
         end
     end
 

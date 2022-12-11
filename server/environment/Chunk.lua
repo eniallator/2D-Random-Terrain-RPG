@@ -1,5 +1,5 @@
 local config = require 'conf'
-local StringBuilder = require 'common.utils.StringBuilder'
+local StringBuilder = require 'common.types.StringBuilder'
 
 return function(x, y, terrainGenerator)
     local chunk = {}

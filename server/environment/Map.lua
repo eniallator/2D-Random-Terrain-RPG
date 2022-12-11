@@ -1,5 +1,6 @@
 local config = require 'conf'
 local OrderedTable = require 'common.utils.OrderedTable'
+local posToId = require 'common.utils.posToId'
 local Chunk = require 'server.environment.Chunk'
 local TerrainGenerator = require 'server.environment.TerrainGenerator'
 -- local Zombie = require 'client.Zombie'
@@ -22,8 +23,7 @@ return function(mapSeed)
                 if chunksSet >= limit then
                     return outputChunks
                 end
-                local chunkID =
-                    'x' .. (j < 0 and 'n' or '') .. math.abs(j) .. 'y' .. (i < 0 and 'n' or '') .. math.abs(i)
+                local chunkID = posToId.forward(j, i)
                 if chunkIdLookup[chunkID] == nil then
                     if self.chunks[chunkID] == nil then
                         self.chunks[chunkID] = Chunk(j, i, self.terrainGenerator)
