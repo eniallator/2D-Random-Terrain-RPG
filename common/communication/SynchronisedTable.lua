@@ -53,8 +53,8 @@ local function deserialiseValue(str, i)
 end
 
 local function SynchronisedMetaTable(class, initialAge)
-    local SUB_TABLE_DELETED = '$DELETED_SUB_TABLE'
-    local NEW_SUB_TABLE = '$NEW_SUB_TABLE'
+    local SUB_TABLE_DELETED = '$DELETED'
+    local NEW_SUB_TABLE = '$NEW'
     local AGE_KEY = '__AGE'
 
     local mt = {
