@@ -3,7 +3,8 @@ local Binary = require 'common.types.Binary'
 
 local oldType = type
 local type = function(val)
-    return val.isBinary and 'binary' or oldType(val)
+    local oldType = oldType(val)
+    return oldType == 'table' and val.isBinary and 'binary' or oldType
 end
 
 local function serialiseValue(value)
@@ -30,11 +31,12 @@ local function deserialiseValue(str, i)
         end
         return val:gsub('\\(["\\])', '%1'), i + 1
     elseif str:sub(i, i) == 'b' then
-        local lengthStr = str:sub(i + 1):match('^b(%d+)')
-        -- 2 to consume both the 'b' and 'd' chars
-        i = i + 2 + #lengthStr
-        local data = str:sub(i, i + math.ceil(lengthStr / 8))
-        return Binary(tonumber(lengthStr), data), i + math.ceil(lengthStr / 8)
+        i = i + 1
+        local lengthStr = str:sub(i):match('^%d+')
+        i = i + 1 + #lengthStr
+        local endI = i + math.floor(lengthStr / 8)
+        local data = str:sub(i, endI)
+        return Binary(tonumber(lengthStr), data), endI + 1
     elseif str:sub(i, i + 3) == 'true' or str:sub(i, i + 4) == 'false' then
         local val = str:sub(i, i + 3) == 'true'
         return val, val and i + 4 or i + 5
@@ -51,7 +53,8 @@ local function deserialiseValue(str, i)
 end
 
 local function SynchronisedMetaTable(class, initialAge)
-    local SUB_TABLE_DELETED = '$DELETED'
+    local SUB_TABLE_DELETED = '$DELETED_SUB_TABLE'
+    local NEW_SUB_TABLE = '$NEW_SUB_TABLE'
     local AGE_KEY = '__AGE'
 
     local mt = {
@@ -100,6 +103,7 @@ local function SynchronisedMetaTable(class, initialAge)
             else
                 mt.__subTables[key] = mt.__class(value, mt.__data[AGE_KEY])
             end
+            mt.__subTables[key][NEW_SUB_TABLE] = mt.__newAge
         elseif DATA_VALUE_TYPES[valType] then
             -- Trigger update if data value changed
             if mt.__data[key] ~= value then
@@ -123,7 +127,11 @@ local function SynchronisedMetaTable(class, initialAge)
             hasDataUpdates = true
             updatesBuilder:add(key)
             updatesBuilder:add('=')
-            updatesBuilder:add(serialiseValue(value))
+            if key == NEW_SUB_TABLE then
+                updatesBuilder:add(serialiseValue(true))
+            else
+                updatesBuilder:add(serialiseValue(value))
+            end
         end
         if hasDataUpdates then
             updatesBuilder:add('}')
@@ -153,25 +161,21 @@ local function SynchronisedMetaTable(class, initialAge)
 
     function mt.deserialiseUpdates(str, age, i)
         i = i or 1
+        local isNewSubTable = false
         if str:sub(i, i) == '{' then
             mt.__data = {}
             i = i + 1
             while str:sub(i, i) ~= '}' do
-                local key, value = str:sub(i):match('^[%w_]+')
-                i = i + #key
-                if str:sub(i, i) ~= '=' then
-                    error(
-                        'Malformed updates string, expected "=" at char ' ..
-                            i .. ', instead found "' .. str:sub(i, i) .. '"'
-                    )
-                end
-                i = i + 1
+                local key, value = str:sub(i):match('^[^=]+')
+                i = i + #key + 1
                 value, i = deserialiseValue(str, i)
                 if str:sub(i, i) == ',' then
                     i = i + 1
                 end
                 if key == AGE_KEY then
                     age = age or value
+                elseif key == NEW_SUB_TABLE then
+                    isNewSubTable = true
                 else
                     mt.__data[key] = value
                 end
@@ -180,6 +184,9 @@ local function SynchronisedMetaTable(class, initialAge)
             if age then
                 mt.__data[AGE_KEY] = age
             end
+        end
+        if isNewSubTable then
+            mt.__subTables = {}
         end
         if str:sub(i, i) == '[' then
             i = i + 1

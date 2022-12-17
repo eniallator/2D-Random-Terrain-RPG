@@ -14,22 +14,26 @@ return function(mapSeed)
     map.mobs = {}
     map.projectiles = {}
 
-    local function getChunks(self, chunkRegion, chunkIdLookup, limit)
+    local function getChunks(self, chunkRegion, chunksReceived, limit)
         local i, j
         local chunksSet = 0
         local outputChunks = {}
-        for i = chunkRegion.startY, chunkRegion.endY do
-            for j = chunkRegion.startX, chunkRegion.endX do
+        local regionWidth = chunkRegion.endX - chunkRegion.startX + 1
+        local s = ''
+        for i = 0, chunkRegion.endY - chunkRegion.startY do
+            for j = 0, chunkRegion.endX - chunkRegion.startX do
                 if chunksSet >= limit then
                     return outputChunks
                 end
-                local chunkID = posToId.forward(j, i)
-                if chunkIdLookup[chunkID] == nil then
-                    if self.chunks[chunkID] == nil then
-                        self.chunks[chunkID] = Chunk(j, i, self.terrainGenerator)
+                local bitIndex = i * regionWidth + j + 1
+                if chunksReceived == nil or chunksReceived.length + 1 == bitIndex or chunksReceived:bitAt(bitIndex) == 0 then
+                    local chunkId = posToId.forward(j + chunkRegion.startX, i + chunkRegion.startY)
+                    if self.chunks[chunkId] == nil then
+                        self.chunks[chunkId] =
+                            Chunk(j + chunkRegion.startX, i + chunkRegion.startY, self.terrainGenerator)
                     end
 
-                    outputChunks[chunkID] = self.chunks[chunkID]:getData()
+                    outputChunks[chunkId] = self.chunks[chunkId]:getData()
                     chunksSet = chunksSet + 1
                 end
             end
@@ -96,7 +100,7 @@ return function(mapSeed)
 
                 connectionsLocalState[id].environment.lastSent = connection.lastServerTickAge
                 connectionsLocalState[id].environment.chunks =
-                    getChunks(self, chunkRegion, connection.state.environment.chunkIds, config.maxChunksToSend)
+                    getChunks(self, chunkRegion, connection.state.environment.chunksReceived, config.maxChunksToSend)
             end
         end
         -- updateProjectiles(self, box)

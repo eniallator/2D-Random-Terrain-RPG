@@ -24,9 +24,7 @@ return function(menuState)
                     }
                 }
             },
-            environment = {
-                chunkIds = {}
-            }
+            environment = {chunksReceived = nil}
         }
     )
 

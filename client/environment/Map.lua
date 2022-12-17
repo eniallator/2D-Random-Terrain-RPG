@@ -72,16 +72,15 @@ return function(player, mapSeed)
         end
     end
 
-    -- TODO: Implement this!
-    function map:getRemainingIds(chunkRadius)
-        local centerX = self.player.hitbox.x / config.chunkSize
-        local centerY = self.player.hitbox.y / config.chunkSize
+    function map:getRemainingIds(pos, chunkRadius)
+        local centerX = pos.x / config.chunkSize
+        local centerY = pos.y / config.chunkSize
 
         local builder = BinaryBuilder()
         for i = math.floor(centerY - chunkRadius), math.ceil(centerY + chunkRadius) do
             for j = math.floor(centerX - chunkRadius), math.ceil(centerX + chunkRadius) do
                 local chunkId = posToId.forward(j, i)
-                builder:add(tonumber(self.chunks[chunkId] ~= nil and 1 or 0))
+                builder:add(self.chunks[chunkId] ~= nil and 1 or 0)
             end
         end
         return builder:build()
@@ -93,9 +92,13 @@ return function(player, mapSeed)
             if receivedNetworkState.environment.chunks then
                 for id, chunkData in receivedNetworkState.environment.chunks.subTablePairs() do
                     self.chunks[id] = Chunk(chunkData)
-                    localNetworkState.environment.chunkIds[id] = 1
                 end
                 self:cleanupOldChunks(receivedNetworkState.environment.playerChunkRadius)
+                localNetworkState.environment.chunksReceived =
+                    self:getRemainingIds(
+                    localNetworkState.player.pos.current,
+                    receivedNetworkState.environment.playerChunkRadius
+                )
             end
 
             -- Updating players
