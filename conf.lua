@@ -9,7 +9,7 @@ return {
     development = true,
     chunkSize = 16,
     playerChunkRadius = 5,
-    maxChunksToSend = 10,
+    maxChunksToSend = 40,
     mapSeed = 1234,
     tps = 20,
     camera = {

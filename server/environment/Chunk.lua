@@ -1,5 +1,8 @@
 local config = require 'conf'
 local StringBuilder = require 'common.types.StringBuilder'
+local BinaryBuilder = require 'common.types.BinaryBuilder'
+
+local bitsPerTileId = math.ceil(math.log(#config.terrain.biomeMap))
 
 return function(x, y, terrainGenerator)
     local chunk = {}
@@ -21,18 +24,14 @@ return function(x, y, terrainGenerator)
 
     function chunk:getData()
         if self._data == nil then
-            local groundTilesBuilder = StringBuilder()
+            local groundTilesBuilder = BinaryBuilder()
+            local i, j, k
             for i = 1, #self.groundTiles do
-                if groundTilesBuilder.length > 0 then
-                    groundTilesBuilder:add('&')
-                end
-                local insertComma = false
                 for j = 1, #self.groundTiles[i] do
-                    if insertComma then
-                        groundTilesBuilder:add(',')
+                    local tileId = self.groundTiles[i][j] - 1
+                    for k = bitsPerTileId - 1, 0, -1 do
+                        groundTilesBuilder:add(math.floor(tileId / 2 ^ k) % 2)
                     end
-                    groundTilesBuilder:add(tostring(self.groundTiles[i][j]))
-                    insertComma = true
                 end
             end
             self._data = {
