@@ -12,6 +12,7 @@ return function(initialConnectionState)
     local networkApi = BaseNetworkApi()
 
     networkApi.addressToIdMap = {}
+    networkApi.lastHeartbeats = {}
     networkApi.idCounter = 1
 
     function networkApi:checkForUpdates(age)
@@ -23,6 +24,7 @@ return function(initialConnectionState)
             local key = self.addressToIdMap[address]
             local headers, payload = packet.deserialise(data)
             if key == nil then
+                -- New connection
                 key = self.idCounter
                 self.idCounter = self.idCounter + 1
 
@@ -38,6 +40,7 @@ return function(initialConnectionState)
                 self.addressToIdMap[address] = key
                 print('connected id:', key)
             end
+            self.lastHeartbeats[key] = age
             self.__receivedState[key].clientTickAge, self.__receivedState[key].lastServerTickAge =
                 tonumber(headers.clientTickAge or self.__receivedState[key].clientTickAge),
                 tonumber(headers.serverTickAge or self.__receivedState[key].lastServerTickAge)
@@ -47,8 +50,25 @@ return function(initialConnectionState)
         end
     end
 
+    function networkApi:_checkTimeouts(age)
+        local timeouts = {}
+        for id, lastAge in pairs(self.lastHeartbeats) do
+            if id ~= 1 and age > lastAge + config.communication.timeoutTicks then
+                timeouts[#timeouts + 1] = id
+            end
+        end
+        for _, id in ipairs(timeouts) do
+            self.addressToIdMap[self.__receivedState[id].ip .. ':' .. tostring(self.__receivedState[id].port)] = nil
+            self.lastHeartbeats[id] = nil
+            self.__receivedState[id]:clear()
+            self.__receivedState[id] = nil
+            print('Timed out id', id)
+        end
+    end
+
     function networkApi:flushUpdates(age)
-        for id, connection in self.__receivedState.subTablePairs() do
+        self:_checkTimeouts(age)
+        for id, connection in self.__receivedState:subTablePairs() do
             udp:sendto(
                 packet.serialise(
                     {id = connection.id, serverTickAge = age, lastClientTickAge = connection.clientTickAge},

@@ -108,6 +108,11 @@ return function(player, mapSeed)
                 end
                 self.connectedPlayers[id]:update(player)
             end
+            for id, player in pairs(self.connectedPlayers) do
+                if receivedNetworkState.players[id] == nil then
+                    self.connectedPlayers[id] = nil
+                end
+            end
         end
         -- updateProjectiles(self, box)
         -- updateMobs(self, box)

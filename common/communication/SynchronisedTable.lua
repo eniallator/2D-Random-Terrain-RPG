@@ -52,11 +52,9 @@ local function deserialiseValue(str, i)
     end
 end
 
+local SUB_TABLE_DELETED = '$DELETED'
+local AGE_KEY = '__AGE'
 local function SynchronisedMetaTable(class, initialAge)
-    local SUB_TABLE_DELETED = '$DELETED'
-    local NEW_SUB_TABLE = '$NEW'
-    local AGE_KEY = '__AGE'
-
     local mt = {
         __newAge = initialAge or 0,
         __data = {[AGE_KEY] = initialAge or 0},
@@ -76,6 +74,12 @@ local function SynchronisedMetaTable(class, initialAge)
 
     function mt.getLastAge()
         return mt.__data[AGE_KEY]
+    end
+
+    function mt.clear()
+        mt.__data = {[AGE_KEY] = mt.__newAge}
+        mt.__otherTypes = {}
+        mt.__subTables = {}
     end
 
     function mt.__index(tbl, key)
@@ -103,7 +107,6 @@ local function SynchronisedMetaTable(class, initialAge)
             else
                 mt.__subTables[key] = mt.__class(value, mt.__data[AGE_KEY])
             end
-            mt.__subTables[key][NEW_SUB_TABLE] = mt.__newAge
         elseif DATA_VALUE_TYPES[valType] then
             -- Trigger update if data value changed
             if mt.__data[key] ~= value then
@@ -127,11 +130,7 @@ local function SynchronisedMetaTable(class, initialAge)
             hasDataUpdates = true
             updatesBuilder:add(key)
             updatesBuilder:add('=')
-            if key == NEW_SUB_TABLE then
-                updatesBuilder:add(serialiseValue(true))
-            else
-                updatesBuilder:add(serialiseValue(value))
-            end
+            updatesBuilder:add(serialiseValue(value))
         end
         if hasDataUpdates then
             updatesBuilder:add('}')
@@ -139,7 +138,7 @@ local function SynchronisedMetaTable(class, initialAge)
         local hasSubTableUpdates = false
         for key, value in pairs(mt.__subTables or {}) do
             updatesBuilder:add(hasSubTableUpdates and ',' or '[')
-            updatesBuilder:add(key)
+            updatesBuilder:add(tostring(key))
             if value == SUB_TABLE_DELETED then
                 mt.__subTables[key] = nil
                 updatesBuilder:add(value)
@@ -161,7 +160,6 @@ local function SynchronisedMetaTable(class, initialAge)
 
     function mt.deserialiseUpdates(str, age, i)
         i = i or 1
-        local isNewSubTable = false
         if str:sub(i, i) == '{' then
             mt.__data = {}
             i = i + 1
@@ -174,8 +172,6 @@ local function SynchronisedMetaTable(class, initialAge)
                 end
                 if key == AGE_KEY then
                     age = age or value
-                elseif key == NEW_SUB_TABLE then
-                    isNewSubTable = true
                 else
                     mt.__data[key] = value
                 end
@@ -185,15 +181,12 @@ local function SynchronisedMetaTable(class, initialAge)
                 mt.__data[AGE_KEY] = age
             end
         end
-        if isNewSubTable then
-            mt.__subTables = {}
-        end
         if str:sub(i, i) == '[' then
             i = i + 1
             while str:sub(i, i) ~= ']' do
-                local subTableKey = str:sub(i):match('^[^,%]{%[]+')
+                local subTableKey = str:sub(i):match('^[^$,%]{%[]+')
                 i = i + #subTableKey
-                if str:sub(i, i + #SUB_TABLE_DELETED) == SUB_TABLE_DELETED then
+                if str:sub(i, i + #SUB_TABLE_DELETED - 1) == SUB_TABLE_DELETED then
                     i = i + #SUB_TABLE_DELETED
                     mt.__subTables[subTableKey] = nil
                 else
@@ -239,9 +232,13 @@ local function SynchronisedTable(initialData, initialAge)
         return tbl
     end
 
+    function synchronisedTable:clear()
+        mt.clear()
+    end
+
     function synchronisedTable:setAge(age)
         mt.__newAge = age
-        for _, subTable in pairs(mt.__subTables) do
+        for _, subTable in self:subTablePairs() do
             subTable:setAge(age)
         end
     end
@@ -256,7 +253,14 @@ local function SynchronisedTable(initialData, initialAge)
         return pairs(mt.__data)
     end
     function synchronisedTable:subTablePairs()
-        return pairs(mt.__subTables)
+        function iter(_, idx)
+            local v
+            repeat
+                idx, v = next(mt.__subTables, idx)
+            until v ~= SUB_TABLE_DELETED
+            return idx, v
+        end
+        return iter
     end
 
     function synchronisedTable:serialiseUpdates(age, force)

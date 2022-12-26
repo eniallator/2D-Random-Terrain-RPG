@@ -88,6 +88,7 @@ return {
     },
     communication = {
         address = 'localhost',
-        port = 3000
+        port = 3000,
+        timeoutTicks = 31
     }
 }

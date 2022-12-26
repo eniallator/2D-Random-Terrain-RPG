@@ -99,6 +99,9 @@ return function(mapSeed)
                 }
 
                 connectionsLocalState[id].environment.lastSent = connection.lastServerTickAge
+                if connectionsLocalState[id].environment.chunks ~= nil then
+                    connectionsLocalState[id].environment.chunks:clear()
+                end
                 connectionsLocalState[id].environment.chunks =
                     getChunks(self, chunkRegion, connection.state.environment.chunksReceived, config.maxChunksToSend)
             end
