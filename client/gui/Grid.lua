@@ -1,4 +1,4 @@
-local OrderedTable = require 'common.utils.OrderedTable'
+local OrderedTable = require 'common.types.OrderedTable'
 
 local components = {
     button = require 'client.gui.components.Button',

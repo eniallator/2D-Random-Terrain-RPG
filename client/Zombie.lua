@@ -1,6 +1,5 @@
 local config = require 'conf'
 local Entity = require 'client.Entity'
-local EnemyBehaviour = require 'client.EnemyBehaviour'
 
 local types = {
     {path = ASSETS.textures.entity.zombie.knight, col = 1},

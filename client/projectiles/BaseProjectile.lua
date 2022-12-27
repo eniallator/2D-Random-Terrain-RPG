@@ -1,5 +1,5 @@
 local Sprite = require 'client.Sprite'
-local hitbox = require 'client.Hitbox'
+local hitbox = require 'common.types.Hitbox'
 
 return function(args)
     local baseProjectile = {}

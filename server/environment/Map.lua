@@ -1,9 +1,10 @@
 local config = require 'conf'
-local OrderedTable = require 'common.utils.OrderedTable'
+local OrderedTable = require 'common.types.OrderedTable'
 local posToId = require 'common.utils.posToId'
+local collide = require 'common.utils.collide'
 local Chunk = require 'server.environment.Chunk'
 local TerrainGenerator = require 'server.environment.TerrainGenerator'
--- local Zombie = require 'client.Zombie'
+local Zombie = require 'server.Zombie'
 
 return function(mapSeed)
     local map = {}
@@ -12,7 +13,10 @@ return function(mapSeed)
 
     map.chunks = {}
     map.mobs = {}
+    map.mobId = 1
     map.projectiles = {}
+
+    local sqrMobDespawnRadius = config.entity.mob.despawnRadius ^ 2
 
     local function getChunks(self, chunkRegion, chunksReceived, limit)
         local i, j
@@ -41,30 +45,53 @@ return function(mapSeed)
         return outputChunks
     end
 
-    local function updateMobs(self, box)
-        local cfg, i = config.entity.mob
+    local function prepareMobs(self, player, playerId, networkMobsTable, age)
+        local cfg = config.entity.mob
 
-        for i = #self.mobs, 1, -1 do
-            local absDiff = {
-                x = math.abs(self.mobs[i].hitbox.x - box.x),
-                y = math.abs(self.mobs[i].hitbox.y - box.y)
+        local overlappingMobs = self:getMobsOverlapping(player.pos.current.x, player.pos.current.y, sqrMobDespawnRadius)
+        if #overlappingMobs < cfg.capPerPlayer and math.random() < cfg.spawnChance then
+            local zombieType = math.ceil(math.random() * 5)
+            local spawnPos = {
+                x = player.pos.current.x - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius,
+                y = player.pos.current.y - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius
             }
-            if absDiff.x > cfg.despawnRadius or absDiff.y > cfg.despawnRadius or not self.mobs[i].alive then
-                table.remove(self.mobs, i)
+            self.mobs[self.mobId] = Zombie(zombieType, spawnPos.x, spawnPos.y, self.mobId, age)
+            overlappingMobs[self.mobId] = self.mobs[self.mobId]
+            self.mobId = self.mobId + 1
+        end
+
+        for id in networkMobsTable.subTablePairs() do
+            if overlappingMobs[id] == nil then
+                networkMobsTable[id] = nil
             end
         end
 
-        if #self.mobs < cfg.cap and math.random() < cfg.spawnChance then
-            local zombieType = math.ceil(math.random() * 5)
-            local spawnPos = {
-                x = box.x - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius,
-                y = box.y - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius
-            }
-            table.insert(self.mobs, Zombie(zombieType, spawnPos.x, spawnPos.y))
-        end
+        local id, mob
+        for id, mob in pairs(overlappingMobs) do
+            if not mob.alive then
+                self.mobs[id] = nil
+            end
 
-        for _, mob in ipairs(self.mobs) do
-            mob:update(self)
+            networkMobsTable[id] = mob.data
+
+            if mob.lastTicked ~= age then
+                mob.nearbyPlayers = {byId = {[playerId] = player}, {entity = player, id = playerId}}
+            else
+                mob.nearbyPlayers.byId[playerId] = player
+                mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = player, id = playerId}
+            end
+            mob.lastTicked = age
+        end
+    end
+
+    local function updateMobs(self, age)
+        local i, mob
+        for i, mob in pairs(self.mobs) do
+            if mob.lastTicked ~= age then
+                self.mobs[i] = nil
+            else
+                mob:update(age)
+            end
         end
     end
 
@@ -80,7 +107,7 @@ return function(mapSeed)
         end
     end
 
-    function map:update(connectionsLocalState, connectionsReceivedState)
+    function map:update(connectionsLocalState, connectionsReceivedState, age)
         if connectionsReceivedState then
             for id, connection in connectionsReceivedState.subTablePairs() do
                 local chunkRegion = {
@@ -104,22 +131,23 @@ return function(mapSeed)
                 end
                 connectionsLocalState[id].environment.chunks =
                     getChunks(self, chunkRegion, connection.state.environment.chunksReceived, config.maxChunksToSend)
+                prepareMobs(self, connection.state.player, id, connectionsLocalState[id].mobs, age)
             end
         end
+        updateMobs(self, age)
         -- updateProjectiles(self, box)
-        -- updateMobs(self, box)
     end
 
     function map:addProjectile(projectile)
         table.insert(self.projectiles, projectile)
     end
 
-    function map:getMobsOverlapping(hitbox)
+    function map:getMobsOverlapping(x, y, sqrRadius)
         local overlappingMobs = {}
 
-        for _, mob in pairs(self.mobs) do
-            if mob.hitbox:collide(hitbox) then
-                table.insert(overlappingMobs, mob)
+        for id, mob in pairs(self.mobs) do
+            if collide.getSqrDist(mob.data.pos.x, mob.data.pos.y, x, y) < sqrRadius then
+                overlappingMobs[id] = mob
             end
         end
 

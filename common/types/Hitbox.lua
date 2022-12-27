@@ -9,7 +9,7 @@ return function(x, y, diameter)
     end
 
     function hitbox:collide(other)
-        return self:getDist(other) < (self.diameter + other.diameter) / 2
+        return (self.x - other.x) ^ 2 + (self.y - other.y) ^ 2 < ((self.diameter + other.diameter) / 2) ^ 2
     end
 
     return hitbox

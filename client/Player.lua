@@ -7,8 +7,8 @@ return function(spriteData, nickname, class, isLocal)
         Entity(
         {
             speed = 8 / config.tps,
-            width = 3,
-            height = 4,
+            width = config.entity.player.width,
+            height = config.entity.player.height,
             nextFrameDist = 1.5,
             maxHealth = config.entity.player.health,
             label = nickname,

@@ -63,13 +63,15 @@ return {
     },
     entity = {
         player = {
-            health = 1000
+            health = 1000,
+            width = 3,
+            height = 4
         },
         item = {
             dim = 6
         },
         mob = {
-            cap = 30,
+            capPerPlayer = 20,
             spawnChance = 0.1,
             spawnRadius = 120,
             despawnRadius = 150
@@ -83,7 +85,7 @@ return {
             },
             idleTime = {min = 3, max = 7},
             walkRange = {min = 5, max = 20},
-            agroRange = {start = 15, stop = 20}
+            sqrAgroRange = {start = 225, stop = 400}
         }
     },
     communication = {

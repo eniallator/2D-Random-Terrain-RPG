@@ -1,5 +1,5 @@
 local config = require 'conf'
-local OrderedTable = require 'common.utils.OrderedTable'
+local OrderedTable = require 'common.types.OrderedTable'
 local BinaryBuilder = require 'common.types.BinaryBuilder'
 local posToId = require 'common.utils.posToId'
 local Chunk = require 'client.environment.Chunk'

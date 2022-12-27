@@ -1,7 +1,7 @@
 local BaseClass = require 'client.class.BaseClass'
 local config = require 'conf'
 local Targetter = require 'client.projectiles.Targetter'
-local Hitbox = require 'client.Hitbox'
+local Hitbox = require 'common.types.Hitbox'
 
 return function()
     local cleric = BaseClass()

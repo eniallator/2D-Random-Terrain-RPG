@@ -1,7 +1,7 @@
 local interpolate = require 'common.utils.interpolate'
 local LayeredSprite = require 'client.LayeredSprite'
 local Sprite = require 'client.Sprite'
-local Hitbox = require 'client.Hitbox'
+local Hitbox = require 'common.types.Hitbox'
 
 return function(args)
     local entity = {}

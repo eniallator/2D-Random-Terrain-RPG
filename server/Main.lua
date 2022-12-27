@@ -11,7 +11,8 @@ return function()
                 environment = {
                     playerChunkRadius = config.playerChunkRadius
                 },
-                players = {}
+                players = {},
+                mobs = {}
             }
         ),
         config.tps
@@ -48,7 +49,7 @@ return function()
             end
         end
 
-        self.map:update(connectionsLocalState, connectionsReceivedState)
+        self.map:update(connectionsLocalState, connectionsReceivedState, self.age)
     end
 
     return main

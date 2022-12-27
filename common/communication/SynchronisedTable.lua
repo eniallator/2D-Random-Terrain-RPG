@@ -87,7 +87,8 @@ local function SynchronisedMetaTable(class, initialAge)
         if tostring(key):sub(1, #metaPrefix) == metaPrefix then
             return mt[key:sub(#metaPrefix + 1)]
         end
-        return mt.__data[key] or mt.__subTables[key] or mt.__otherTypes[key]
+        return mt.__data[key] or mt.__subTables[key] ~= SUB_TABLE_DELETED and mt.__subTables[key] or
+            mt.__otherTypes[key]
     end
 
     function mt.__newindex(tbl, key, value)

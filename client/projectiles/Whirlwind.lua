@@ -1,5 +1,5 @@
 local config = require 'conf'
-local Hitbox = require 'client.Hitbox'
+local Hitbox = require 'common.types.Hitbox'
 local BaseProjectile = require 'client.projectiles.BaseProjectile'
 
 return function(fromPos, directionNorm, cfg)
