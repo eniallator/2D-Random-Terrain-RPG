@@ -10,11 +10,14 @@ return function(initialLocalState)
     networkApi.serverTickAge = -1
     networkApi.serverLastClientTickAge = -1
 
-    function networkApi:checkForUpdates()
+    function networkApi:checkForUpdates(age)
         if self.udp == nil then
             return
         end
         local data, msg = self.udp:receive()
+        if data then
+            self.lastReceived = age
+        end
         while data do
             local headers, payload = packet.deserialise(data)
             self.id, self.serverTickAge, self.serverLastClientTickAge =
@@ -38,11 +41,12 @@ return function(initialLocalState)
     end
 
     function networkApi:disconnect()
-        -- TODO: Send disconnect message
-        -- self.udp:send()
-        self.udp:setpeername('*')
-        self.udp:close()
-        self.udp = nil
+        if self.udp ~= nil then
+            -- TODO: Send disconnect message
+            -- self.udp:send()
+            self.udp:close()
+            self.udp = nil
+        end
     end
 
     function networkApi:flushUpdates(age, force)

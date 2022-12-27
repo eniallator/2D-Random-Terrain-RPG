@@ -31,9 +31,9 @@ return function(menuState)
     if menuState.multiplayer ~= nil then
         game.networkApi:connect(menuState.multiplayer.address, menuState.multiplayer.port)
     else
-        -- Want to save data before killing thread, so will wait until it's done
-        local serverThread = love.thread.newThread('server/Engine.lua')
-        serverThread:start()
+        game.serverThread = love.thread.newThread('server/Engine.lua')
+        game.serverThread:start()
+        game.serverChannel = love.thread.getChannel('SERVER')
 
         game.networkApi:connect(config.communication.address, config.communication.port)
     end
@@ -53,7 +53,7 @@ return function(menuState)
     end
 
     function game:update(menuState)
-        self.networkApi:checkForUpdates(self.age - 1)
+        self.networkApi:checkForUpdates(self.age)
 
         local now = os.clock()
         self.dtAccumulated = self.dtAccumulated + now - self.lastClockTime
@@ -65,7 +65,20 @@ return function(menuState)
             self.networkApi:setAge(self.age)
             self.dtAccumulated = self.dtAccumulated - self.tickLength
             ticked = true
-            self.gameLoop:update(self.networkApi:getLocalState(), self.networkApi:getReceivedState())
+            self.gameLoop:update(self.networkApi:getLocalState(), self.networkApi:getReceivedState(), menuState)
+            if
+                self.networkApi.lastReceived ~= nil and self.serverThread == nil and
+                    self.age > self.networkApi.lastReceived + config.communication.timeoutTicks
+             then
+                menuState.scene = 'mainMenu'
+            end
+            if menuState.scene ~= 'game' then
+                self.networkApi:disconnect()
+                if self.serverThread ~= nil then
+                    self.serverChannel:push('kill')
+                    self.serverThread:wait()
+                end
+            end
             MOUSE.updateValues()
             KEYS.updateRecentPressed()
         end

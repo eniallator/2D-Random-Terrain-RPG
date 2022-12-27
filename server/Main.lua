@@ -16,9 +16,19 @@ return function()
         ),
         config.tps
     )
+    main.channel = love.thread.getChannel('SERVER')
+    main.running = true
     main.map = Map(config.mapSeed)
 
     function main:updateTick(connectionsLocalState, connectionsReceivedState)
+        local message = self.channel:pop()
+        while message do
+            if message == 'kill' then
+                self.running = false
+                return
+            end
+            message = self.channel:pop()
+        end
         local connectedPlayers = {}
         if connectionsReceivedState ~= nil then
             for id in connectionsReceivedState.subTablePairs() do

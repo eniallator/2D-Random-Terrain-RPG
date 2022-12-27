@@ -4,6 +4,7 @@ local Grid = require 'client.gui.Grid'
 return function()
     local death = BaseGui()
     death.menu = Grid()
+    death.worldShader = SHADERS.blackAndWhite
 
     death.menu:addComponent(
         'button',

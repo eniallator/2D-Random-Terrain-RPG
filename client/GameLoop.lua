@@ -1,8 +1,8 @@
 local config = require 'conf'
 local BaseGui = require 'client.gui.BaseGui'
--- local Escape = require 'client.gui.overlays.Escape'
--- local Death = require 'client.gui.overlays.Death'
--- local PlayerInventory = require 'client.gui.overlays.PlayerInventory'
+local Escape = require 'client.gui.overlays.Escape'
+local Death = require 'client.gui.overlays.Death'
+local PlayerInventory = require 'client.gui.overlays.PlayerInventory'
 
 local Player = require 'client.Player'
 local Map = require 'client.environment.Map'
@@ -80,63 +80,44 @@ return function(menuState)
     end
 
     function game:resize(width, height)
-        -- if self.overlay ~= nil and self.overlay.resize then
-        --     self.overlay:resize(width, height)
-        -- end
-        --
-        -- if self.pauseOverlay ~= nil then
-        --     self.pauseOverlay:resize(width, height)
-        -- end
+        if self.overlay ~= nil and self.overlay.resize then
+            self.overlay:resize(width, height)
+        end
     end
 
-    function game:update(localNetworkState, receivedNetworkState)
+    function game:update(localNetworkState, receivedNetworkState, menuState)
         -- if not self.player.alive then
-        --     if not self.paused then
-        --         self.paused = true
-        --         self.pauseOverlay = Death()
-        --     end
-        -- elseif KEYS.recentPressed.escape then
-        --     if not self.paused then
-        --         self.pauseOverlay = Escape()
-        --     else
-        --         self.pauseOverlay = nil
-        --     end
-        --     self.paused = not self.paused
-        -- end
+        --     self.overlay = Death()
+        -- else
+        if KEYS.recentPressed.escape then
+            if self.overlay then
+                self.overlay = nil
+            else
+                self.overlay = Escape()
+            end
+        end
 
         if not self.paused then
             updateGame(self, localNetworkState, receivedNetworkState)
         end
 
-        -- if self.overlay ~= nil then
-        --     self.overlay:update()
-        -- end
-
-        -- if self.pauseOverlay ~= nil then
-        --     return self.pauseOverlay:update(
-        --         {spriteData = playerData.spriteData, playerNickname = self.player.nickname, class = playerData.class}
-        --     )
-        -- end
+        if self.overlay ~= nil then
+            self.overlay:update(menuState)
+        end
     end
 
     function game:draw(localNetworkState, receivedNetworkState, dt)
-        -- if self.player.alive then
-        --     love.graphics.setShader()
-        -- else
-        --     love.graphics.setShader(SHADERS.blackAndWhite)
-        -- end
+        if self.overlay ~= nil and self.overlay.worldShader then
+            love.graphics.setShader(self.overlay.worldShader)
+        end
 
         local cameraBox = self.camera:getViewBox()
 
         self.map:draw(localNetworkState, receivedNetworkState, dt, cameraBox)
 
-        -- if self.overlay ~= nil then
-        --     self.overlay:draw()
-        -- end
-
-        -- if self.pauseOverlay ~= nil then
-        --     self.pauseOverlay:draw()
-        -- end
+        if self.overlay ~= nil then
+            self.overlay:draw()
+        end
     end
 
     return game

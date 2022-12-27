@@ -9,10 +9,12 @@ server = Server()
 
 local lastTicked = os.clock()
 
-while true do
+while server.running do
     local currTime = os.clock()
     local dt = currTime - lastTicked
     lastTicked = currTime
 
     server:update(dt)
 end
+
+print('Server killed')
