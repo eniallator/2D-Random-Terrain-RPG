@@ -55,32 +55,26 @@ return function(mapSeed)
                 x = player.pos.current.x - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius,
                 y = player.pos.current.y - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius
             }
-            self.mobs[self.mobId] = Zombie(zombieType, spawnPos.x, spawnPos.y, self.mobId, age)
+            self.mobs[self.mobId] = Zombie(zombieType, spawnPos.x, spawnPos.y, age)
             overlappingMobs[self.mobId] = self.mobs[self.mobId]
             self.mobId = self.mobId + 1
-        end
-
-        for id in networkMobsTable.subTablePairs() do
-            if overlappingMobs[id] == nil then
-                networkMobsTable[id] = nil
-            end
         end
 
         local id, mob
         for id, mob in pairs(overlappingMobs) do
             if not mob.alive then
                 self.mobs[id] = nil
-            end
-
-            networkMobsTable[id] = mob.data
-
-            if mob.lastTicked ~= age then
-                mob.nearbyPlayers = {byId = {[playerId] = player}, {entity = player, id = playerId}}
             else
-                mob.nearbyPlayers.byId[playerId] = player
-                mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = player, id = playerId}
+                networkMobsTable[id] = mob.data
+
+                if mob.lastTicked ~= age then
+                    mob.nearbyPlayers = {byId = {[playerId] = player}, {entity = player, id = playerId}}
+                else
+                    mob.nearbyPlayers.byId[playerId] = player
+                    mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = player, id = playerId}
+                end
+                mob.lastTicked = age
             end
-            mob.lastTicked = age
         end
     end
 
@@ -109,7 +103,7 @@ return function(mapSeed)
 
     function map:update(connectionsLocalState, connectionsReceivedState, age)
         if connectionsReceivedState then
-            for id, connection in connectionsReceivedState.subTablePairs() do
+            for id, connection in connectionsReceivedState:subTablePairs() do
                 local chunkRegion = {
                     startX = math.floor(
                         connection.state.player.pos.current.x / config.chunkSize - config.playerChunkRadius
@@ -126,11 +120,10 @@ return function(mapSeed)
                 }
 
                 connectionsLocalState[id].environment.lastSent = connection.lastServerTickAge
-                if connectionsLocalState[id].environment.chunks ~= nil then
-                    connectionsLocalState[id].environment.chunks:clear()
-                end
+                connectionsLocalState[id].environment.chunks:clear()
                 connectionsLocalState[id].environment.chunks =
                     getChunks(self, chunkRegion, connection.state.environment.chunksReceived, config.maxChunksToSend)
+                connectionsLocalState[id].mobs:clear()
                 prepareMobs(self, connection.state.player, id, connectionsLocalState[id].mobs, age)
             end
         end
@@ -146,7 +139,7 @@ return function(mapSeed)
         local overlappingMobs = {}
 
         for id, mob in pairs(self.mobs) do
-            if collide.getSqrDist(mob.data.pos.x, mob.data.pos.y, x, y) < sqrRadius then
+            if collide.getSqrDist(mob.data.pos.current.x, mob.data.pos.current.y, x, y) < sqrRadius then
                 overlappingMobs[id] = mob
             end
         end

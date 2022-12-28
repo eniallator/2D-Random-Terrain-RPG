@@ -9,7 +9,8 @@ return function()
         NetworkApi(
             {
                 environment = {
-                    playerChunkRadius = config.playerChunkRadius
+                    playerChunkRadius = config.playerChunkRadius,
+                    chunks = {}
                 },
                 players = {},
                 mobs = {}
@@ -32,17 +33,17 @@ return function()
         end
         local connectedPlayers = {}
         if connectionsReceivedState ~= nil then
-            for id in connectionsReceivedState.subTablePairs() do
+            for id in connectionsReceivedState:subTablePairs() do
                 connectedPlayers[id] = true
             end
         end
-        for id, state in connectionsLocalState.subTablePairs() do
-            for otherId, connection in connectionsReceivedState.subTablePairs() do
+        for id, state in connectionsLocalState:subTablePairs() do
+            for otherId, connection in connectionsReceivedState:subTablePairs() do
                 if id ~= otherId then
                     state.players[otherId] = connection.state.player
                 end
             end
-            for otherId in state.players.subTablePairs() do
+            for otherId in state.players:subTablePairs() do
                 if connectedPlayers[otherId] == nil then
                     state.players[otherId] = nil
                 end

@@ -67,6 +67,11 @@ return function(args)
     local function updatePos(self, networkState)
         local dest = not self.isLocal and networkState.pos.dest or self.dest
 
+        if not self.isLocal then
+            self.hitbox.x = networkState.pos.current.x
+            self.hitbox.y = networkState.pos.current.y
+        end
+
         if not dest or dest.x == self.hitbox.x and dest.y == self.hitbox.y then
             self.oldPos = nil
             return

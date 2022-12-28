@@ -53,6 +53,7 @@ local function deserialiseValue(str, i)
 end
 
 local SUB_TABLE_DELETED = '$DELETED'
+local CLEAR_KEY = '__CLEARED'
 local AGE_KEY = '__AGE'
 local function SynchronisedMetaTable(class, initialAge)
     local mt = {
@@ -76,9 +77,19 @@ local function SynchronisedMetaTable(class, initialAge)
         return mt.__data[AGE_KEY]
     end
 
+    function mt.forceUpdate(deep)
+        mt.__data[AGE_KEY] = mt.__newAge
+        if deep then
+            for _, subTable in pairs(mt.__subTables or {}) do
+                if subTable ~= SUB_TABLE_DELETED then
+                    subTable:forceUpdate(deep)
+                end
+            end
+        end
+    end
+
     function mt.clear()
-        mt.__data = {[AGE_KEY] = mt.__newAge}
-        mt.__otherTypes = {}
+        mt.__data = {[AGE_KEY] = mt.__newAge, [CLEAR_KEY] = mt.__newAge}
         mt.__subTables = {}
     end
 
@@ -161,6 +172,7 @@ local function SynchronisedMetaTable(class, initialAge)
 
     function mt.deserialiseUpdates(str, age, i)
         i = i or 1
+        local oldAge = mt.__data[AGE_KEY]
         if str:sub(i, i) == '{' then
             mt.__data = {}
             i = i + 1
@@ -181,6 +193,9 @@ local function SynchronisedMetaTable(class, initialAge)
             if age then
                 mt.__data[AGE_KEY] = age
             end
+        end
+        if mt.__data[CLEAR_KEY] ~= nil and mt.__data[CLEAR_KEY] > oldAge then
+            mt.__subTables = {}
         end
         if str:sub(i, i) == '[' then
             i = i + 1
@@ -248,6 +263,10 @@ local function SynchronisedTable(initialData, initialAge)
     end
     function synchronisedTable:getLastAge()
         return mt.getLastAge()
+    end
+
+    function synchronisedTable:forceUpdate(deep)
+        mt.forceUpdate(deep)
     end
 
     function synchronisedTable:dataPairs()

@@ -12,6 +12,7 @@ local types = {
 return function(type, x, y)
     local zombieArgs = {
         speed = 5 / config.tps,
+        isLocal = false,
         x = x,
         y = y,
         width = 3,
@@ -20,9 +21,6 @@ return function(type, x, y)
         maxHealth = config.entity.player.health
     }
     local zombie = Entity(zombieArgs)
-    local super = Entity(zombieArgs)
-
-    zombie.behaviour = EnemyBehaviour(zombie, config.entity.zombie)
 
     local spritesheet = types[type].path
     local colOffset = (types[type].col - 1) * 3 * spritesheet.width
@@ -160,11 +158,6 @@ return function(type, x, y)
             }
         }
     )
-
-    function zombie:update(map)
-        self.behaviour:autoUpdate(map)
-        super.update(self)
-    end
 
     return zombie
 end

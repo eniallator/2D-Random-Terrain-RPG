@@ -4,7 +4,7 @@ local BinaryBuilder = require 'common.types.BinaryBuilder'
 local posToId = require 'common.utils.posToId'
 local Chunk = require 'client.environment.Chunk'
 local Player = require 'client.Player'
--- local Zombie = require 'client.Zombie'
+local Zombie = require 'client.Zombie'
 
 return function(player, mapSeed)
     local map = {}
@@ -15,30 +15,25 @@ return function(player, mapSeed)
     map.player = player
     map.connectedPlayers = {}
 
-    local function updateMobs(self, box)
-        local cfg, i = config.entity.mob
-
-        for i = #self.mobs, 1, -1 do
-            local absDiff = {
-                x = math.abs(self.mobs[i].hitbox.x - box.x),
-                y = math.abs(self.mobs[i].hitbox.y - box.y)
-            }
-            if absDiff.x > cfg.despawnRadius or absDiff.y > cfg.despawnRadius or not self.mobs[i].alive then
-                table.remove(self.mobs, i)
+    local function updateMobs(self, receivedMobs)
+        for id, mob in pairs(self.mobs) do
+            if receivedMobs[id] == nil then
+                self.mobs[id] = nil
             end
         end
 
-        if #self.mobs < cfg.cap and math.random() < cfg.spawnChance then
-            local zombieType = math.ceil(math.random() * 5)
-            local spawnPos = {
-                x = box.x - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius,
-                y = box.y - cfg.spawnRadius / 2 + math.random() * cfg.spawnRadius
-            }
-            table.insert(self.mobs, Zombie(zombieType, spawnPos.x, spawnPos.y))
-        end
+        for id, mob in receivedMobs:subTablePairs() do
+            if self.mobs[id] == nil then
+                if mob.id == nil then
+                    print(serialise(mob:toTable()))
+                end
+                local entityType, variant = mob.id:match('^([^.]+)%.(%d+)')
+                if entityType == 'zombie' then
+                    self.mobs[id] = Zombie(tonumber(variant), mob.pos.x, mob.pos.y)
+                end
+            end
 
-        for _, mob in ipairs(self.mobs) do
-            mob:update(self)
+            self.mobs[id]:update(mob)
         end
     end
 
@@ -90,7 +85,7 @@ return function(player, mapSeed)
         if receivedNetworkState then
             -- Updating local chunks
             if receivedNetworkState.environment.chunks then
-                for id, chunkData in receivedNetworkState.environment.chunks.subTablePairs() do
+                for id, chunkData in receivedNetworkState.environment.chunks:subTablePairs() do
                     self.chunks[id] = Chunk(chunkData)
                 end
                 self:cleanupOldChunks(receivedNetworkState.environment.playerChunkRadius)
@@ -102,7 +97,7 @@ return function(player, mapSeed)
             end
 
             -- Updating players
-            for id, player in receivedNetworkState.players.subTablePairs() do
+            for id, player in receivedNetworkState.players:subTablePairs() do
                 if self.connectedPlayers[id] == nil then
                     self.connectedPlayers[id] = Player(player.spriteData, player.nickname)
                 end
@@ -113,9 +108,10 @@ return function(player, mapSeed)
                     self.connectedPlayers[id] = nil
                 end
             end
-        end
+
+            updateMobs(self, receivedNetworkState.mobs)
         -- updateProjectiles(self, box)
-        -- updateMobs(self, box)
+        end
     end
 
     function map:addProjectile(projectile)
@@ -177,11 +173,11 @@ return function(player, mapSeed)
             sortedDrawables:add(player.drawPos.y, player)
         end
 
-        -- for _, mob in ipairs(self.mobs) do
-        --     mob:calcDraw(dt)
-        --     mob:drawShadow(box)
-        --     sortedDrawables:add(mob.drawPos.y, mob)
-        -- end
+        for id, mob in pairs(self.mobs) do
+            mob:calcDraw(dt)
+            mob:drawShadow(box)
+            sortedDrawables:add(mob.drawPos.y, mob)
+        end
 
         -- for _, projectile in ipairs(self.projectiles) do
         --     projectile:calcDraw(dt)

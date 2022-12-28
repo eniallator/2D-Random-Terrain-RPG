@@ -2,9 +2,9 @@ local config = require 'conf'
 local Entity = require 'server.Entity'
 local EnemyBehaviour = require 'server.EnemyBehaviour'
 
-return function(variant, x, y, id, age)
+return function(variant, x, y, age)
     local zombieArgs = {
-        id = id .. '.zombie.' .. variant,
+        id = 'zombie.' .. variant,
         speed = 5 / config.tps,
         x = x,
         y = y,
@@ -13,14 +13,15 @@ return function(variant, x, y, id, age)
         maxHealth = config.entity.player.health
     }
     local zombie = Entity(zombieArgs, age)
-    local super = Entity(zombieArgs)
 
     zombie.nearbyPlayers = {}
     zombie.behaviour = EnemyBehaviour(config.entity.zombie)
 
+    local oldUpdate = zombie.update
+
     function zombie:update(age)
         self.behaviour:autoUpdate(self, self.nearbyPlayers)
-        super.update(self, age)
+        oldUpdate(self, age)
     end
 
     return zombie

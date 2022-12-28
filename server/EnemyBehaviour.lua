@@ -15,13 +15,13 @@ return function(cfg)
     function enemyBehaviour:attack(entity)
         local sqrDistBetween =
             collide.getSqrDist(
-            entity.data.pos.x,
-            entity.data.pos.y,
+            entity.data.pos.current.x,
+            entity.data.pos.current.y,
             self.target.entity.pos.current.x,
             self.target.entity.pos.current.y
         )
-        if sqrDistBetween < math.max(cfg.attack.range ^ 2, (config.entity.player.width * 0.4 + entity.data.radius) ^ 2) then
-            entity.data.dest = nil
+        if sqrDistBetween < math.max(cfg.attack.range ^ 2, (config.entity.player.width * 0.4 + entity.radius) ^ 2) then
+            entity.data.pos.dest = nil
             if self.attackCooldown == nil then
                 -- self.target:damage(cfg.attack.damage)
                 self.attackCooldown = os.clock() + cfg.attack.cooldown
@@ -32,7 +32,7 @@ return function(cfg)
     end
 
     function enemyBehaviour:wander(entity)
-        if entity.data.dest == nil then
+        if entity.data.pos.dest == nil then
             if self.moveTime == nil then
                 self.moveTime =
                     os.clock() + self.cfg.idleTime.min + math.random() * (self.cfg.idleTime.max - self.cfg.idleTime.min)
@@ -44,9 +44,9 @@ return function(cfg)
                     y = math.random() * range - range / 2
                 }
                 local dest = {
-                    x = entity.data.pos.x + ranOutput.x +
+                    x = entity.data.pos.current.x + ranOutput.x +
                         (ranOutput.x >= 0 and self.cfg.walkRange.min or -self.cfg.walkRange.min),
-                    y = entity.data.pos.y + ranOutput.y +
+                    y = entity.data.pos.current.y + ranOutput.y +
                         (ranOutput.y >= 0 and self.cfg.walkRange.min or -self.cfg.walkRange.min)
                 }
                 entity:setDest(dest.x, dest.y)
@@ -62,8 +62,8 @@ return function(cfg)
             collide.getSqrDist(
             target.entity.pos.current.x,
             target.entity.pos.current.y,
-            entity.data.pos.x,
-            entity.data.pos.y
+            entity.data.pos.current.x,
+            entity.data.pos.current.y
         )
 
         if self.attackCooldown ~= nil and os.clock() >= self.attackCooldown then

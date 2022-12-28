@@ -73,9 +73,11 @@ return function(menuState)
                 menuState.scene = 'mainMenu'
             end
 
-            local serverError = self.serverThread:getError()
-            if serverError then
-                error(serverError)
+            if self.serverThread ~= nil then
+                local serverError = self.serverThread:getError()
+                if serverError then
+                    error(serverError)
+                end
             end
             if menuState.scene ~= 'game' then
                 self.networkApi:disconnect()
