@@ -18,16 +18,15 @@ return function(mapSeed)
 
     local sqrMobDespawnRadius = config.entity.mob.despawnRadius ^ 2
 
-    local function getChunks(self, chunkRegion, chunksReceived, limit)
+    local function getChunks(self, chunkRegion, outputChunks, chunksReceived, limit)
         local i, j
         local chunksSet = 0
-        local outputChunks = {}
         local regionWidth = chunkRegion.endX - chunkRegion.startX + 1
         local s = ''
         for i = 0, chunkRegion.endY - chunkRegion.startY do
             for j = 0, chunkRegion.endX - chunkRegion.startX do
                 if chunksSet >= limit then
-                    return outputChunks
+                    return
                 end
                 local bitIndex = i * regionWidth + j + 1
                 if chunksReceived == nil or chunksReceived.length + 1 == bitIndex or chunksReceived:bitAt(bitIndex) == 0 then
@@ -42,7 +41,6 @@ return function(mapSeed)
                 end
             end
         end
-        return outputChunks
     end
 
     local function prepareMobs(self, player, playerId, networkMobsTable, age)
@@ -121,8 +119,13 @@ return function(mapSeed)
 
                 connectionsLocalState[id].environment.lastSent = connection.lastServerTickAge
                 connectionsLocalState[id].environment.chunks:clear()
-                connectionsLocalState[id].environment.chunks =
-                    getChunks(self, chunkRegion, connection.state.environment.chunksReceived, config.maxChunksToSend)
+                getChunks(
+                    self,
+                    chunkRegion,
+                    connectionsLocalState[id].environment.chunks,
+                    connection.state.environment.chunksReceived,
+                    config.maxChunksToSend
+                )
                 connectionsLocalState[id].mobs:clear()
                 prepareMobs(self, connection.state.player, id, connectionsLocalState[id].mobs, age)
             end

@@ -1,3 +1,4 @@
+local timeAnalysis = require 'common.development.timeAnalysis'
 local config = require 'conf'
 local BaseGui = require 'client.gui.BaseGui'
 local Escape = require 'client.gui.overlays.Escape'
@@ -16,9 +17,7 @@ return function(menuState)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
-    game.pauseOverlay = nil
     game.overlay = nil
-    game.paused = false
 
     local function updateGame(self, localNetworkState, receivedNetworkState)
         if KEYS.recentPressed.t then
@@ -86,10 +85,9 @@ return function(menuState)
     end
 
     function game:update(localNetworkState, receivedNetworkState, menuState)
-        -- if not self.player.alive then
-        --     self.overlay = Death()
-        -- else
-        if KEYS.recentPressed.escape then
+        if not self.player.alive then
+            self.overlay = Death()
+        elseif KEYS.recentPressed.escape then
             if self.overlay then
                 self.overlay = nil
             else
@@ -97,9 +95,7 @@ return function(menuState)
             end
         end
 
-        if not self.paused then
-            updateGame(self, localNetworkState, receivedNetworkState)
-        end
+        updateGame(self, localNetworkState, receivedNetworkState)
 
         if self.overlay ~= nil then
             self.overlay:update(menuState)

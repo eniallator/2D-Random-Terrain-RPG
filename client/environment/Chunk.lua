@@ -63,7 +63,7 @@ return function(chunkData)
     local chunk = chunkData:toTable()
     chunk.groundTiles = deserialiseGroundTiles(chunk.groundTiles)
 
-    function chunk:draw(x, y, width, height)
+    function chunk:draw(spriteBatch, x, y, width, height)
         local tileDim = {
             width = width / config.chunkSize,
             height = height / config.chunkSize
@@ -72,8 +72,7 @@ return function(chunkData)
         for i = 1, config.chunkSize do
             for j = 1, config.chunkSize do
                 local biomeName = config.terrain.biomeMap[self.groundTiles[i][j]].name
-                love.graphics.draw(
-                    ASSETS.textures.terrain.spritesheet.img,
+                spriteBatch:add(
                     biomeQuadLookUp[biomeName],
                     x + (j - 1) * tileDim.width,
                     y + (i - 1) * tileDim.height,

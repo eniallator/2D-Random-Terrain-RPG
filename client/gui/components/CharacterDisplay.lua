@@ -24,14 +24,9 @@ return function(box, spriteData)
         local imgRatio = imgRef.width / imgRef.height
         local boxRatio = self.box.width / self.box.height
         local padding = {
-            x = 0,
-            y = 0
+            x = imgRatio < boxRatio and self.box.width - self.box.height / imgRef.height * imgRef.width or 0,
+            y = imgRatio > boxRatio and self.box.height - self.box.width / imgRef.width * imgRef.height or 0
         }
-        if imgRatio > boxRatio then
-            padding.y = self.box.height - self.box.width / imgRef.width * imgRef.height
-        elseif imgRatio < boxRatio then
-            padding.x = self.box.width - self.box.height / imgRef.height * imgRef.width
-        end
         for _, data in ipairs(self.imgs) do
             love.graphics.setColor(data.tint.r, data.tint.g, data.tint.b, 1)
             love.graphics.draw(

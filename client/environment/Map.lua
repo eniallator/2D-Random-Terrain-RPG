@@ -142,13 +142,14 @@ return function(player, mapSeed)
             endY = math.ceil((box.y + box.height / 2) / config.chunkSize)
         }
 
-        local i, j
+        local spriteBatch, i, j = love.graphics.newSpriteBatch(ASSETS.textures.terrain.spritesheet.img)
         for i = chunkRegion.startY, chunkRegion.endY do
             for j = chunkRegion.startX, chunkRegion.endX do
                 local chunkId = posToId.forward(j, i)
 
                 if self.chunks[chunkId] ~= nil then
                     self.chunks[chunkId]:draw(
+                        spriteBatch,
                         ((j * config.chunkSize) - box.x - box.width / 2) / box.width * love.graphics.getWidth() +
                             love.graphics.getWidth(),
                         ((i * config.chunkSize) - box.y - box.height / 2) / box.height * love.graphics.getHeight() +
@@ -159,6 +160,7 @@ return function(player, mapSeed)
                 end
             end
         end
+        love.graphics.draw(spriteBatch)
     end
 
     local function drawDrawables(self, dt, box)
