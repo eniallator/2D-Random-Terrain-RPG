@@ -33,24 +33,6 @@ return function()
             end
             message = self.channel:pop()
         end
-        local connectedPlayers = {}
-        if connectionsReceivedState ~= nil then
-            for id in connectionsReceivedState:subTablePairs() do
-                connectedPlayers[id] = true
-            end
-        end
-        for id, state in connectionsLocalState:subTablePairs() do
-            for otherId, connection in connectionsReceivedState:subTablePairs() do
-                if id ~= otherId then
-                    state.players[otherId] = connection.state.player
-                end
-            end
-            for otherId in state.players:subTablePairs() do
-                if connectedPlayers[otherId] == nil then
-                    state.players[otherId] = nil
-                end
-            end
-        end
 
         self.map:update(connectionsLocalState, connectionsReceivedState, self.age)
     end

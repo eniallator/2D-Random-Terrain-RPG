@@ -93,15 +93,28 @@ return function(mapSeed)
     end
 
     local function updatePlayers(self, age, connections)
-        local i, player
-        for i, player in pairs(self.players) do
-            if connections[i] == nil then
-                self.players[i] = nil
-            elseif self.players.lastTicked ~= age then
-                -- Simulate player if they haven't sent a packet
-                self.players[i]:update(age)
+        local id, player
+        for id, player in pairs(self.players) do
+            if connections[id] == nil then
+                self.players[id] = nil
+            else
+                if self.players.lastTicked ~= age then
+                    -- Simulate player if they haven't sent a packet
+                    self.players[id]:update(age)
+                end
+                connections[id].player = self.players[id].data
             end
-            connections[i].player = self.players[i].data
+        end
+        local otherId, otherPlayer
+        for id, player in pairs(self.players) do
+            for otherId, otherplayer in connections[id].players:subTablePairs() do
+                if self.players[otherId] == nil then
+                    connections[id].players[otherId] = nil
+                end
+            end
+            for otherId, otherPlayer in pairs(self.players) do
+                connections[id].players[otherId] = otherPlayer.data
+            end
         end
     end
 
@@ -121,7 +134,7 @@ return function(mapSeed)
         if connectionsReceivedState then
             for id, connection in connectionsReceivedState:subTablePairs() do
                 if self.players[id] == nil then
-                    self.players[id] = Player()
+                    self.players[id] = Player(connection.state.player)
                 end
                 self.players[id].lastTicked = age
                 self.players[id]:setPosData(connection.state.player.pos)

@@ -84,17 +84,15 @@ return function(player, mapSeed)
     function map:update(localNetworkState, receivedNetworkState, box)
         if receivedNetworkState then
             -- Updating local chunks
-            if receivedNetworkState.environment.chunks then
-                for id, chunkData in receivedNetworkState.environment.chunks:subTablePairs() do
-                    self.chunks[id] = Chunk(chunkData)
-                end
-                self:cleanupOldChunks(receivedNetworkState.environment.playerChunkRadius)
-                localNetworkState.environment.chunksReceived =
-                    self:getRemainingIds(
-                    localNetworkState.player.pos.current,
-                    receivedNetworkState.environment.playerChunkRadius
-                )
+            for id, chunkData in receivedNetworkState.environment.chunks:subTablePairs() do
+                self.chunks[id] = Chunk(chunkData)
             end
+            self:cleanupOldChunks(receivedNetworkState.environment.playerChunkRadius)
+            localNetworkState.environment.chunksReceived =
+                self:getRemainingIds(
+                localNetworkState.player.pos.current,
+                receivedNetworkState.environment.playerChunkRadius
+            )
 
             -- Updating players
             for id, player in receivedNetworkState.players:subTablePairs() do

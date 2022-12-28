@@ -24,6 +24,14 @@ return function(args, age)
         },
         age
     )
+    if args.initialData then
+        for key, val in args.initialData:dataPairs() do
+            entity.data[key] = val
+        end
+        for key, val in args.initialData:subTablePairs() do
+            entity.data[key] = val
+        end
+    end
 
     function entity:setDest(x, y)
         self.data.pos.dest = {x = x, y = y}
