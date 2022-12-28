@@ -67,10 +67,10 @@ return function(args)
     local function updatePos(self, networkState)
         local dest = not self.isLocal and networkState.pos.dest or self.dest
 
-        if not self.isLocal then
-            self.hitbox.x = networkState.pos.current.x
-            self.hitbox.y = networkState.pos.current.y
-        end
+        self.oldPos = {
+            x = self.hitbox.x,
+            y = self.hitbox.y
+        }
 
         if not dest or dest.x == self.hitbox.x and dest.y == self.hitbox.y then
             self.oldPos = nil
@@ -106,10 +106,6 @@ return function(args)
             end
         end
 
-        self.oldPos = {
-            x = self.hitbox.x,
-            y = self.hitbox.y
-        }
         self.hitbox.x = nextPos.x
         self.hitbox.y = nextPos.y
     end
@@ -132,12 +128,12 @@ return function(args)
     end
 
     function entity:calcDraw(dt)
-        self.drawPos.x = self.hitbox.x
-        self.drawPos.y = self.hitbox.y
-
-        if self.oldPos ~= nil then
-            self.drawPos.x = interpolate.linear(dt, self.hitbox.x, self.oldPos.x)
-            self.drawPos.y = interpolate.linear(dt, self.hitbox.y, self.oldPos.y)
+        if self.oldPos == nil then
+            self.drawPos.x = self.hitbox.x
+            self.drawPos.y = self.hitbox.y
+        else
+            self.drawPos.x = interpolate.linear(dt, self.oldPos.x, self.hitbox.x)
+            self.drawPos.y = interpolate.linear(dt, self.oldPos.y, self.hitbox.y)
         end
     end
 

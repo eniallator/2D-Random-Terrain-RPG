@@ -112,12 +112,14 @@ return function(mapSeed)
         local otherId, otherPlayer
         for id, player in pairs(self.players) do
             for otherId, otherplayer in connections[id].players:subTablePairs() do
-                if self.players[otherId] == nil then
+                if id ~= otherId and self.players[otherId] == nil then
                     connections[id].players[otherId] = nil
                 end
             end
             for otherId, otherPlayer in pairs(self.players) do
-                connections[id].players[otherId] = otherPlayer.data
+                if id ~= otherId then
+                    connections[id].players[otherId] = otherPlayer.data
+                end
             end
         end
     end

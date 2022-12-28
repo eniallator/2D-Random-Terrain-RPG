@@ -29,7 +29,7 @@ return function(player, mapSeed)
                 end
                 local entityType, variant = mob.id:match('^([^.]+)%.(%d+)')
                 if entityType == 'zombie' then
-                    self.mobs[id] = Zombie(tonumber(variant), mob.pos.x, mob.pos.y)
+                    self.mobs[id] = Zombie(tonumber(variant), mob.pos.current.x, mob.pos.current.y)
                 end
             end
 
