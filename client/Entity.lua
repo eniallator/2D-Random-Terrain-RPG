@@ -1,7 +1,6 @@
 local interpolate = require 'common.utils.interpolate'
 local LayeredSprite = require 'client.LayeredSprite'
 local Sprite = require 'client.Sprite'
-local Hitbox = require 'common.types.Hitbox'
 
 return function(args)
     local entity = {}
@@ -19,8 +18,9 @@ return function(args)
         entity.sprite = Sprite(args.width, args.height)
     end
 
-    entity.hitbox = Hitbox(args.x or 0, args.y or 0, args.width * 0.8)
-    entity.drawPos = {x = entity.hitbox.x, y = entity.hitbox.y}
+    entity.radius = args.width * 0.4
+    entity.pos = {current = {x = args.x or 0, y = args.y or 0}, dest = nil}
+    entity.drawPos = {x = entity.pos.current.x, y = entity.pos.current.y}
     entity.speed = args.speed
     entity.autoAnimation = true
     entity.label = args.label
@@ -29,20 +29,21 @@ return function(args)
     entity.nextFrameDist = args.nextFrameDist
 
     function entity:setDest(x, y)
-        self.dest = {x = x, y = y}
+        self.pos.dest = {x = x, y = y}
     end
 
     local function updateSprite(self)
         if
-            self.isLocal and (not self.dest or self.dest.x == self.hitbox.x and self.dest.y == self.hitbox.y) or
+            self.isLocal and
+                (not self.pos.dest or self.pos.dest.x == self.pos.current.x and self.pos.dest.y == self.pos.current.y) or
                 not self.isLocal and
-                    (self.oldPos == nil or self.hitbox.x == self.oldPos.x and self.hitbox.y == self.oldPos.y)
+                    (self.oldPos == nil or self.pos.current.x == self.oldPos.x and self.pos.current.y == self.oldPos.y)
          then
             self.sprite:playAnimation()
         else
             local diff =
-                self.isLocal and {x = self.hitbox.x - self.dest.x, y = self.hitbox.y - self.dest.y} or
-                {x = self.oldPos.x - self.hitbox.x, y = self.oldPos.y - self.hitbox.y}
+                self.isLocal and {x = self.pos.current.x - self.pos.dest.x, y = self.pos.current.y - self.pos.dest.y} or
+                {x = self.oldPos.x - self.pos.current.x, y = self.oldPos.y - self.pos.current.y}
             local direction
 
             if math.abs(diff.x) > math.abs(diff.y) then
@@ -65,14 +66,14 @@ return function(args)
     end
 
     local function updatePos(self, networkState)
-        local dest = not self.isLocal and networkState.pos.dest or self.dest
+        local dest = not self.isLocal and networkState.pos.dest or self.pos.dest
 
         self.oldPos = {
-            x = self.hitbox.x,
-            y = self.hitbox.y
+            x = self.pos.current.x,
+            y = self.pos.current.y
         }
 
-        if not dest or dest.x == self.hitbox.x and dest.y == self.hitbox.y then
+        if not dest or dest.x == self.pos.current.x and dest.y == self.pos.current.y then
             self.oldPos = nil
             return
         end
@@ -86,8 +87,8 @@ return function(args)
             }
         else
             local posDiff = {
-                x = dest.x - self.hitbox.x,
-                y = dest.y - self.hitbox.y
+                x = dest.x - self.pos.current.x,
+                y = dest.y - self.pos.current.y
             }
             local sqrMagnitude = posDiff.x ^ 2 + posDiff.y ^ 2
 
@@ -100,14 +101,14 @@ return function(args)
                     y = posDiff.y / magnitude
                 }
                 nextPos = {
-                    x = self.hitbox.x + normalised.x * self.speed,
-                    y = self.hitbox.y + normalised.y * self.speed
+                    x = self.pos.current.x + normalised.x * self.speed,
+                    y = self.pos.current.y + normalised.y * self.speed
                 }
             end
         end
 
-        self.hitbox.x = nextPos.x
-        self.hitbox.y = nextPos.y
+        self.pos.current.x = nextPos.x
+        self.pos.current.y = nextPos.y
     end
 
     local function updateDetails(self, networkState)
@@ -131,11 +132,11 @@ return function(args)
 
     function entity:calcDraw(dt)
         if self.oldPos == nil or not self.alive then
-            self.drawPos.x = self.hitbox.x
-            self.drawPos.y = self.hitbox.y
+            self.drawPos.x = self.pos.current.x
+            self.drawPos.y = self.pos.current.y
         else
-            self.drawPos.x = interpolate.linear(dt, self.oldPos.x, self.hitbox.x)
-            self.drawPos.y = interpolate.linear(dt, self.oldPos.y, self.hitbox.y)
+            self.drawPos.x = interpolate.linear(dt, self.oldPos.x, self.pos.current.x)
+            self.drawPos.y = interpolate.linear(dt, self.oldPos.y, self.pos.current.y)
         end
     end
 
@@ -151,8 +152,8 @@ return function(args)
             'fill',
             frameBox.x + self.sprite.dim.width / 2 * scale.x,
             frameBox.y + self.sprite.dim.height * scale.y,
-            self.hitbox.diameter / 2 * scale.x,
-            self.hitbox.diameter / 2 * scale.y / 1.5
+            self.radius * scale.x,
+            self.radius * scale.y / 1.5
         )
         love.graphics.setColor(1, 1, 1, 1)
     end

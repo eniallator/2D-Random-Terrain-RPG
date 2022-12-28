@@ -9,11 +9,13 @@ return function(randomSeed)
     function terrainGenerator:generate(x, y)
         -- love.math.setRandomSeed(self.randomSeed)
 
-        temperature = (simplex.Noise2D(x / config.terrain.biomeScale, y / config.terrain.biomeScale) + 1) / 2
+        temperature =
+            (simplex.Noise3D(x / config.terrain.biomeScale, y / config.terrain.biomeScale, self.randomSeed) + 1) / 2
         humidity =
-            (simplex.Noise2D(
+            (simplex.Noise3D(
             x / config.terrain.biomeScale + config.terrain.noiseOffset,
-            y / config.terrain.biomeScale + config.terrain.noiseOffset
+            y / config.terrain.biomeScale + config.terrain.noiseOffset,
+            self.randomSeed
         ) +
             1) /
             2

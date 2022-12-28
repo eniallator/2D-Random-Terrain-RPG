@@ -12,8 +12,8 @@ return function()
             if meta.lastAttackTime < newTime then
                 meta.lastAttackTime = newTime
                 local diff = {
-                    x = args.toPos.x - args.entity.hitbox.x,
-                    y = args.toPos.y - args.entity.hitbox.y
+                    x = args.toPos.x - args.entity.pos.current.x,
+                    y = args.toPos.y - args.entity.pos.current.y
                 }
                 local directionNorm = {
                     x = diff.x / (math.abs(diff.x) + math.abs(diff.y)),

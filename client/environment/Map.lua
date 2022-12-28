@@ -50,8 +50,8 @@ return function(player, mapSeed)
     end
 
     function map:cleanupOldChunks(chunkRadius)
-        local centerX = self.player.hitbox.x / config.chunkSize
-        local centerY = self.player.hitbox.y / config.chunkSize
+        local centerX = self.player.pos.current.x / config.chunkSize
+        local centerY = self.player.pos.current.y / config.chunkSize
 
         for chunkId, _ in pairs(self.chunks) do
             local x, y = posToId.backward(chunkId)
@@ -114,18 +114,6 @@ return function(player, mapSeed)
 
     function map:addProjectile(projectile)
         table.insert(self.projectiles, projectile)
-    end
-
-    function map:getMobsOverlapping(hitbox)
-        local overlappingMobs = {}
-
-        for _, mob in pairs(self.mobs) do
-            if mob.hitbox:collide(hitbox) then
-                table.insert(overlappingMobs, mob)
-            end
-        end
-
-        return overlappingMobs
     end
 
     local function drawChunks(self, box)

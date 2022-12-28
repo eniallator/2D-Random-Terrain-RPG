@@ -2,7 +2,6 @@ local interpolate = require 'common.utils.interpolate'
 local SynchronisedTable = require 'common.communication.SynchronisedTable'
 local LayeredSprite = require 'client.LayeredSprite'
 local Sprite = require 'client.Sprite'
-local Hitbox = require 'common.types.Hitbox'
 
 return function(args, age)
     local entity = {}

@@ -23,8 +23,8 @@ return function(menuState)
         if KEYS.recentPressed.t then
             if self.camera.following then
                 self.camera:setPos(
-                    self.camera.target.hitbox.x,
-                    self.camera.target.hitbox.y - self.camera.target.sprite.dim.height / 2
+                    self.camera.target.pos.current.x,
+                    self.camera.target.pos.current.y - self.camera.target.sprite.dim.height / 2
                 )
             else
                 self.camera:setTarget(self.player)
@@ -75,8 +75,8 @@ return function(menuState)
             end
 
             self.player:update(receivedNetworkState and receivedNetworkState.player)
-            localNetworkState.player.pos.current.x = self.player.hitbox.x
-            localNetworkState.player.pos.current.y = self.player.hitbox.y
+            localNetworkState.player.pos.current.x = self.player.pos.current.x
+            localNetworkState.player.pos.current.y = self.player.pos.current.y
         end
     end
 
