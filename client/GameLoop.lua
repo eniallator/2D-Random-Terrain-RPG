@@ -61,21 +61,23 @@ return function(menuState)
 
         self.map:update(localNetworkState, receivedNetworkState, cameraBox)
 
-        if MOUSE.right.clicked then
-            local dest = {
-                x = (cameraBox.x - cameraBox.width / 2) +
-                    (MOUSE.right.pos.x / love.graphics.getWidth()) * cameraBox.width,
-                y = (cameraBox.y - cameraBox.height / 2) +
-                    (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
-            }
-            self.player:setDest(dest.x, dest.y)
-            localNetworkState.player.pos.dest.x = dest.x
-            localNetworkState.player.pos.dest.y = dest.y
-        end
+        if self.player.alive then
+            if MOUSE.right.clicked then
+                local dest = {
+                    x = (cameraBox.x - cameraBox.width / 2) +
+                        (MOUSE.right.pos.x / love.graphics.getWidth()) * cameraBox.width,
+                    y = (cameraBox.y - cameraBox.height / 2) +
+                        (MOUSE.right.pos.y / love.graphics.getHeight()) * cameraBox.height
+                }
+                self.player:setDest(dest.x, dest.y)
+                localNetworkState.player.pos.dest.x = dest.x
+                localNetworkState.player.pos.dest.y = dest.y
+            end
 
-        self.player:update(receivedNetworkState and receivedNetworkState.player)
-        localNetworkState.player.pos.current.x = self.player.hitbox.x
-        localNetworkState.player.pos.current.y = self.player.hitbox.y
+            self.player:update(receivedNetworkState and receivedNetworkState.player)
+            localNetworkState.player.pos.current.x = self.player.hitbox.x
+            localNetworkState.player.pos.current.y = self.player.hitbox.y
+        end
     end
 
     function game:resize(width, height)

@@ -59,25 +59,26 @@ return function(cfg)
             self.target ~= nil and nearbyTargets.byId[self.target.id] ~= nil and self.target or
             nearbyTargets[math.ceil(math.random() * #nearbyTargets)]
         local sqrDistToTarget =
+            target ~= nil and
             collide.getSqrDist(
-            target.entity.data.pos.current.x,
-            target.entity.data.pos.current.y,
-            entity.data.pos.current.x,
-            entity.data.pos.current.y
-        )
+                target.entity.data.pos.current.x,
+                target.entity.data.pos.current.y,
+                entity.data.pos.current.x,
+                entity.data.pos.current.y
+            )
 
         if self.attackCooldown ~= nil and os.clock() >= self.attackCooldown then
             self.attackCooldown = nil
         end
 
         if self.status == 'wander' then
-            if sqrDistToTarget < self.cfg.sqrAgroRange.start then
+            if target ~= nil and sqrDistToTarget < self.cfg.sqrAgroRange.start then
                 self.status = 'attack'
                 self.target = target
                 self.moveTime = nil
             end
         elseif self.status == 'attack' then
-            if sqrDistToTarget > self.cfg.sqrAgroRange.stop then
+            if target == nil or sqrDistToTarget > self.cfg.sqrAgroRange.stop then
                 self.status = 'wander'
                 self.target = nil
             end

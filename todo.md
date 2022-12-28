@@ -8,8 +8,6 @@
   - Any player interactions like movement/animation changes
     - Progression through an animation can be client side, although may need to be synced depending on the animation
   - Have singleplayer/multiplayer options on the main menu, where you can connect to another server in multiplayer
-- Order of game elements:
-  - Map first. Get it being sent across, that way it's the foundation
 
 ## Procedural Textures
 

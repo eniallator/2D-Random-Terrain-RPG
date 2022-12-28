@@ -116,10 +116,6 @@ return function(player, mapSeed)
         table.insert(self.projectiles, projectile)
     end
 
-    function map:getPlayer()
-        return self.player
-    end
-
     function map:getMobsOverlapping(hitbox)
         local overlappingMobs = {}
 

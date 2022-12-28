@@ -67,14 +67,18 @@ return function(mapSeed)
             else
                 networkMobsTable[id] = mob.data
 
-                if mob.lastTicked ~= age then
-                    mob.nearbyPlayers = {
-                        byId = {[playerId] = self.players[playerId]},
-                        {entity = self.players[playerId], id = playerId}
-                    }
-                else
-                    mob.nearbyPlayers.byId[playerId] = self.players[playerId]
-                    mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = self.players[playerId], id = playerId}
+                if self.players[playerId].data.alive then
+                    if mob.lastTicked ~= age then
+                        mob.nearbyPlayers = {
+                            byId = {[playerId] = self.players[playerId]},
+                            {entity = self.players[playerId], id = playerId}
+                        }
+                    else
+                        mob.nearbyPlayers.byId[playerId] = self.players[playerId]
+                        mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = self.players[playerId], id = playerId}
+                    end
+                elseif mob.lastTicked ~= age then
+                    mob.nearbyPlayers = {byId = {}}
                 end
                 mob.lastTicked = age
             end
