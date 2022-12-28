@@ -96,6 +96,7 @@ return function(mapSeed)
         end
     end
 
+    local entityDetailKeys = {'health', 'maxHealth', 'alive'}
     local function updatePlayers(self, age, connections)
         local id, player
         for id, player in pairs(self.players) do
@@ -106,7 +107,7 @@ return function(mapSeed)
                     -- Simulate player if they haven't sent a packet
                     self.players[id]:update(age)
                 end
-                connections[id].player = self.players[id].data
+                connections[id].player = self.players[id]:getData(entityDetailKeys)
             end
         end
         local otherId, otherPlayer
@@ -118,7 +119,7 @@ return function(mapSeed)
             end
             for otherId, otherPlayer in pairs(self.players) do
                 if id ~= otherId then
-                    connections[id].players[otherId] = otherPlayer.data
+                    connections[id].players[otherId] = otherPlayer:getData()
                 end
             end
         end
@@ -186,7 +187,7 @@ return function(mapSeed)
         local overlappingMobs = {}
 
         for id, mob in pairs(self.mobs) do
-            if collide.getSqrDist(mob.data.pos.current.x, mob.data.pos.current.y, x, y) < sqrRadius then
+            if collide.getSqrDist(mob:getData().pos.current.x, mob:getData().pos.current.y, x, y) < sqrRadius then
                 overlappingMobs[id] = mob
             end
         end

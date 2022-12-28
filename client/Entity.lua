@@ -110,10 +110,12 @@ return function(args)
         self.hitbox.y = nextPos.y
     end
 
-    local detailKeys = {'health', 'maxHealth', 'alive'}
     local function updateDetails(self, networkState)
-        for _, key in pairs(detailKeys) do
-            self[key] = networkState[key]
+        for key, val in networkState:dataPairs() do
+            self[key] = val
+        end
+        for key, val in networkState:subTablePairs() do
+            self[key] = val
         end
     end
 
@@ -128,7 +130,7 @@ return function(args)
     end
 
     function entity:calcDraw(dt)
-        if self.oldPos == nil then
+        if self.oldPos == nil or not self.alive then
             self.drawPos.x = self.hitbox.x
             self.drawPos.y = self.hitbox.y
         else

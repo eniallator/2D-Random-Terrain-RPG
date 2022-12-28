@@ -33,6 +33,18 @@ return function(args, age)
         end
     end
 
+    function entity:getData(keys)
+        if keys then
+            local newData = SynchronisedTable(nil, self.data:getLastAge())
+            for _, key in ipairs(keys) do
+                newData[key] = self.data[key]
+            end
+            return newData
+        else
+            return self.data
+        end
+    end
+
     function entity:setDest(x, y)
         self.data.pos.dest = {x = x, y = y}
         self.data:forceUpdate(true)
