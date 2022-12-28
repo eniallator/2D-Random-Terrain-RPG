@@ -73,7 +73,7 @@ return function(menuState)
             localNetworkState.player.pos.dest.y = dest.y
         end
 
-        self.player:update()
+        self.player:update(receivedNetworkState and receivedNetworkState.player)
         localNetworkState.player.pos.current.x = self.player.hitbox.x
         localNetworkState.player.pos.current.y = self.player.hitbox.y
     end

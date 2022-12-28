@@ -1,3 +1,4 @@
+local timeAnalysis = require 'common.development.timeAnalysis'
 local config = require 'conf'
 local NetworkApi = require 'server.communication.NetworkApi'
 local GameLoopController = require 'common.GameLoopController'
@@ -13,7 +14,8 @@ return function()
                     chunks = {}
                 },
                 players = {},
-                mobs = {}
+                mobs = {},
+                player = {}
             }
         ),
         config.tps

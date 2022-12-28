@@ -4,12 +4,19 @@ return function(networkApi, tps)
 
     gameLoopController.networkApi = networkApi
     gameLoopController.tickLength = 1 / tps
+    gameLoopController.networkTickLength = gameLoopController.tickLength / tps
 
     gameLoopController.dtAccumulated = 0
+    gameLoopController.networkDtAccumulated = 0
     gameLoopController.age = 0
 
     function gameLoopController:update(dt)
-        self.networkApi:checkForUpdates(self.age - 1)
+        self.networkDtAccumulated = self.networkDtAccumulated + dt
+
+        while self.networkDtAccumulated > self.networkTickLength do
+            self.networkApi:checkForUpdates(self.age - 1)
+            self.networkDtAccumulated = self.networkDtAccumulated - self.networkTickLength
+        end
 
         self.dtAccumulated = self.dtAccumulated + dt
         local ticked = false

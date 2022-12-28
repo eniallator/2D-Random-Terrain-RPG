@@ -17,17 +17,17 @@ return function(cfg)
             collide.getSqrDist(
             entity.data.pos.current.x,
             entity.data.pos.current.y,
-            self.target.entity.pos.current.x,
-            self.target.entity.pos.current.y
+            self.target.entity.data.pos.current.x,
+            self.target.entity.data.pos.current.y
         )
         if sqrDistBetween < math.max(cfg.attack.range ^ 2, (config.entity.player.width * 0.4 + entity.radius) ^ 2) then
             entity.data.pos.dest = nil
             if self.attackCooldown == nil then
-                -- self.target:damage(cfg.attack.damage)
+                self.target.entity:damage(cfg.attack.damage)
                 self.attackCooldown = os.clock() + cfg.attack.cooldown
             end
         else
-            entity:setDest(self.target.entity.pos.current.x, self.target.entity.pos.current.y)
+            entity:setDest(self.target.entity.data.pos.current.x, self.target.entity.data.pos.current.y)
         end
     end
 
@@ -60,8 +60,8 @@ return function(cfg)
             nearbyTargets[math.ceil(math.random() * #nearbyTargets)]
         local sqrDistToTarget =
             collide.getSqrDist(
-            target.entity.pos.current.x,
-            target.entity.pos.current.y,
+            target.entity.data.pos.current.x,
+            target.entity.data.pos.current.y,
             entity.data.pos.current.x,
             entity.data.pos.current.y
         )

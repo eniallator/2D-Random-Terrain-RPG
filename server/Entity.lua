@@ -7,13 +7,8 @@ local Hitbox = require 'common.types.Hitbox'
 return function(args, age)
     local entity = {}
 
-    entity.maxHealth = args.maxHealth
-    entity.health = args.maxHealth
     entity.radius = args.width * 0.4
     entity.speed = args.speed
-    entity.label = args.label
-
-    entity.alive = true
 
     entity.data =
         SynchronisedTable(
@@ -22,7 +17,10 @@ return function(args, age)
             pos = {
                 current = {x = args.x, y = args.y},
                 dest = nil
-            }
+            },
+            alive = true,
+            maxHealth = args.maxHealth,
+            health = args.maxHealth
         },
         age
     )
@@ -35,6 +33,10 @@ return function(args, age)
     function entity:clearDest()
         self.data.pos.dest = nil
         self.data:forceUpdate(true)
+    end
+
+    function entity:setPosData(pos)
+        entity.data.pos = pos
     end
 
     function entity:update(age)
@@ -74,9 +76,9 @@ return function(args, age)
     end
 
     function entity:damage(amount)
-        self.health = math.max(self.health - amount, 0)
-        if self.health == 0 then
-            self.alive = false
+        if self.data.alive then
+            self.data.health = math.max(self.data.health - amount, 0)
+            self.data.alive = self.data.health > 0
         end
     end
 

@@ -5,12 +5,14 @@ local collide = require 'common.utils.collide'
 local Chunk = require 'server.environment.Chunk'
 local TerrainGenerator = require 'server.environment.TerrainGenerator'
 local Zombie = require 'server.Zombie'
+local Player = require 'server.Player'
 
 return function(mapSeed)
     local map = {}
 
     map.terrainGenerator = TerrainGenerator(mapSeed)
 
+    map.players = {}
     map.chunks = {}
     map.mobs = {}
     map.mobId = 1
@@ -60,16 +62,19 @@ return function(mapSeed)
 
         local id, mob
         for id, mob in pairs(overlappingMobs) do
-            if not mob.alive then
+            if not mob.data.alive then
                 self.mobs[id] = nil
             else
                 networkMobsTable[id] = mob.data
 
                 if mob.lastTicked ~= age then
-                    mob.nearbyPlayers = {byId = {[playerId] = player}, {entity = player, id = playerId}}
+                    mob.nearbyPlayers = {
+                        byId = {[playerId] = self.players[playerId]},
+                        {entity = self.players[playerId], id = playerId}
+                    }
                 else
-                    mob.nearbyPlayers.byId[playerId] = player
-                    mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = player, id = playerId}
+                    mob.nearbyPlayers.byId[playerId] = self.players[playerId]
+                    mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = self.players[playerId], id = playerId}
                 end
                 mob.lastTicked = age
             end
@@ -84,6 +89,19 @@ return function(mapSeed)
             else
                 mob:update(age)
             end
+        end
+    end
+
+    local function updatePlayers(self, age, connections)
+        local i, player
+        for i, player in pairs(self.players) do
+            if connections[i] == nil then
+                self.players[i] = nil
+            elseif self.players.lastTicked ~= age then
+                -- Simulate player if they haven't sent a packet
+                self.players[i]:update(age)
+            end
+            connections[i].player = self.players[i].data
         end
     end
 
@@ -102,6 +120,12 @@ return function(mapSeed)
     function map:update(connectionsLocalState, connectionsReceivedState, age)
         if connectionsReceivedState then
             for id, connection in connectionsReceivedState:subTablePairs() do
+                if self.players[id] == nil then
+                    self.players[id] = Player()
+                end
+                self.players[id].lastTicked = age
+                self.players[id]:setPosData(connection.state.player.pos)
+
                 local chunkRegion = {
                     startX = math.floor(
                         connection.state.player.pos.current.x / config.chunkSize - config.playerChunkRadius
@@ -130,6 +154,7 @@ return function(mapSeed)
                 prepareMobs(self, connection.state.player, id, connectionsLocalState[id].mobs, age)
             end
         end
+        updatePlayers(self, age, connectionsLocalState)
         updateMobs(self, age)
         -- updateProjectiles(self, box)
     end

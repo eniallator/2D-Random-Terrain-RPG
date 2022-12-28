@@ -114,17 +114,20 @@ return function(args)
         self.hitbox.y = nextPos.y
     end
 
+    local detailKeys = {'health', 'maxHealth', 'alive'}
+    local function updateDetails(self, networkState)
+        for _, key in pairs(detailKeys) do
+            self[key] = networkState[key]
+        end
+    end
+
     function entity:update(networkState)
         if self.autoAnimation then
             updateSprite(self)
         end
         updatePos(self, networkState)
-    end
-
-    function entity:damage(amount)
-        self.health = math.max(self.health - amount, 0)
-        if self.health == 0 then
-            self.alive = false
+        if networkState then
+            updateDetails(self, networkState)
         end
     end
 

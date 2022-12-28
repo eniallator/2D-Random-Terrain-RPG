@@ -98,8 +98,8 @@ local function SynchronisedMetaTable(class, initialAge)
         if tostring(key):sub(1, #metaPrefix) == metaPrefix then
             return mt[key:sub(#metaPrefix + 1)]
         end
-        return mt.__data[key] or mt.__subTables[key] ~= SUB_TABLE_DELETED and mt.__subTables[key] or
-            mt.__otherTypes[key]
+        return mt.__subTables[key] ~= SUB_TABLE_DELETED and mt.__subTables[key] or mt.__otherTypes[key] or
+            mt.__data[key]
     end
 
     function mt.__newindex(tbl, key, value)
@@ -206,7 +206,7 @@ local function SynchronisedMetaTable(class, initialAge)
                     i = i + #SUB_TABLE_DELETED
                     mt.__subTables[subTableKey] = nil
                 else
-                    if mt.__subTables[subTableKey] == nil then
+                    if mt.__subTables[subTableKey] == nil or mt.__subTables[subTableKey] == SUB_TABLE_DELETED then
                         mt.__subTables[subTableKey] = mt.__class()
                     end
                     i = mt.__subTables[subTableKey].meta_deserialiseUpdates(str, age, i)
