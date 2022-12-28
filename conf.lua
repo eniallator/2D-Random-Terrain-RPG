@@ -73,8 +73,8 @@ return {
         mob = {
             capPerPlayer = 20,
             spawnChance = 0.1,
-            spawnRadius = 120,
-            despawnRadius = 150
+            spawnRadius = 70,
+            despawnRadius = 85
         },
         zombie = {
             health = 1000,
