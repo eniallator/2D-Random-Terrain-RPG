@@ -27,7 +27,7 @@ local biomeQuadLookUp = {
         spritesheet.img:getWidth(),
         spritesheet.img:getHeight()
     ),
-    ['Snowy'] = love.graphics.newQuad(
+    ['Snow'] = love.graphics.newQuad(
         10 * spritesheet.width,
         1 * spritesheet.height,
         spritesheet.width,

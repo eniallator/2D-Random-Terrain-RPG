@@ -39,7 +39,7 @@ return {
             {
                 temperature = {min = 0, max = 0.5},
                 humidity = {min = 0, max = 0.5},
-                name = 'Snowy'
+                name = 'Snow'
             }
         }
     },

@@ -47,7 +47,7 @@ return function(state)
     end
 
     function creditsCategory:update(state)
-        self:updateMenu(state)
+        self:updateMenu(self.menu, state)
     end
 
     function creditsCategory:draw(dt)
