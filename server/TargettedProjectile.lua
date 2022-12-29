@@ -2,8 +2,8 @@ local config = require 'conf'
 local collide = require 'common.utils.collide'
 local Projectile = require 'server.Projectile'
 
-return function(args)
-    local targetter = Projectile(args)
+return function(id, age, args)
+    local targetter = Projectile(id, age, args)
 
     targetter.target = args.target
 

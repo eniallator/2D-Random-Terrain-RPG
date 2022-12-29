@@ -1,4 +1,5 @@
 local Sprite = require 'client.Sprite'
+local collide = require 'common.utils.collide'
 local interpolate = require 'common.utils.interpolate'
 
 return function(args)
@@ -13,20 +14,21 @@ return function(args)
     baseProjectile.drawPos = {x = args.data.pos.current.x, y = args.data.pos.current.y}
 
     baseProjectile.deltaMoved = 0
-    baseProjectile.distTravelled = 0
-    baseProjectile.alive = true
-    baseProjectile.autoAnimation = true
 
-    local function updateSprite(self)
+    local function updateSprite(self, diff)
         if self.deltaMoved > self.nextFrameDist then
             self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDist))
             self.deltaMoved = self.deltaMoved % self.nextFrameDist
         end
 
-        self.deltaMoved = self.deltaMoved + self.speed
+        self.deltaMoved = self.deltaMoved + diff
     end
 
     function baseProjectile:update()
+        updateSprite(
+            self,
+            collide.getDist(self.oldPos.x, self.oldPos.y, self.data.pos.current.x, self.data.pos.current.y)
+        )
         self.oldPos.x = self.data.pos.current.x
         self.oldPos.y = self.data.pos.current.y
     end

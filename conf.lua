@@ -57,7 +57,7 @@ return {
                 damage = 30,
                 range = 70
             },
-            targetRadius = 5,
+            targetSqrRadius = 25,
             maxTargets = 4
         }
     },

@@ -1,6 +1,6 @@
 local BaseClass = require 'server.class.BaseClass'
 local config = require 'conf'
--- local Targetter = require 'server.projectiles.Targetter'
+local TargettedProjectile = require 'server.TargettedProjectile'
 local Hitbox = require 'common.types.Hitbox'
 
 return function()
@@ -9,20 +9,35 @@ return function()
 
     cleric:addAbility(
         function(meta, args)
-            local newTime = love.timer.getTime() + cfg.attack.cooldown
-            if meta.lastAttackTime < newTime then
+            local newTime = os.clock()
+            if meta.lastAttackTime + cfg.attack.cooldown < newTime then
                 meta.lastAttackTime = newTime
 
-                local hitbox = Hitbox(args.toPos.x, args.toPos.y, cfg.targetRadius * 2)
-                local mobs = args.map:getMobsOverlapping(hitbox)
-                for i = 1, math.min(#mobs, cfg.maxTargets) do
+                local entityData = args.castedBy:getData()
+
+                local numProjectiles, _, mob = 0
+                for _, mob in pairs(args.map:getMobsOverlapping(args.toPos.x, args.toPos.y, cfg.targetSqrRadius)) do
                     local targetter =
-                        Targetter(args.entity.hitbox, mobs[i], {range = cfg.attack.range, damage = cfg.attack.damage})
+                        TargettedProjectile(
+                        'homingWhirlwind',
+                        args.age,
+                        {
+                            target = mob,
+                            width = 1,
+                            height = 1,
+                            speed = config.tps / 8,
+                            range = cfg.attack.range,
+                            damage = cfg.attack.damage,
+                            pos = entityData.pos.current,
+                            directionNorm = directionNorm,
+                            nextFrameDist = 3.5
+                        }
+                    )
                     args.map:addProjectile(targetter)
                 end
             end
         end,
-        {lastAttackTime = love.timer.getTime() - cfg.attack.cooldown}
+        {lastAttackTime = os.clock() - cfg.attack.cooldown}
     )
 
     return cleric

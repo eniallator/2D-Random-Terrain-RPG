@@ -69,7 +69,9 @@ return function(mapSeed)
 
         for id, mob in pairs(overlappingMobs) do
             if networkMobsTable[id] == nil then
-                networkMobsTable[id] = mob:getData()
+                local mobData = mob:getData()
+                mobData:forceUpdate(true)
+                networkMobsTable[id] = mobData
             end
 
             if self.players[playerId].data.alive then
@@ -153,7 +155,9 @@ return function(mapSeed)
             end
             for otherId, otherPlayer in pairs(self.players) do
                 if id ~= otherId then
-                    connections[id].players[otherId] = otherPlayer:getData()
+                    local otherPlayerData = otherPlayer:getData()
+                    otherPlayerData:forceUpdate()
+                    connections[id].players[otherId] = otherPlayerData
                 end
             end
         end
