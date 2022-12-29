@@ -15,7 +15,10 @@ return function(box, data, bgColour, textColour)
     local longestAuthor, longestCreditsType, yOffset = 0, 0, 0
     local font = love.graphics.getFont()
     for creditsType, item in pairs(credits.data) do
-        table.insert(credits.textData, {reference = item, {text = creditsType, x = textBorder.x, y = textBorder.y + yOffset}})
+        table.insert(
+            credits.textData,
+            {reference = item, {text = creditsType, x = textBorder.x, y = textBorder.y + yOffset}}
+        )
         yOffset = yOffset + ySpacing + font:getHeight(creditsType)
 
         if item.author and font:getWidth(item.author) > longestAuthor then
@@ -32,6 +35,7 @@ return function(box, data, bgColour, textColour)
     xOffsets.author = xOffsets.seperator + xSpacing + font:getWidth(seperator)
     xOffsets.icon = xOffsets.author + xSpacing + longestAuthor
 
+    local _, data
     for _, data in ipairs(credits.textData) do
         local yValue = data[1].y
         table.insert(data, {text = seperator, x = xOffsets.seperator, y = yValue})
@@ -55,6 +59,7 @@ return function(box, data, bgColour, textColour)
 
     function credits:update(state)
         if MOUSE.left.clicked then
+            local _, data
             for _, data in ipairs(self.iconData) do
                 if
                     (self.box.x + data.x <= MOUSE.left.pos.x and MOUSE.left.pos.x < self.box.x + data.x + data.dim) and
@@ -71,7 +76,7 @@ return function(box, data, bgColour, textColour)
         love.graphics.rectangle('fill', self.box.x, self.box.y, self.box.width, self.box.height)
         love.graphics.setColor(self.textColour.r, self.textColour.g, self.textColour.b)
 
-        local i
+        local _, i, row, data
         for _, row in ipairs(self.textData) do
             for i = 1, #row do
                 love.graphics.print(row[i].text, self.box.x + row[i].x, self.box.y + row[i].y)

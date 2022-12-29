@@ -1,4 +1,4 @@
-local BaseClass = require 'client.class.BaseClass'
+local BaseClass = require 'server.class.BaseClass'
 local config = require 'conf'
 
 return function()

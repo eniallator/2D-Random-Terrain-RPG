@@ -1,6 +1,6 @@
 local BaseGui = require 'client.gui.BaseGui'
 local Grid = require 'client.gui.Grid'
-local classLookup = require 'client.class.ClassLookup'
+local ClassesEnum = require 'common.types.ClassesEnum'
 
 return function(state)
     local characterSelect = BaseGui()
@@ -50,11 +50,11 @@ return function(state)
             function(state)
                 local index
                 if state.class == nil then
-                    index = #classLookup
+                    index = #ClassesEnum
                 else
-                    index = (classLookup.indices[state.class] - 2) % #classLookup + 1
+                    index = (ClassesEnum.byValue[state.class] - 2) % #ClassesEnum + 1
                 end
-                state.class = classLookup[index].name
+                state.class = ClassesEnum[index].value
             end,
             {r = 0, g = 0.7, b = 0}
         }
@@ -65,7 +65,7 @@ return function(state)
         {value = 3},
         {
             function(state)
-                return state.class or 'No class selected'
+                return state.class == nil and 'No class selected' or ClassesEnum[ClassesEnum.byValue[state.class]].label
             end
         }
     )
@@ -80,9 +80,9 @@ return function(state)
                 if state.class == nil then
                     index = 1
                 else
-                    index = classLookup.indices[state.class] % #classLookup + 1
+                    index = ClassesEnum.byValue[state.class] % #ClassesEnum + 1
                 end
-                state.class = classLookup[index].name
+                state.class = ClassesEnum[index].value
             end,
             {r = 0, g = 0.7, b = 0}
         }

@@ -52,7 +52,7 @@ return function(initialConnectionState)
     end
 
     function networkApi:_checkTimeouts(age)
-        local timeouts = {}
+        local timeouts, id, lastAge, _ = {}
         for id, lastAge in pairs(self.lastHeartbeats) do
             if id ~= 1 and age > lastAge + config.communication.timeoutTicks then
                 timeouts[#timeouts + 1] = id
@@ -69,6 +69,7 @@ return function(initialConnectionState)
 
     function networkApi:flushUpdates(age)
         self:_checkTimeouts(age)
+        local id, connection
         for id, connection in self.__receivedState:subTablePairs() do
             udp:sendto(
                 packet.serialise(

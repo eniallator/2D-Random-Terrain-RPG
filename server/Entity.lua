@@ -19,11 +19,15 @@ return function(args, age)
             },
             alive = true,
             maxHealth = args.maxHealth,
-            health = args.maxHealth
+            health = args.maxHealth,
+            nickname = nil,
+            spriteData = nil,
+            lastAbility = nil
         },
         age
     )
     if args.initialData then
+        local key, val
         for key, val in args.initialData:dataPairs() do
             entity.data[key] = val
         end
@@ -52,12 +56,20 @@ return function(args, age)
         self.data.pos.dest = nil
     end
 
-    function entity:setPosData(pos)
-        entity.data.pos = pos
+    function entity:updateData(data)
+        self.data.nickname = data.nickname
+        self.data.spriteData = data.spriteData
+        self.data.class = data.class
+        self.data.pos = data.pos
+        self.data.lastAbility = data.lastAbility
     end
 
-    function entity:update(age)
+    function entity:update(age, shouldSimulate)
         self.data:setAge(age)
+        if not shouldSimulate then
+            return
+        end
+
         if
             self.data.pos.dest == nil or
                 self.data.pos.dest.x == self.data.pos.current.x and self.data.pos.dest.y == self.data.pos.current.y

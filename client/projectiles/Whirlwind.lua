@@ -2,17 +2,14 @@ local config = require 'conf'
 local Hitbox = require 'common.types.Hitbox'
 local BaseProjectile = require 'client.projectiles.BaseProjectile'
 
-return function(fromPos, directionNorm, cfg)
+return function(data)
     local whirlwind =
         BaseProjectile(
         {
+            data = data,
             width = 1,
             height = 1,
-            speed = config.tps / 8,
-            range = cfg.range,
-            damage = cfg.damage,
             pos = fromPos,
-            directionNorm = directionNorm,
             nextFrameDist = 3.5
         }
     )

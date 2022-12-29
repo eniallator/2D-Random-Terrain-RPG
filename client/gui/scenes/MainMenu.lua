@@ -1,6 +1,6 @@
 local BaseGui = require 'client.gui.BaseGui'
 local Grid = require 'client.gui.Grid'
-local ClassLookup = require 'client.class.ClassLookup'
+local ClassesEnum = require 'common.types.ClassesEnum'
 
 return function(state)
     local mainMenu = BaseGui()
@@ -16,7 +16,12 @@ return function(state)
 
     mainMenu.menu:addComponent('label', {value = 1}, {value = 1, weight = 1}, state.nickname)
     mainMenu.menu:addComponent('characterDisplay', {value = 1}, {value = 2, weight = 4}, {state.spriteData})
-    mainMenu.menu:addComponent('label', {value = 1}, {value = 3, weight = 1}, state.class or 'No class selected')
+    mainMenu.menu:addComponent(
+        'label',
+        {value = 1},
+        {value = 3, weight = 1},
+        state.class == nil and 'No class selected' or ClassesEnum[ClassesEnum.byValue[state.class]].label
+    )
     mainMenu.menu:addComponent(
         'button',
         {value = 1},

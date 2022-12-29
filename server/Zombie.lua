@@ -21,7 +21,7 @@ return function(variant, x, y, age)
 
     function zombie:update(age)
         self.behaviour:autoUpdate(self, self.nearbyPlayers)
-        oldUpdate(self, age)
+        oldUpdate(self, age, true)
     end
 
     return zombie

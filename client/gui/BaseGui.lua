@@ -7,6 +7,7 @@ return function()
     end
 
     function baseGui:updateMenu(menu, state)
+        local _, component
         for _, component in ipairs(menu:getComponents()) do
             if type(component.update) == 'function' then
                 component:update(state)
@@ -16,6 +17,7 @@ return function()
     end
 
     function baseGui:drawMenu(menu, dt)
+        local _, component
         for _, component in ipairs(menu:getComponents()) do
             if type(component.draw) == 'function' then
                 component:draw(dt)

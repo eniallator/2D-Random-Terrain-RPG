@@ -19,6 +19,7 @@ return function()
     end
 
     function orderedTable:get(priority)
+        local _, entry
         for _, entry in ipairs(self.data) do
             if entry.priority == priority then
                 return entry.data
@@ -45,6 +46,7 @@ return function()
                 func(self.data[i].data, self.data[i].priority)
             end
         else
+            local _, entry
             for _, entry in ipairs(self.data) do
                 func(entry.data, entry.priority)
             end

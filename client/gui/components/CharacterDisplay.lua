@@ -27,6 +27,7 @@ return function(box, spriteData)
             x = imgRatio < boxRatio and self.box.width - self.box.height / imgRef.height * imgRef.width or 0,
             y = imgRatio > boxRatio and self.box.height - self.box.width / imgRef.width * imgRef.height or 0
         }
+        local _, data
         for _, data in ipairs(self.imgs) do
             love.graphics.setColor(data.tint.r, data.tint.g, data.tint.b, 1)
             love.graphics.draw(

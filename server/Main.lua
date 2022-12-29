@@ -15,6 +15,7 @@ return function()
                 },
                 players = {},
                 mobs = {},
+                projectiles = {},
                 player = {}
             }
         ),

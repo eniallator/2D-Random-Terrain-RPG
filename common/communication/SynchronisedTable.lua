@@ -81,6 +81,7 @@ local function SynchronisedMetaTable(class, initialAge)
     function mt.forceUpdate(deep)
         mt.__data[AGE_KEY] = mt.__newAge
         if deep then
+            local _, subTable
             for _, subTable in pairs(mt.__subTables or {}) do
                 if subTable ~= SUB_TABLE_DELETED then
                     subTable:forceUpdate(deep)
@@ -127,6 +128,7 @@ local function SynchronisedMetaTable(class, initialAge)
                 mt.__data[AGE_KEY] = mt.__newAge
             end
             if mt.__subTables[key] ~= nil then
+                mt.__subTables[key] = nil
                 mt.__deletedSubTables[key] = mt.__data[AGE_KEY]
             end
             mt.__data[key] = value
@@ -136,6 +138,7 @@ local function SynchronisedMetaTable(class, initialAge)
     end
 
     function mt.clearCacheBefore(age)
+        local key, val, _, subTable
         for key, val in pairs(mt.__deletedSubTables) do
             if age > val then
                 mt.__deletedSubTables[key] = nil
@@ -148,6 +151,7 @@ local function SynchronisedMetaTable(class, initialAge)
 
     function mt.serialiseUpdates(age, force, updatesBuilder)
         local hasDataUpdates = false
+        local key, value
         for key, value in pairs((age <= mt.__data[AGE_KEY] or force) and mt.__data or {}) do
             if hasDataUpdates then
                 updatesBuilder:add(',')
@@ -166,19 +170,19 @@ local function SynchronisedMetaTable(class, initialAge)
         for key, value in pairs(mt.__subTables or {}) do
             updatesBuilder:add(hasSubTableUpdates and ',' or '[')
             updatesBuilder:add(tostring(key))
-            if value == SUB_TABLE_DELETED then
-                mt.__subTables[key] = nil
-                updatesBuilder:add(value)
-                hasSubTableUpdates = true
+            local lengthBefore = updatesBuilder.length
+            value.meta_serialiseUpdates(age, force, updatesBuilder)
+            if updatesBuilder.length == lengthBefore then
+                updatesBuilder:removeLast(2)
             else
-                local lengthBefore = updatesBuilder.length
-                value.meta_serialiseUpdates(age, force, updatesBuilder)
-                if updatesBuilder.length == lengthBefore then
-                    updatesBuilder:removeLast(2)
-                else
-                    hasSubTableUpdates = true
-                end
+                hasSubTableUpdates = true
             end
+        end
+        for key in pairs(mt.__deletedSubTables) do
+            updatesBuilder:add(hasSubTableUpdates and ',' or '[')
+            updatesBuilder:add(tostring(key))
+            updatesBuilder:add(SUB_TABLE_DELETED)
+            hasSubTableUpdates = true
         end
         if hasSubTableUpdates then
             updatesBuilder:add(']')
@@ -254,6 +258,7 @@ local function SynchronisedTable(initialData, initialAge)
 
     function synchronisedTable:toTable()
         local tbl = {}
+        local key, value, subTable
         for key, value in pairs(mt.__data) do
             tbl[key] = value
         end
@@ -273,6 +278,7 @@ local function SynchronisedTable(initialData, initialAge)
 
     function synchronisedTable:setAge(age)
         mt.__newAge = age
+        local _, subTable
         for _, subTable in self:subTablePairs() do
             subTable:setAge(age)
         end

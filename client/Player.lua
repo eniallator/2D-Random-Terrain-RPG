@@ -2,7 +2,7 @@ local config = require 'conf'
 local Entity = require 'client.Entity'
 local BaseInventory = require 'client.items.BaseInventory'
 
-return function(spriteData, nickname, class, isLocal)
+return function(spriteData, nickname, isLocal)
     local player =
         Entity(
         {
@@ -16,10 +16,6 @@ return function(spriteData, nickname, class, isLocal)
             isLocal = isLocal
         }
     )
-
-    -- if class ~= nil then
-    --     player.class = class.init()
-    -- end
 
     player.spriteType = 1 or spriteType
     player.nickname = nickname

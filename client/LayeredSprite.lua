@@ -46,6 +46,7 @@ return function(spriteWidth, spriteHeight)
             y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y
         }
 
+        local _, spritesheetData
         for _, spritesheetData in ipairs(animation.spritesheetData) do
             love.graphics.setColor(
                 spritesheetData.tint.r,

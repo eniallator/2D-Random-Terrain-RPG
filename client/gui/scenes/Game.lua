@@ -13,6 +13,7 @@ return function(menuState)
             player = {
                 nickname = menuState.nickname,
                 spriteData = menuState.spriteData,
+                class = menuState.class,
                 pos = {
                     current = {
                         x = 0,
@@ -22,6 +23,10 @@ return function(menuState)
                         x = 0,
                         y = 0
                     }
+                },
+                lastAbility = {
+                    id = nil,
+                    toPos = {x = nil, y = nil}
                 }
             },
             environment = {chunksReceived = nil}

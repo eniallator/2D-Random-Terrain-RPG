@@ -64,6 +64,7 @@ return function()
         runningWeightSums.x, totalWeights.x = xWeights.tbl, xWeights.total
         runningWeightSums.y, totalWeights.y = yWeights.tbl, yWeights.total
 
+        local _, row, data
         for _, row in ipairs(self.componentData) do
             for _, data in ipairs(row) do
                 local box = {

@@ -2,6 +2,7 @@ local config = require 'conf'
 local OrderedTable = require 'common.types.OrderedTable'
 local BinaryBuilder = require 'common.types.BinaryBuilder'
 local posToId = require 'common.utils.posToId'
+local ProjectileLookup = require 'client.projectiles.ProjectileLookup'
 local Chunk = require 'client.environment.Chunk'
 local Player = require 'client.Player'
 local Zombie = require 'client.Zombie'
@@ -16,6 +17,7 @@ return function(player, mapSeed)
     map.connectedPlayers = {}
 
     local function updateMobs(self, receivedMobs)
+        local id, mob
         for id, mob in pairs(self.mobs) do
             if receivedMobs[id] == nil then
                 self.mobs[id] = nil
@@ -24,9 +26,6 @@ return function(player, mapSeed)
 
         for id, mob in receivedMobs:subTablePairs() do
             if self.mobs[id] == nil then
-                if mob.id == nil then
-                    print(serialise(mob:toTable()))
-                end
                 local entityType, variant = mob.id:match('^([^.]+)%.(%d+)')
                 if entityType == 'zombie' then
                     self.mobs[id] = Zombie(tonumber(variant), mob.pos.current.x, mob.pos.current.y)
@@ -37,14 +36,18 @@ return function(player, mapSeed)
         end
     end
 
-    local function updateProjectiles(self, box)
-        for _, projectile in ipairs(self.projectiles) do
-            projectile:update(self.mobs)
+    local function updateProjectiles(self, receivedProjectiles)
+        local id, projectile
+        for id, projectile in pairs(self.projectiles) do
+            if receivedProjectiles[id] == nil then
+                self.projectiles[id] = nil
+            end
         end
-
-        for i = #self.projectiles, 1, -1 do
-            if not self.projectiles[i].alive then
-                table.remove(self.projectiles, i)
+        for id, projectile in receivedProjectiles.subTablePairs() do
+            if self.projectiles[id] == nil then
+                self.projectiles[id] = ProjectileLookup[projectile.id](projectile)
+            else
+                self.projectiles[id]:update()
             end
         end
     end
@@ -53,7 +56,8 @@ return function(player, mapSeed)
         local centerX = self.player.pos.current.x / config.chunkSize
         local centerY = self.player.pos.current.y / config.chunkSize
 
-        for chunkId, _ in pairs(self.chunks) do
+        local chunkId
+        for chunkId in pairs(self.chunks) do
             local x, y = posToId.backward(chunkId)
 
             -- Simple AABB, however offset by 1 since the server does math.floor for
@@ -71,7 +75,7 @@ return function(player, mapSeed)
         local centerX = pos.x / config.chunkSize
         local centerY = pos.y / config.chunkSize
 
-        local builder = BinaryBuilder()
+        local builder, i, j = BinaryBuilder()
         for i = math.floor(centerY - chunkRadius), math.ceil(centerY + chunkRadius) do
             for j = math.floor(centerX - chunkRadius), math.ceil(centerX + chunkRadius) do
                 local chunkId = posToId.forward(j, i)
@@ -84,6 +88,7 @@ return function(player, mapSeed)
     function map:update(localNetworkState, receivedNetworkState, box)
         if receivedNetworkState then
             -- Updating local chunks
+            local id, chunkData, player
             for id, chunkData in receivedNetworkState.environment.chunks:subTablePairs() do
                 self.chunks[id] = Chunk(chunkData)
             end
@@ -108,12 +113,8 @@ return function(player, mapSeed)
             end
 
             updateMobs(self, receivedNetworkState.mobs)
-        -- updateProjectiles(self, box)
+            updateProjectiles(self, receivedNetworkState.projectiles)
         end
-    end
-
-    function map:addProjectile(projectile)
-        table.insert(self.projectiles, projectile)
     end
 
     local function drawChunks(self, box)
@@ -151,6 +152,7 @@ return function(player, mapSeed)
         self.player:drawShadow(box)
         sortedDrawables:add(self.player.drawPos.y, self.player)
 
+        local id, player, mob, projectile
         for id, player in pairs(self.connectedPlayers) do
             player:calcDraw(dt)
             player:drawShadow(box)
@@ -163,10 +165,10 @@ return function(player, mapSeed)
             sortedDrawables:add(mob.drawPos.y, mob)
         end
 
-        -- for _, projectile in ipairs(self.projectiles) do
-        --     projectile:calcDraw(dt)
-        --     sortedDrawables:add(projectile.drawPos.y, projectile)
-        -- end
+        for id, projectile in pairs(self.projectiles) do
+            projectile:calcDraw(dt)
+            sortedDrawables:add(projectile.drawPos.y, projectile)
+        end
 
         sortedDrawables:iterate(
             function(drawable)

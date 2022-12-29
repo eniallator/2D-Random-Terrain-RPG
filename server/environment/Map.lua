@@ -17,14 +17,14 @@ return function(mapSeed)
     map.mobs = {}
     map.mobId = 1
     map.projectiles = {}
+    map.projectileId = 1
 
     local sqrMobDespawnRadius = config.entity.mob.despawnRadius ^ 2
 
     local function getChunks(self, chunkRegion, outputChunks, chunksReceived, limit)
-        local i, j
         local chunksSet = 0
         local regionWidth = chunkRegion.endX - chunkRegion.startX + 1
-        local s = ''
+        local s, i, j = ''
         for i = 0, chunkRegion.endY - chunkRegion.startY do
             for j = 0, chunkRegion.endX - chunkRegion.startX do
                 if chunksSet >= limit then
@@ -68,35 +68,32 @@ return function(mapSeed)
         end
 
         for id, mob in pairs(overlappingMobs) do
-            if not mob.data.alive then
-                self.mobs[id] = nil
-            else
-                if networkMobsTable[id] == nil then
-                    networkMobsTable[id] = mob.data
-                end
-
-                if self.players[playerId].data.alive then
-                    if mob.lastTicked ~= age then
-                        mob.nearbyPlayers = {
-                            byId = {[playerId] = self.players[playerId]},
-                            {entity = self.players[playerId], id = playerId}
-                        }
-                    else
-                        mob.nearbyPlayers.byId[playerId] = self.players[playerId]
-                        mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = self.players[playerId], id = playerId}
-                    end
-                elseif mob.lastTicked ~= age then
-                    mob.nearbyPlayers = {byId = {}}
-                end
-                mob.lastTicked = age
+            if networkMobsTable[id] == nil then
+                networkMobsTable[id] = mob:getData()
             end
+
+            if self.players[playerId].data.alive then
+                if mob.lastTicked ~= age then
+                    mob.nearbyPlayers = {
+                        byId = {[playerId] = self.players[playerId]},
+                        {entity = self.players[playerId], id = playerId}
+                    }
+                else
+                    mob.nearbyPlayers.byId[playerId] = self.players[playerId]
+                    mob.nearbyPlayers[#mob.nearbyPlayers + 1] = {entity = self.players[playerId], id = playerId}
+                end
+            elseif mob.lastTicked ~= age then
+                mob.nearbyPlayers = {byId = {}}
+            end
+            mob.lastTicked = age
         end
     end
 
     local function updateMobs(self, age)
         local i, mob
         for i, mob in pairs(self.mobs) do
-            if mob.lastTicked ~= age then
+            local mobData = mob:getData()
+            if not mobData.alive or mob.lastTicked ~= age then
                 self.mobs[i] = nil
             else
                 mob:update(age)
@@ -104,21 +101,50 @@ return function(mapSeed)
         end
     end
 
+    local projectileAreaSideLength = config.chunkSize * (config.playerChunkRadius * 2 + 1)
+    local function prepareProjectiles(self, player, networkProjectilesTable)
+        local overlappingProjectiles =
+            self:getProjectilesOverlapping(
+            player.pos.current.x,
+            player.pos.current.y,
+            projectileAreaSideLength,
+            projectileAreaSideLength
+        )
+        local id, projectile
+        for id, projectile in networkProjectilesTable:subTablePairs() do
+            if overlappingProjectiles[id] == nil then
+                networkProjectilesTable[id] = nil
+            end
+        end
+        for id, projectile in pairs(overlappingProjectiles) do
+            if networkProjectilesTable[id] == nil then
+                networkProjectilesTable[id] = projectile:getData()
+            end
+        end
+    end
+
+    local function updateProjectiles(self)
+        local id, projectile
+        for id, projectile in pairs(self.projectiles) do
+            if projectile.alive then
+                projectile:update(self.mobs)
+            else
+                self.projectiles[id] = nil
+            end
+        end
+    end
+
     local playerDetailKeys = {'health', 'maxHealth', 'alive'}
     local function updatePlayers(self, age, connections)
-        local id, player
+        local id, player, otherId, otherPlayer
         for id, player in pairs(self.players) do
             if connections[id] == nil then
                 self.players[id] = nil
             else
-                if self.players.lastTicked ~= age then
-                    -- Simulate player if they haven't sent a packet
-                    self.players[id]:update(age)
-                end
+                self.players[id]:update(age, self, self.players[id].lastTicked ~= age)
                 connections[id].player = self.players[id]:getData(playerDetailKeys)
             end
         end
-        local otherId, otherPlayer
         for id, player in pairs(self.players) do
             for otherId, otherplayer in connections[id].players:subTablePairs() do
                 if id ~= otherId and self.players[otherId] == nil then
@@ -133,26 +159,19 @@ return function(mapSeed)
         end
     end
 
-    local function updateProjectiles(self, box)
-        for _, projectile in ipairs(self.projectiles) do
-            projectile:update(self.mobs)
-        end
-
-        for i = #self.projectiles, 1, -1 do
-            if not self.projectiles[i].alive then
-                table.remove(self.projectiles, i)
-            end
-        end
-    end
-
     function map:update(connectionsLocalState, connectionsReceivedState, age)
+        updateProjectiles(self)
+        updateMobs(self, age - 1)
         if connectionsReceivedState then
+            local id, connection
             for id, connection in connectionsReceivedState:subTablePairs() do
                 if self.players[id] == nil then
                     self.players[id] = Player(connection.state.player)
                 end
                 self.players[id].lastTicked = age
-                self.players[id]:setPosData(connection.state.player.pos)
+                if connection.state.player ~= nil then
+                    self.players[id]:updateData(connection.state.player)
+                end
 
                 local chunkRegion = {
                     startX = math.floor(
@@ -179,27 +198,41 @@ return function(mapSeed)
                     config.maxChunksToSend
                 )
                 prepareMobs(self, connection.state.player, id, connectionsLocalState[id].mobs, age)
+                prepareProjectiles(self, connection.state.player, connectionsLocalState[id].projectiles)
             end
         end
         updatePlayers(self, age, connectionsLocalState)
-        updateMobs(self, age)
-        -- updateProjectiles(self, box)
     end
 
     function map:addProjectile(projectile)
-        table.insert(self.projectiles, projectile)
+        self.projectiles[self.projectileId] = projectile
+        self.projectileId = self.projectileId + 1
     end
 
     function map:getMobsOverlapping(x, y, sqrRadius)
-        local overlappingMobs = {}
+        local overlappingMobs, id, mob = {}
 
         for id, mob in pairs(self.mobs) do
-            if collide.getSqrDist(mob:getData().pos.current.x, mob:getData().pos.current.y, x, y) < sqrRadius then
+            local mobData = mob:getData()
+            if collide.getSqrDist(mobData.pos.current.x, mobData.pos.current.y, x, y) < sqrRadius then
                 overlappingMobs[id] = mob
             end
         end
 
         return overlappingMobs
+    end
+
+    function map:getProjectilesOverlapping(x, y, width, height)
+        local overlappingProjectiles, id, projectile = {}
+
+        for id, projectile in pairs(self.projectiles) do
+            local projectileData = projectile:getData()
+            if collide.posInside(x, y, width, height, projectileData.pos.current.x, projectileData.pos.current.y) then
+                overlappingProjectiles[id] = projectile
+            end
+        end
+
+        return overlappingProjectiles
     end
 
     return map

@@ -7,13 +7,11 @@ local PlayerInventory = require 'client.gui.overlays.PlayerInventory'
 
 local Player = require 'client.Player'
 local Map = require 'client.environment.Map'
-local classLookup = require 'client.class.ClassLookup'
 local Camera = require 'client.Camera'
 
 return function(menuState)
     local game = {}
-    game.player =
-        Player(menuState.spriteData, menuState.nickname, classLookup[classLookup.indices[menuState.class]], true)
+    game.player = Player(menuState.spriteData, menuState.nickname, true)
     game.map = Map(game.player, mapSeed or love.timer.getTime())
     game.camera = Camera(game.player)
 
@@ -35,21 +33,6 @@ return function(menuState)
             math.min(config.camera.zoomLimits.max, math.max(config.camera.zoomLimits.min, self.camera.scale))
 
         local cameraBox = self.camera:getViewBox()
-
-        -- local i
-        -- for i = 1, 9 do
-        --     if KEYS.recentPressed[tostring(i)] then
-        --         local mousePos = {}
-        --         mousePos.x, mousePos.y = love.mouse.getPosition()
-        --         local toPos = {
-        --             x = (cameraBox.x - cameraBox.width / 2) + (mousePos.x / love.graphics.getWidth()) * cameraBox.width,
-        --             y = (cameraBox.y - cameraBox.height / 2) +
-        --                 (mousePos.y / love.graphics.getHeight()) * cameraBox.height
-        --         }
-        --         self.player.class:useAbility(i, {map = self.map, entity = self.player, toPos = toPos})
-        --         break
-        --     end
-        -- end
 
         -- if KEYS.recentPressed.i then
         --     if self.overlay == nil then
@@ -77,6 +60,21 @@ return function(menuState)
             self.player:update(receivedNetworkState and receivedNetworkState.player)
             localNetworkState.player.pos.current.x = self.player.pos.current.x
             localNetworkState.player.pos.current.y = self.player.pos.current.y
+
+            local i
+            for i = 1, 9 do
+                if KEYS.recentPressed[tostring(i)] then
+                    local mouse = {}
+                    mouse.x, mouse.y = love.mouse.getPosition()
+                    localNetworkState.player.lastAbility:forceUpdate()
+                    localNetworkState.player.lastAbility.id = i
+                    localNetworkState.player.lastAbility.toPos.x =
+                        (cameraBox.x - cameraBox.width / 2) + (mouse.x / love.graphics.getWidth()) * cameraBox.width
+                    localNetworkState.player.lastAbility.toPos.y =
+                        (cameraBox.y - cameraBox.height / 2) + (mouse.y / love.graphics.getHeight()) * cameraBox.height
+                    break
+                end
+            end
         end
     end
 
