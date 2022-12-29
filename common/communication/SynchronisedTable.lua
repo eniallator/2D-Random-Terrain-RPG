@@ -52,15 +52,16 @@ local function deserialiseValue(str, i)
     end
 end
 
-local SUB_TABLE_DELETED = '$DELETED'
-local CLEAR_KEY = '__CLEARED'
-local AGE_KEY = '__AGE'
+local SUB_TABLE_DELETED = '$D'
+local CLEAR_KEY = '$C'
+local AGE_KEY = '$A'
 local function SynchronisedMetaTable(class, initialAge)
     local mt = {
         __newAge = initialAge or 0,
         __data = {[AGE_KEY] = initialAge or 0},
         __otherTypes = {},
         __subTables = {},
+        __deletedSubTables = {},
         __metatable = 'SynchronisedTable',
         __class = class
     }
@@ -113,6 +114,7 @@ local function SynchronisedMetaTable(class, initialAge)
             if mt.__data[key] ~= nil then
                 mt.__data[AGE_KEY] = mt.__newAge
                 mt.__data[key] = nil
+                mt.__deletedSubTables[key] = nil
             end
             if getmetatable(value) == mt.__metatable then
                 mt.__subTables[key] = value
@@ -124,10 +126,23 @@ local function SynchronisedMetaTable(class, initialAge)
             if mt.__data[key] ~= value then
                 mt.__data[AGE_KEY] = mt.__newAge
             end
-            mt.__subTables[key] = mt.__subTables[key] ~= nil and SUB_TABLE_DELETED or nil
+            if mt.__subTables[key] ~= nil then
+                mt.__deletedSubTables[key] = mt.__data[AGE_KEY]
+            end
             mt.__data[key] = value
         else
             mt.__otherTypes[key] = value
+        end
+    end
+
+    function mt.clearCacheBefore(age)
+        for key, val in pairs(mt.__deletedSubTables) do
+            if age > val then
+                mt.__deletedSubTables[key] = nil
+            end
+        end
+        for _, subTable in pairs(mt.__subTables) do
+            subTable:clearCacheBefore(age)
         end
     end
 
@@ -248,6 +263,10 @@ local function SynchronisedTable(initialData, initialAge)
         return tbl
     end
 
+    function synchronisedTable:clearCacheBefore(age)
+        mt.clearCacheBefore(age)
+    end
+
     function synchronisedTable:clear()
         mt.clear()
     end
@@ -273,14 +292,7 @@ local function SynchronisedTable(initialData, initialAge)
         return pairs(mt.__data)
     end
     function synchronisedTable:subTablePairs()
-        function iter(_, idx)
-            local v
-            repeat
-                idx, v = next(mt.__subTables, idx)
-            until v ~= SUB_TABLE_DELETED
-            return idx, v
-        end
-        return iter
+        return pairs(mt.__subTables)
     end
 
     function synchronisedTable:serialiseUpdates(age, force)

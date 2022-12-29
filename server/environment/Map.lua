@@ -61,11 +61,19 @@ return function(mapSeed)
         end
 
         local id, mob
+        for id, mob in networkMobsTable:subTablePairs() do
+            if overlappingMobs[id] == nil then
+                networkMobsTable[id] = nil
+            end
+        end
+
         for id, mob in pairs(overlappingMobs) do
             if not mob.data.alive then
                 self.mobs[id] = nil
             else
-                networkMobsTable[id] = mob.data
+                if networkMobsTable[id] == nil then
+                    networkMobsTable[id] = mob.data
+                end
 
                 if self.players[playerId].data.alive then
                     if mob.lastTicked ~= age then
@@ -96,7 +104,7 @@ return function(mapSeed)
         end
     end
 
-    local entityDetailKeys = {'health', 'maxHealth', 'alive'}
+    local playerDetailKeys = {'health', 'maxHealth', 'alive'}
     local function updatePlayers(self, age, connections)
         local id, player
         for id, player in pairs(self.players) do
@@ -107,7 +115,7 @@ return function(mapSeed)
                     -- Simulate player if they haven't sent a packet
                     self.players[id]:update(age)
                 end
-                connections[id].player = self.players[id]:getData(entityDetailKeys)
+                connections[id].player = self.players[id]:getData(playerDetailKeys)
             end
         end
         local otherId, otherPlayer
@@ -170,7 +178,6 @@ return function(mapSeed)
                     connection.state.environment.chunksReceived,
                     config.maxChunksToSend
                 )
-                connectionsLocalState[id].mobs:clear()
                 prepareMobs(self, connection.state.player, id, connectionsLocalState[id].mobs, age)
             end
         end

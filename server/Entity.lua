@@ -46,12 +46,10 @@ return function(args, age)
 
     function entity:setDest(x, y)
         self.data.pos.dest = {x = x, y = y}
-        self.data:forceUpdate(true)
     end
 
     function entity:clearDest()
         self.data.pos.dest = nil
-        self.data:forceUpdate(true)
     end
 
     function entity:setPosData(pos)
@@ -89,7 +87,6 @@ return function(args, age)
             }
         end
 
-        self.data:forceUpdate(true)
         self.data.pos.current.x = nextPos.x
         self.data.pos.current.y = nextPos.y
     end

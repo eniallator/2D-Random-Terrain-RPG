@@ -25,6 +25,7 @@ return function(initialLocalState)
                 tonumber(headers.serverTickAge),
                 tonumber(headers.lastClientTickAge)
             self.__receivedState:deserialiseUpdates(payload)
+            self.__localState:clearCacheBefore(self.serverLastClientTickAge)
             self.__hasReceivedState = true
             data, msg = self.udp:receive()
         end

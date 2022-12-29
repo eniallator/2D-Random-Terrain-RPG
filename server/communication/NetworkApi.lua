@@ -45,6 +45,7 @@ return function(initialConnectionState)
                 tonumber(headers.clientTickAge or self.__receivedState[key].clientTickAge),
                 tonumber(headers.serverTickAge or self.__receivedState[key].lastServerTickAge)
             self.__receivedState[key].state:deserialiseUpdates(payload, age)
+            self.__localState[key]:clearCacheBefore(self.__receivedState[key].lastServerTickAge)
 
             data, ip, port = udp:receivefrom()
         end
