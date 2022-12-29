@@ -20,6 +20,7 @@ return function(args)
 
     entity.radius = args.width * 0.4
     entity.pos = {current = {x = args.x or 0, y = args.y or 0}, dest = nil}
+    entity.oldPos = {x = entity.pos.current.x, y = entity.pos.current.y}
     entity.drawPos = {x = entity.pos.current.x, y = entity.pos.current.y}
     entity.speed = args.speed
     entity.label = args.label
@@ -32,35 +33,26 @@ return function(args)
     end
 
     local function updateSprite(self)
-        if
-            self.isLocal and
-                (not self.pos.dest or self.pos.dest.x == self.pos.current.x and self.pos.dest.y == self.pos.current.y) or
-                not self.isLocal and
-                    (self.oldPos == nil or self.pos.current.x == self.oldPos.x and self.pos.current.y == self.oldPos.y)
-         then
-            self.sprite:playAnimation()
+        local diff, direction, dist = {
+            x = self.pos.current.x - self.oldPos.x,
+            y = self.pos.current.y - self.oldPos.y
+        }
+        if diff.x == 0 and diff.y == 0 then
+            direction = 'idle'
+            dist = 0
+        elseif math.abs(diff.x) > math.abs(diff.y) then
+            direction = diff.x < 0 and 'left' or 'right'
+            dist = math.sqrt(diff.x ^ 2 + diff.y ^ 2)
         else
-            local diff =
-                self.isLocal and {x = self.pos.current.x - self.pos.dest.x, y = self.pos.current.y - self.pos.dest.y} or
-                {x = self.oldPos.x - self.pos.current.x, y = self.oldPos.y - self.pos.current.y}
-            local direction
+            direction = diff.y < 0 and 'up' or 'down'
+            dist = math.sqrt(diff.x ^ 2 + diff.y ^ 2)
+        end
+        self.sprite:playAnimation(direction)
 
-            if math.abs(diff.x) > math.abs(diff.y) then
-                direction = diff.x < 0 and 'right' or 'left'
-            else
-                direction = diff.y < 0 and 'down' or 'up'
-            end
-
-            self.sprite:playAnimation(direction)
-
-            local dist =
-                self.isLocal and math.min(self.speed, math.sqrt(diff.x ^ 2 + diff.y ^ 2)) or
-                math.sqrt(diff.x ^ 2 + diff.y ^ 2)
-            self.deltaMoved = self.deltaMoved + dist
-            if self.deltaMoved > self.nextFrameDist then
-                self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDist))
-                self.deltaMoved = self.deltaMoved % self.nextFrameDist
-            end
+        self.deltaMoved = self.deltaMoved + dist
+        if self.deltaMoved > self.nextFrameDist then
+            self.sprite:advanceAnimation(math.floor(self.deltaMoved / self.nextFrameDist))
+            self.deltaMoved = self.deltaMoved % self.nextFrameDist
         end
     end
 
@@ -73,7 +65,6 @@ return function(args)
         }
 
         if not dest or dest.x == self.pos.current.x and dest.y == self.pos.current.y then
-            self.oldPos = nil
             return
         end
 
