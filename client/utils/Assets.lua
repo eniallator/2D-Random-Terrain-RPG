@@ -6,7 +6,8 @@ return {
             game = love.graphics.newImage('client/assets/textures/icons/game.png'),
             website = love.graphics.newImage('client/assets/textures/icons/website.png'),
             github = love.graphics.newImage('client/assets/textures/icons/github.png'),
-            twitter = love.graphics.newImage('client/assets/textures/icons/twitter.png')
+            twitter = love.graphics.newImage('client/assets/textures/icons/twitter.png'),
+            linkedin = love.graphics.newImage('client/assets/textures/icons/linkedin.png')
         },
         entity = {
             player = {
