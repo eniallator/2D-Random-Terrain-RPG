@@ -41,7 +41,7 @@ return function(spriteWidth, spriteHeight)
 
     function sprite:playAnimation(name, force)
         local nextAnimation = name or self.defaultAnimation
-        if force or self.playingAnimation == nil or nextAnimation ~= self.playingAnimation.name then
+        if force or self.playingAnimation == nil or nextAnimation ~= self.playingAnimation then
             self.playingAnimation = self.animations[name] and name or self.defaultAnimation
             self.frameIndex = 1
         end

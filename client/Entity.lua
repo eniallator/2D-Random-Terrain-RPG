@@ -22,7 +22,6 @@ return function(args)
     entity.pos = {current = {x = args.x or 0, y = args.y or 0}, dest = nil}
     entity.drawPos = {x = entity.pos.current.x, y = entity.pos.current.y}
     entity.speed = args.speed
-    entity.autoAnimation = true
     entity.label = args.label
 
     entity.deltaMoved = 0
@@ -121,9 +120,7 @@ return function(args)
     end
 
     function entity:update(networkState)
-        if self.autoAnimation then
-            updateSprite(self)
-        end
+        updateSprite(self)
         updatePos(self, networkState)
         if networkState then
             updateDetails(self, networkState)
