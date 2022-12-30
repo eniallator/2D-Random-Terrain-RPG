@@ -13,7 +13,7 @@ return function()
     end
 
     function baseGui:bake()
-        baseGui:resize(love.graphics.getDimensions())
+        self:resize(love.graphics.getDimensions())
     end
 
     function baseGui:update(state)

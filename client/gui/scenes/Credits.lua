@@ -8,10 +8,9 @@ return function(state)
     credits.menu =
         Grid {
         styles = {
-            gapY = '2%',
-            marginLeft = '12.5%',
+            marginLeft = '20%',
             marginTop = '10%',
-            marginRight = '12.5%',
+            marginRight = '20%',
             marginBottom = '10%'
         },
         children = {

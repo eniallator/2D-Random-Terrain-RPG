@@ -13,19 +13,14 @@ return function(state)
     characterSelect.menu =
         Grid {
         styles = {
-            gapY = '2%',
-            marginLeft = '12.5%',
+            marginLeft = '20%',
             marginTop = '10%',
-            marginRight = '12.5%',
+            marginRight = '20%',
             marginBottom = '10%'
         },
         children = {
             TextInput {outputTbl = state, outputTblKey = 'nickname'},
             Grid {
-                styles = {
-                    marginTop = '1%',
-                    marginBottom = '1%'
-                },
                 columns = 3,
                 yWeight = 4,
                 children = {
@@ -37,7 +32,7 @@ return function(state)
                             state.selectedColourTbl = state.spriteData.eyes
                         end
                     },
-                    CharacterDisplay {spriteData = state.spriteData},
+                    CharacterDisplay {spriteData = state.spriteData, xWeight = 2, yWeight = 3},
                     Button {
                         text = 'Hair Colour',
                         onClick = function(state)
@@ -59,6 +54,7 @@ return function(state)
                         end
                     },
                     Label {
+                        xWeight = 2,
                         text = function(state)
                             return state.class == nil and 'No class selected' or
                                 ClassesEnum[ClassesEnum.byValue[state.class]].label

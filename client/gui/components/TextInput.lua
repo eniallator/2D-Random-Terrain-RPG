@@ -31,24 +31,27 @@ return function(args)
     end
 
     function textInput:draw()
-        local text = self.outputTbl[self.outputTblKey] or ''
-        local font = love.graphics.getFont()
-
         local background = self.selected and self.bakedStyles.selectedBackground or self.bakedStyles.background
 
         love.graphics.setColor(background.r, background.g, background.b, background.a)
         love.graphics.rectangle('fill', self.bakedBox.x, self.bakedBox.y, self.bakedBox.w, self.bakedBox.h)
+
+        local text = self.outputTbl[self.outputTblKey] or ''
+        local font = love.graphics.getFont()
+
         love.graphics.setColor(
             self.bakedStyles.colour.r,
             self.bakedStyles.colour.g,
             self.bakedStyles.colour.b,
             self.bakedStyles.colour.a
         )
+        love.graphics.setFont(self.bakedFont)
         love.graphics.print(
             text,
-            self.bakedBox.x + self.bakedBox.w / 2 - font:getWidth(text) / 2,
-            self.bakedBox.y + self.bakedBox.h / 2 - font:getHeight(text) / 2
+            self.bakedBox.x + self.bakedBox.w / 2 - self.bakedFont:getWidth(text) / 2,
+            self.bakedBox.y + self.bakedBox.h / 2 - self.bakedFont:getHeight(text) / 2
         )
+        love.graphics.setFont(font)
     end
 
     return textInput

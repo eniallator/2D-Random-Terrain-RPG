@@ -1,8 +1,8 @@
 local BaseComponent = require 'client.gui.components.BaseComponent'
 
 local extraDefaultStyles = {
-    gapX = '2%',
-    gapY = '2%'
+    gapX = '2vmin',
+    gapY = '2vmin'
 }
 
 return function(args)

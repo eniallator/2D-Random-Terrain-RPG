@@ -1,6 +1,7 @@
 love.graphics.setDefaultFilter('nearest', 'nearest')
 
 return {
+    fonts = {Psilly = 'client/assets/fonts/Psilly.otf'},
     textures = {
         icons = {
             game = love.graphics.newImage('client/assets/textures/icons/game.png'),

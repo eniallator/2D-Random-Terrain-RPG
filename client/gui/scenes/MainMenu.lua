@@ -12,16 +12,19 @@ return function(state)
     mainMenu.menu =
         Grid {
         styles = {
-            gapY = '2%',
-            marginLeft = '12.5%',
+            marginLeft = '20%',
             marginTop = '10%',
-            marginRight = '12.5%',
+            marginRight = '20%',
             marginBottom = '10%'
         },
         children = {
-            Label {text = state.nickname},
+            Label {
+                styles = {background = {r = 0.3, g = 0.3, b = 0.3}},
+                text = state.nickname
+            },
             CharacterDisplay {spriteData = state.spriteData, yWeight = 4},
             Label {
+                styles = {background = {r = 0.3, g = 0.3, b = 0.3}},
                 text = state.class == nil and 'No class selected' or ClassesEnum[ClassesEnum.byValue[state.class]].label
             },
             Button {
@@ -30,23 +33,28 @@ return function(state)
                     state.scene = 'characterSelect'
                 end
             },
-            Button {
-                text = 'host',
-                onClick = function(state)
-                    state.scene = 'game'
-                end,
-                disabled = function(state)
-                    return state.class == nil
-                end
-            },
-            Button {
-                text = 'Connect to a host',
-                onClick = function(state)
-                    state.scene = 'multiplayer'
-                end,
-                disabled = function(state)
-                    return state.class == nil
-                end
+            Grid {
+                columns = 2,
+                children = {
+                    Button {
+                        text = 'Host',
+                        onClick = function(state)
+                            state.scene = 'game'
+                        end,
+                        disabled = function(state)
+                            return state.class == nil
+                        end
+                    },
+                    Button {
+                        text = 'Connect to a host',
+                        onClick = function(state)
+                            state.scene = 'multiplayer'
+                        end,
+                        disabled = function(state)
+                            return state.class == nil
+                        end
+                    }
+                }
             },
             Button {
                 text = 'Credits',
