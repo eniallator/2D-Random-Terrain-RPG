@@ -1,44 +1,25 @@
 local BaseGui = require 'client.gui.BaseGui'
-local Grid = require 'client.gui.Grid'
+local Button = require 'client.gui.components.Button'
 
 return function()
     local death = BaseGui()
-    death.menu = Grid()
+
     death.worldShader = SHADERS.blackAndWhite
 
-    death.menu:addComponent(
-        'button',
-        {value = 1},
-        {value = 2},
-        {
-            'Return to Menu',
-            function(state)
-                love.graphics.setShader()
-                state.scene = 'mainMenu'
-            end,
-            {r = 0.5, g = 0.5, b = 0.5}
-        }
-    )
-
-    function death:resize(width, height)
-        local minDim = math.min(width, height)
-        self.menu:setPadding(minDim / 40, minDim / 60)
-        local border = {
-            x = width / 3,
-            y = height * 7 / 16
-        }
-        self.menu:bakeComponents(border.x, border.y * 1.5, width - border.x * 2, height - border.y * 2)
-    end
-
-    function death:update(state)
-        return self:updateMenu(self.menu, state)
-    end
-
-    function death:draw(dt)
-        self:drawMenu(self.menu, dt)
-    end
-
-    death:resize(love.graphics.getDimensions())
+    death.menu =
+        Button {
+        styles = {
+            marginLeft = '33%',
+            marginTop = '70%',
+            marginRight = '33%',
+            marginBottom = '10%'
+        },
+        text = 'Return to Menu',
+        onClick = function(state)
+            love.graphics.setShader()
+            state.scene = 'mainMenu'
+        end
+    }
 
     return death
 end

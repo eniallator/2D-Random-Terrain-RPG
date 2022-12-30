@@ -1,5 +1,7 @@
-return function(box, spriteData)
-    local characterDisplay = {}
+local BaseComponent = require 'client.gui.components.BaseComponent'
+
+return function(args)
+    local characterDisplay = BaseComponent(args)
 
     characterDisplay.imgs = {
         {
@@ -8,24 +10,22 @@ return function(box, spriteData)
         },
         {
             spritesheet = ASSETS.textures.entity.player.hair,
-            tint = spriteData.hair
+            tint = args.spriteData.hair
         },
         {
             spritesheet = ASSETS.textures.entity.player.eyes,
-            tint = spriteData.eyes
+            tint = args.spriteData.eyes
         }
     }
-
-    characterDisplay.box = box
 
     function characterDisplay:draw()
         local imgRef = self.imgs[1].spritesheet
         local quad = love.graphics.newQuad(0, 0, imgRef.width, imgRef.height, imgRef.img:getDimensions())
         local imgRatio = imgRef.width / imgRef.height
-        local boxRatio = self.box.width / self.box.height
+        local boxRatio = self.bakedBox.w / self.bakedBox.h
         local padding = {
-            x = imgRatio < boxRatio and self.box.width - self.box.height / imgRef.height * imgRef.width or 0,
-            y = imgRatio > boxRatio and self.box.height - self.box.width / imgRef.width * imgRef.height or 0
+            x = imgRatio < boxRatio and self.bakedBox.w - self.bakedBox.h / imgRef.height * imgRef.width or 0,
+            y = imgRatio > boxRatio and self.bakedBox.h - self.bakedBox.w / imgRef.width * imgRef.height or 0
         }
         local _, data
         for _, data in ipairs(self.imgs) do
@@ -33,11 +33,11 @@ return function(box, spriteData)
             love.graphics.draw(
                 data.spritesheet.img,
                 quad,
-                self.box.x + padding.x / 2,
-                self.box.y + padding.y / 2,
+                self.bakedBox.x + padding.x / 2,
+                self.bakedBox.y + padding.y / 2,
                 0,
-                (self.box.width - padding.x) / data.spritesheet.width,
-                (self.box.height - padding.y) / data.spritesheet.height
+                (self.bakedBox.w - padding.x) / data.spritesheet.width,
+                (self.bakedBox.h - padding.y) / data.spritesheet.height
             )
         end
         love.graphics.setColor(1, 1, 1, 1)

@@ -1,24 +1,33 @@
-return function(box, inventory, rowWidth, padding, backgroundColour)
-    local inventoryComponent = {}
+local BaseComponent = require 'client.gui.components.BaseComponent'
+
+local extraDefaultStyles = {
+    gapX = 10,
+    gapY = 10,
+    background = {r = 0.7, g = 0.7, b = 0.7, a = 1}
+}
+
+return function(args)
+    local inventory = BaseComponent(args, extraDefaultStyles)
 
     local inventorySquare = ASSETS.textures.inventory.inventorySquare
 
-    inventoryComponent.box = box
-    inventoryComponent.inventory = inventory
-    inventoryComponent.rowWidth = rowWidth
-    inventoryComponent.backgroundColour = backgroundColour or {r = 0.5, g = 0.5, b = 0.5}
-    inventoryComponent.padding = padding or 0
+    inventory.inventory = args.inventory
+    inventory.rowWidth = args.rowWidth or 9
 
-    function inventoryComponent:draw()
-        if self.backgroundColour ~= nil then
-            love.graphics.setColor(self.backgroundColour.r, self.backgroundColour.g, self.backgroundColour.b)
+    function inventory:draw()
+        if self.bakedStyles.background then
+            love.graphics.setColor(
+                self.bakedStyles.background.r,
+                self.bakedStyles.background.g,
+                self.bakedStyles.background.b,
+                self.bakedStyles.background.a
+            )
         end
-        love.graphics.setColor(1, 1, 1, 1)
-        local i, j
         local numRows = math.ceil(self.inventory.maxStacks / self.rowWidth)
 
-        local itemDim = math.min(self.box.width / self.rowWidth, self.box.height / numRows)
+        local itemDim = math.min(self.bakedBox.w / self.rowWidth, self.bakedBox.h / numRows)
 
+        local i, j
         for i = 1, numRows do
             for j = 1, self.rowWidth do
                 if (i - 1) * self.rowWidth + j > self.inventory.maxStacks then
@@ -26,8 +35,8 @@ return function(box, inventory, rowWidth, padding, backgroundColour)
                 end
 
                 local itemBox = {
-                    x = self.box.x + itemDim * (j - 1) + self.padding / 2,
-                    y = self.box.y + itemDim * (i - 1) + self.padding / 2,
+                    x = self.bakedBox.x + itemDim * (j - 1) + self.padding / 2,
+                    y = self.bakedBox.y + itemDim * (i - 1) + self.padding / 2,
                     width = itemDim - self.padding,
                     height = itemDim - self.padding
                 }
@@ -46,5 +55,5 @@ return function(box, inventory, rowWidth, padding, backgroundColour)
         end
     end
 
-    return inventoryComponent
+    return inventory
 end

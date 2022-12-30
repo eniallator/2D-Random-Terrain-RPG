@@ -87,11 +87,13 @@ return function(menuState)
     function game:update(localNetworkState, receivedNetworkState, menuState)
         if not self.player.alive then
             self.overlay = Death()
+            self.overlay:bake()
         elseif KEYS.recentPressed.escape then
             if self.overlay then
                 self.overlay = nil
             else
                 self.overlay = Escape()
+                self.overlay:bake()
             end
         end
 

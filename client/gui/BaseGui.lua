@@ -6,31 +6,24 @@ return function()
         KEYS.updateRecentPressed()
     end
 
-    function baseGui:updateMenu(menu, state)
-        local _, component
-        for _, component in ipairs(menu:getComponents()) do
-            if type(component.update) == 'function' then
-                component:update(state)
-            end
-        end
+    function baseGui:resize(w, h)
+        self.menu:bakeStyles()
+        self.menu:computeWeights()
+        self.menu:bake(0, 0, w, h)
+    end
+
+    function baseGui:bake()
+        baseGui:resize(love.graphics.getDimensions())
+    end
+
+    function baseGui:update(state)
+        self.menu:update(state)
+        self.menu:handleClick(state)
         self:updateInputs()
     end
 
-    function baseGui:drawMenu(menu, dt)
-        local _, component
-        for _, component in ipairs(menu:getComponents()) do
-            if type(component.draw) == 'function' then
-                component:draw(dt)
-            end
-        end
-    end
-
-    function baseGui:update()
-        error('Gui has not implemented update function yet!')
-    end
-
-    function baseGui:draw(dt)
-        error('Gui has not implemented draw function yet!')
+    function baseGui:draw()
+        self.menu:draw()
     end
 
     return baseGui

@@ -1,63 +1,35 @@
 local BaseGui = require 'client.gui.BaseGui'
-local Grid = require 'client.gui.Grid'
+local Grid = require 'client.gui.components.Grid'
+local Label = require 'client.gui.components.Label'
+local Button = require 'client.gui.components.Button'
+local ColourPicker = require 'client.gui.components.ColourPicker'
 
 return function(state)
     local colourPicker = BaseGui()
 
-    colourPicker.menu = Grid()
-
-    colourPicker.menu:addComponent(
-        'label',
-        {value = 1, weight = 1},
-        {value = 1, weight = 1},
-        {state.selectedColourLabel}
-    )
-    colourPicker.menu:addComponent(
-        'colourPicker',
-        {value = 1, weight = 1},
-        {value = 2, weight = 5},
-        {state.selectedColourTbl}
-    )
-    colourPicker.menu:addComponent(
-        'label',
-        {value = 1, weight = 1},
-        {value = 3, weight = 1},
-        {'', state.selectedColourTbl}
-    )
-    colourPicker.menu:addComponent(
-        'button',
-        {value = 1, weight = 1},
-        {value = 4, weight = 1},
-        {
-            'Save',
-            function(state)
-                state.selectedColourLabel = nil
-                state.selectedColourTbl = nil
-                state.scene = 'characterSelect'
-            end,
-            {r = 0, g = 0.7, b = 0}
+    colourPicker.menu =
+        Grid {
+        styles = {
+            gapY = '2%',
+            marginLeft = '12.5%',
+            marginTop = '10%',
+            marginRight = '12.5%',
+            marginBottom = '10%'
+        },
+        children = {
+            Label {text = state.selectedColourLabel},
+            ColourPicker {outputTbl = state.selectedColourTbl, yWeight = 5},
+            Label {styles = {background = state.selectedColourTbl}},
+            Button {
+                text = 'Save',
+                onClick = function(state)
+                    state.selectedColourLabel = nil
+                    state.selectedColourTbl = nil
+                    state.scene = 'characterSelect'
+                end
+            }
         }
-    )
-
-    function colourPicker:resize(width, height)
-        local minDim = math.min(width, height)
-        self.menu:setPadding(minDim / 30, minDim / 40)
-        local border = {
-            x = width / 4,
-            y = height / 5
-        }
-        self.menu:bakeComponents(border.x, border.y, width - border.x * 2, height - border.y * 2)
-    end
-
-    function colourPicker:update(state)
-        self:updateMenu(self.menu, state)
-    end
-
-    function colourPicker:draw(dt)
-        self:drawMenu(self.menu, dt)
-    end
-
-    colourPicker:resize(love.graphics.getDimensions())
+    }
 
     return colourPicker
 end

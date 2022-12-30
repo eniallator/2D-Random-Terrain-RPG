@@ -1,17 +1,17 @@
+local BaseComponent = require 'client.gui.components.BaseComponent'
+
 local function getRelativeCoords(box, pos)
-    if (box.x <= pos.x and pos.x < box.x + box.width) and
-            (box.y <= pos.y and pos.y < box.y + box.height)
-        then
+    if (box.x <= pos.x and pos.x < box.x + box.w) and (box.y <= pos.y and pos.y < box.y + box.h) then
         return {
-            x = (pos.x - box.x) / box.width,
-            y = (pos.y - box.y) / box.height
+            x = (pos.x - box.x) / box.w,
+            y = (pos.y - box.y) / box.h
         }
     end
 end
 
 local function HSVToRGB(HSV)
     local HDegrees = 6 * HSV.H
-    
+
     local C = HSV.V * HSV.S
     local X = C * (1 - math.abs(HDegrees % 2 - 1))
     local m = HSV.V - C
@@ -27,70 +27,77 @@ local function HSVToRGB(HSV)
     }
 end
 
-return function(box, RGBOutput)
-    local colourPicker = {}
-    local HSToVRatio = 0.8
-    local paddingPercent = 0.02
+local extraDefaultStyles = {
+    gap = '4%'
+}
+
+return function(args)
+    local colourPicker = BaseComponent(args, extraDefaultStyles)
+    colourPicker.HSToVRatio = args.HSToVRatio or 0.8
+    colourPicker.outputTbl = args.outputTbl
 
     colourPicker.HSV = {
         H = 1,
         S = 1,
         V = 1
     }
-    colourPicker.HSBox = {
-        x = box.x,
-        y = box.y,
-        width = box.width,
-        height = (box.height * (1 - paddingPercent / 2)) * HSToVRatio
-    }
-    colourPicker.VBox = {
-        x = box.x,
-        y = box.y + box.height * HSToVRatio * (1 + paddingPercent),
-        width = box.width,
-        height = (box.height * (1 - paddingPercent / 2)) * (1 - HSToVRatio)
-    }
-    colourPicker.shader = SHADERS.colourPicker
 
-    function colourPicker:update(state)
-        if MOUSE.left.clicked then
-            local HSCoords = getRelativeCoords(self.HSBox, MOUSE.left.pos)
-            local VCoords = getRelativeCoords(self.VBox, MOUSE.left.pos)
-            if HSCoords then
-                self.HSV.H = HSCoords.x
-                self.HSV.S = 1 - HSCoords.y
-            elseif VCoords then
-                self.HSV.V = VCoords.x
-            end
+    local oldBake = colourPicker.bake
+    function colourPicker:bake(x, y, w, h)
+        oldBake(self, x, y, w, h)
+        local gap = self:getPixels(self.bakedStyles.gap, h)
+        self.bakedHSBox = {
+            x = self.bakedBox.x,
+            y = self.bakedBox.y,
+            w = self.bakedBox.w,
+            h = self.bakedBox.h * self.HSToVRatio - gap / 2
+        }
+        self.bakedVBox = {
+            x = self.bakedBox.x,
+            y = self.bakedBox.y + self.bakedHSBox.h + gap,
+            w = self.bakedBox.w,
+            h = self.bakedBox.h - self.bakedHSBox.h - gap
+        }
+    end
 
-            if HSCoords or VCoords then
-                local rgb = HSVToRGB(self.HSV)
-                RGBOutput.r = rgb.R
-                RGBOutput.g = rgb.G
-                RGBOutput.b = rgb.B
-            end
+    function colourPicker.onClick(state)
+        local HSCoords = getRelativeCoords(colourPicker.bakedHSBox, MOUSE.left.pos)
+        local VCoords = getRelativeCoords(colourPicker.bakedVBox, MOUSE.left.pos)
+        if HSCoords then
+            colourPicker.HSV.H = HSCoords.x
+            colourPicker.HSV.S = 1 - HSCoords.y
+        elseif VCoords then
+            colourPicker.HSV.V = VCoords.x
+        end
+
+        if HSCoords or VCoords then
+            local rgb = HSVToRGB(colourPicker.HSV)
+            colourPicker.outputTbl.r = rgb.R
+            colourPicker.outputTbl.g = rgb.G
+            colourPicker.outputTbl.b = rgb.B
         end
     end
 
     function colourPicker:draw()
         local img = ASSETS.textures.whiteSquare
-        SHADERS.HSColourPicker:send("V", self.HSV.V)
+        SHADERS.HSColourPicker:send('V', self.HSV.V)
         love.graphics.setShader(SHADERS.HSColourPicker)
         love.graphics.draw(
             img,
-            self.HSBox.x,
-            self.HSBox.y,
+            self.bakedHSBox.x,
+            self.bakedHSBox.y,
             0,
-            self.HSBox.width / img:getWidth(),
-            self.HSBox.height / img:getHeight()
+            self.bakedHSBox.w / img:getWidth(),
+            self.bakedHSBox.h / img:getHeight()
         )
         love.graphics.setShader(SHADERS.VColourPicker)
         love.graphics.draw(
             img,
-            self.VBox.x,
-            self.VBox.y,
+            self.bakedVBox.x,
+            self.bakedVBox.y,
             0,
-            self.VBox.width / img:getWidth(),
-            self.VBox.height / img:getHeight()
+            self.bakedVBox.w / img:getWidth(),
+            self.bakedVBox.h / img:getHeight()
         )
         love.graphics.setShader()
     end

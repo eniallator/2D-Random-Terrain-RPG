@@ -12,10 +12,7 @@ timeAnalysis.registerMethods = function(tbl, name, deep)
                     return value(...)
                 end
                 if currentTimes[itemPath] == nil then
-                    currentTimes[itemPath] = {
-                        calls = 1,
-                        executionTime = 0
-                    }
+                    currentTimes[itemPath] = {calls = 1, executionTime = 0}
                 else
                     currentTimes[itemPath].calls = currentTimes[itemPath].calls + 1
                 end

@@ -14,6 +14,7 @@ return function(initialState)
     sceneManager.state = initialState
     sceneManager.currentSceneName = initialState.scene
     sceneManager.currentScene = sceneList[initialState.scene](initialState)
+    sceneManager.currentScene:bake()
 
     function sceneManager:resize(width, height)
         if type(self.currentScene.resize) == 'function' then
@@ -27,6 +28,7 @@ return function(initialState)
         if self.state.scene ~= self.currentSceneName then
             self.currentSceneName = self.state.scene
             self.currentScene = sceneList[self.currentSceneName](self.state)
+            self.currentScene:bake()
         end
     end
 
