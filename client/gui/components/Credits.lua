@@ -21,7 +21,6 @@ return function(args)
         self.bakedIcons = {}
 
         local longestAuthor, longestCreditsType, yOffset = 0, 0, 0
-        local font = love.graphics.getFont()
         for creditsType, item in pairs(self.data) do
             table.insert(
                 self.bakedText,
@@ -34,25 +33,25 @@ return function(args)
                     }
                 }
             )
-            yOffset = yOffset + self.bakedStyles.gapY + font:getHeight(creditsType)
+            yOffset = yOffset + self.bakedStyles.gapY + self.bakedFont:getHeight(creditsType)
 
-            longestAuthor = math.max(font:getWidth(item.author or ''), longestAuthor)
-            longestCreditsType = math.max(font:getWidth(creditsType), longestCreditsType)
+            longestAuthor = math.max(self.bakedFont:getWidth(item.author), longestAuthor)
+            longestCreditsType = math.max(self.bakedFont:getWidth(creditsType), longestCreditsType)
         end
 
-        local seperator = ':'
+        local separator = ':'
         local xOffsets = {}
-        xOffsets.seperator = longestCreditsType + self.bakedStyles.gapX
-        xOffsets.author = xOffsets.seperator + self.bakedStyles.gapX + font:getWidth(seperator)
+        xOffsets.separator = longestCreditsType + self.bakedStyles.gapX
+        xOffsets.author = xOffsets.separator + self.bakedStyles.gapX + self.bakedFont:getWidth(separator)
         xOffsets.icon = xOffsets.author + self.bakedStyles.gapX + longestAuthor
 
         local _, data
         for _, data in ipairs(self.bakedText) do
             local yValue = data[1].y
-            table.insert(data, {text = seperator, x = xOffsets.seperator, y = yValue})
-            table.insert(data, {text = data.ref.author, x = xOffsets.author, y = yValue})
+            table.insert(data, {text = separator, x = self.bakedBox.x + xOffsets.separator, y = yValue})
+            table.insert(data, {text = data.ref.author, x = self.bakedBox.x + xOffsets.author, y = yValue})
             local xOffset = 0
-            local iconDim = font:getHeight(data[1].text)
+            local iconDim = self.bakedFont:getHeight(data[1].text)
             for linkType, link in pairs(data.ref.links) do
                 table.insert(
                     self.bakedIcons,
@@ -60,7 +59,7 @@ return function(args)
                         link = link,
                         icon = ASSETS.textures.icons[linkType] or ASSETS.textures.icons.website,
                         x = self.bakedBox.x + xOffsets.icon + xOffset,
-                        y = self.bakedBox.y + yValue,
+                        y = yValue,
                         dim = iconDim
                     }
                 )
@@ -74,10 +73,8 @@ return function(args)
             local _, data
             for _, data in ipairs(self.bakedIcons) do
                 if
-                    (self.bakedBox.x + data.x <= MOUSE.left.pos.x and
-                        MOUSE.left.pos.x < self.bakedBox.x + data.x + data.dim) and
-                        (self.bakedBox.y + data.y <= MOUSE.left.pos.y and
-                            MOUSE.left.pos.y < self.bakedBox.y + data.y + data.dim)
+                    (data.x <= MOUSE.left.pos.x and MOUSE.left.pos.x < data.x + data.dim) and
+                        (data.y <= MOUSE.left.pos.y and MOUSE.left.pos.y < data.y + data.dim)
                  then
                     love.system.openURL(data.link)
                 end
@@ -100,12 +97,15 @@ return function(args)
             self.bakedStyles.colour.a
         )
 
+        local font = love.graphics.getFont()
+        love.graphics.setFont(self.bakedFont)
         local _, i, row, data
         for _, row in ipairs(self.bakedText) do
             for i = 1, #row do
                 love.graphics.print(row[i].text, row[i].x, row[i].y)
             end
         end
+        love.graphics.setFont(font)
 
         for _, data in ipairs(self.bakedIcons) do
             love.graphics.draw(
