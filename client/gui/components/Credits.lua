@@ -83,19 +83,11 @@ return function(args)
     end
 
     function credits:draw()
-        love.graphics.setColor(
-            self.bakedStyles.background.r,
-            self.bakedStyles.background.g,
-            self.bakedStyles.background.b,
-            self.bakedStyles.background.a
-        )
+        local background = self:getStyle('background')
+        love.graphics.setColor(background.r, background.g, background.b, background.a)
         love.graphics.rectangle('fill', self.bakedBox.x, self.bakedBox.y, self.bakedBox.w, self.bakedBox.h)
-        love.graphics.setColor(
-            self.bakedStyles.colour.r,
-            self.bakedStyles.colour.g,
-            self.bakedStyles.colour.b,
-            self.bakedStyles.colour.a
-        )
+        local colour = self:getStyle('colour')
+        love.graphics.setColor(colour.r, colour.g, colour.b, colour.a)
 
         local font = love.graphics.getFont()
         love.graphics.setFont(self.bakedFont)

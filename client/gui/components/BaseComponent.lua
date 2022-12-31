@@ -5,6 +5,7 @@ local defaultStyles = {
     marginBottom = 0,
     background = {r = 0, g = 0, b = 0, a = 1},
     colour = {r = 1, g = 1, b = 1, a = 1},
+    _disabled = {},
     font = nil,
     fontSize = '4vmin'
 }
@@ -117,12 +118,25 @@ return function(args, extraDefaultStyles)
         end
     end
 
+    function baseComponent:update(state)
+        if self.textFunc then
+            self.text = self.textFunc(state) or ''
+        end
+        self.isDisabled = self.disabled ~= nil and self.disabled(state)
+        if self.children then
+            local _, child
+            for _, child in ipairs(self.children) do
+                child:update(state)
+            end
+        end
+    end
+
     function baseComponent:handleClick(state)
         local clickedInside =
             MOUSE.left.clicked and
             (self.bakedBox.x <= MOUSE.left.pos.x and MOUSE.left.pos.x < self.bakedBox.x + self.bakedBox.w) and
             (self.bakedBox.y <= MOUSE.left.pos.y and MOUSE.left.pos.y < self.bakedBox.y + self.bakedBox.h)
-        if clickedInside and (self.disabled == nil or not self.disabled(state)) then
+        if clickedInside and not self.isDisabled then
             local clickHandled = false
             if self.children then
                 local _, child
@@ -140,16 +154,8 @@ return function(args, extraDefaultStyles)
         return clickedInside
     end
 
-    function baseComponent:update(state)
-        if self.textFunc then
-            self.text = self.textFunc(state) or ''
-        end
-        if self.children then
-            local _, child
-            for _, child in ipairs(self.children) do
-                child:update(state)
-            end
-        end
+    function baseComponent:getStyle(style)
+        return self.isDisabled and self.bakedStyles._disabled[style] or self.bakedStyles[style]
     end
 
     function baseComponent:draw()
@@ -158,20 +164,12 @@ return function(args, extraDefaultStyles)
         end
         local font = love.graphics.getFont()
 
-        love.graphics.setColor(
-            self.bakedStyles.background.r,
-            self.bakedStyles.background.g,
-            self.bakedStyles.background.b,
-            self.bakedStyles.background.a
-        )
+        local background = self:getStyle('background')
+        love.graphics.setColor(background.r, background.g, background.b, background.a)
         love.graphics.rectangle('fill', self.bakedBox.x, self.bakedBox.y, self.bakedBox.w, self.bakedBox.h)
 
-        love.graphics.setColor(
-            self.bakedStyles.colour.r,
-            self.bakedStyles.colour.g,
-            self.bakedStyles.colour.b,
-            self.bakedStyles.colour.a
-        )
+        local colour = self:getStyle('colour')
+        love.graphics.setColor(colour.r, colour.g, colour.b, colour.a)
         local font = love.graphics.getFont()
         local _, lines = self.bakedFont:getWrap(self.text, self.bakedBox.w)
         love.graphics.setFont(self.bakedFont)

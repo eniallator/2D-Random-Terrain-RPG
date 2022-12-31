@@ -16,12 +16,8 @@ return function(args)
 
     function inventory:draw()
         if self.bakedStyles.background then
-            love.graphics.setColor(
-                self.bakedStyles.background.r,
-                self.bakedStyles.background.g,
-                self.bakedStyles.background.b,
-                self.bakedStyles.background.a
-            )
+            local background = self:getStyle('background')
+            love.graphics.setColor(background.r, background.g, background.b, background.a)
         end
         local numRows = math.ceil(self.inventory.maxStacks / self.rowWidth)
 
