@@ -2,7 +2,7 @@ local BaseGui = require 'client.gui.BaseGui'
 local Inventory = require 'client.gui.components.Inventory'
 
 return function(inventory)
-    local playerInventory = BaseGui()
+    local playerInventory = BaseGui('inventory')
 
     playerInventory.inventory = inventory
     playerInventory.menu =

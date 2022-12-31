@@ -2,7 +2,7 @@ local BaseGui = require 'client.gui.BaseGui'
 local Button = require 'client.gui.components.Button'
 
 return function()
-    local escape = BaseGui()
+    local escape = BaseGui('escape')
 
     escape.menu =
         Button {

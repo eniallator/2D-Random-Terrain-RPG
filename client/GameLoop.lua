@@ -34,14 +34,6 @@ return function(menuState)
 
         local cameraBox = self.camera:getViewBox()
 
-        -- if KEYS.recentPressed.i then
-        --     if self.overlay == nil then
-        --         self.overlay = PlayerInventory(self.player.inventory)
-        --     else
-        --         self.overlay = nil
-        --     end
-        -- end
-
         self.map:update(localNetworkState, receivedNetworkState, cameraBox)
 
         if self.player.alive then
@@ -86,14 +78,23 @@ return function(menuState)
 
     function game:update(localNetworkState, receivedNetworkState, menuState)
         if not self.player.alive then
-            self.overlay = Death()
-            self.overlay:bake()
+            if self.overlay == nil or self.overlay.name ~= 'death' then
+                self.overlay = Death()
+                self.overlay:bake()
+            end
         elseif KEYS.recentPressed.escape then
             if self.overlay then
                 self.overlay = nil
             else
                 self.overlay = Escape()
                 self.overlay:bake()
+            end
+        elseif KEYS.recentPressed.i then
+            if self.overlay == nil then
+                self.overlay = PlayerInventory(self.player.inventory)
+                self.overlay:bake()
+            elseif self.overlay.name == 'inventory' then
+                self.overlay = nil
             end
         end
 

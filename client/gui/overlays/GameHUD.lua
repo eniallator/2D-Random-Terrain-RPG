@@ -2,7 +2,7 @@ local BaseGui = require 'client.gui.BaseGui'
 local Grid = require 'client.gui.Grid'
 
 return function()
-    local gameHud = BaseGui()
+    local gameHud = BaseGui('hud')
     gameHud.menu = Grid()
 
     gameHud.menu:addComponent(

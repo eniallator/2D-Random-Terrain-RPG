@@ -1,5 +1,7 @@
-return function()
+return function(name)
     local baseGui = {}
+
+    baseGui.name = name
 
     function baseGui:updateInputs()
         MOUSE.updateValues()
