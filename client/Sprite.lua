@@ -35,6 +35,12 @@ return function(spriteWidth, spriteHeight)
         end
     end
 
+    function sprite:addFrame(name, img, region)
+        self.animations[name] = {name = name, img = img, region = region or {}}
+        self.animations[name].region.width = img:getWidth()
+        self.animations[name].region.height = img:getHeight()
+    end
+
     function sprite:setDefaultAnimation(name)
         self.defaultAnimation = name
     end
@@ -51,7 +57,7 @@ return function(spriteWidth, spriteHeight)
         self.frameIndex = self.frameIndex + numFrames
         local animation = self.animations[self.playingAnimation]
 
-        if self.frameIndex > #animation.frameRegions then
+        if animation.frameRegions ~= nil and self.frameIndex > #animation.frameRegions then
             if type(animation.repeating) == 'nil' or animation.repeating then
                 self.frameIndex = ((self.frameIndex - 1) % #animation.frameRegions) + 1
             elseif self.defaultAnimation ~= nil then
@@ -80,7 +86,7 @@ return function(spriteWidth, spriteHeight)
         end
 
         local animation = self.animations[self.playingAnimation]
-        local region = animation.frameRegions[self.frameIndex]
+        local region = animation.frameRegions and animation.frameRegions[self.frameIndex] or animation.region
         local scale = {
             x = self.dim.width * love.graphics.getWidth() / box.width / region.width,
             y = self.dim.height * love.graphics.getHeight() / box.height / region.height
@@ -94,15 +100,26 @@ return function(spriteWidth, spriteHeight)
             y = (pos.y - box.y + box.height / 2) / box.height * love.graphics.getHeight() - region.height * scale.y
         }
 
-        love.graphics.draw(
-            animation.spritesheet,
-            animation.quads[self.frameIndex],
-            drawPos.x + inversionOffset.x,
-            drawPos.y + inversionOffset.y,
-            region.rotation or 0,
-            scale.x * (region.invertX and -1 or 1),
-            scale.y * (region.invertY and -1 or 1)
-        )
+        if animation.frameRegions then
+            love.graphics.draw(
+                animation.spritesheet,
+                animation.quads[self.frameIndex],
+                drawPos.x + inversionOffset.x,
+                drawPos.y + inversionOffset.y,
+                region.rotation or 0,
+                scale.x * (region.invertX and -1 or 1),
+                scale.y * (region.invertY and -1 or 1)
+            )
+        else
+            love.graphics.draw(
+                animation.img,
+                drawPos.x + inversionOffset.x,
+                drawPos.y + inversionOffset.y,
+                region.rotation or 0,
+                scale.x * (region.invertX and -1 or 1),
+                scale.y * (region.invertY and -1 or 1)
+            )
+        end
     end
 
     return sprite

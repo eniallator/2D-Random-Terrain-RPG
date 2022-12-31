@@ -5,11 +5,17 @@ return function(maxStacks)
     baseInventory.stacks = {}
 
     function baseInventory:addStack(stack)
-        if index < 1 or index > self.maxStacks or self.stacks[index] ~= nil then
-            return nil
+        local lastIndex, i = 0
+        for i in pairs(self.stacks) do
+            if i - 1 == lastIndex then
+                lastIndex = i
+            else
+                break
+            end
         end
-
-        self.stacks[#self.stacks + 1] = stack
+        if lastIndex < self.maxStacks then
+            self.stacks[lastIndex + 1] = stack
+        end
     end
 
     function baseInventory:removeStack(index)

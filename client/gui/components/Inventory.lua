@@ -1,8 +1,9 @@
 local BaseComponent = require 'client.gui.components.BaseComponent'
 
 local extraDefaultStyles = {
-    gapX = 10,
-    gapY = 10,
+    gapX = '2vmin',
+    gapY = '2vmin',
+    itemPadding = '1vmin',
     background = false
 }
 
@@ -20,16 +21,28 @@ return function(args)
         self.bakedSquares = {}
         local numRows = math.ceil(self.inventory.maxStacks / self.rowWidth)
         local itemDim = math.min(self.bakedBox.w / self.rowWidth, self.bakedBox.h / numRows)
+        local gapX = self:getPixels(self.bakedStyles.gapX, self.bakedBox.w)
+        local gapY = self:getPixels(self.bakedStyles.gapY, self.bakedBox.h)
+        local itemPadding = self:getPixels(self.bakedStyles.itemPadding, math.min(self.bakedBox.w, self.bakedBox.h))
         local i, j
         for i = 1, numRows do
             for j = 1, self.rowWidth do
+                local outer = {
+                    x = self.bakedBox.x + itemDim * (j - 1) + gapX / 2,
+                    y = self.bakedBox.y + itemDim * (i - 1) + gapY / 2,
+                    w = itemDim - gapX,
+                    h = itemDim - gapY
+                }
                 table.insert(
                     self.bakedSquares,
                     {
-                        x = self.bakedBox.x + itemDim * (j - 1) + self.bakedStyles.gapX / 2,
-                        y = self.bakedBox.y + itemDim * (i - 1) + self.bakedStyles.gapY / 2,
-                        w = itemDim - self.bakedStyles.gapX,
-                        h = itemDim - self.bakedStyles.gapY
+                        outer = outer,
+                        inner = {
+                            x = outer.x + itemPadding,
+                            y = outer.y + itemPadding,
+                            w = outer.w - 2 * itemPadding,
+                            h = outer.h - 2 * itemPadding
+                        }
                     }
                 )
             end
@@ -46,14 +59,14 @@ return function(args)
         for i, square in ipairs(self.bakedSquares) do
             love.graphics.draw(
                 inventorySquare,
-                square.x,
-                square.y,
+                square.outer.x,
+                square.outer.y,
                 0,
-                square.w / inventorySquare:getWidth(),
-                square.h / inventorySquare:getHeight()
+                square.outer.w / inventorySquare:getWidth(),
+                square.outer.h / inventorySquare:getHeight()
             )
             if self.inventory.stacks[i] then
-                self.inventory.stacks[i]:draw(square)
+                self.inventory.stacks[i]:draw(square.inner)
             end
         end
     end

@@ -6,12 +6,10 @@ local function BaseItem(args)
     local baseItem = {}
 
     baseItem.img = args.img
-    baseItem.quad =
-        love.graphics.newQuad(args.imgRegion.x, args.imgRegion.y, args.imgRegion.width, args.imgRegion.height)
-    baseItem.imgRegion = args.imgRegion
     baseItem.onGround = args.onGround or false
     baseItem.stack = args.stack or 1
     baseItem.type = args.type
+    baseItem.animated = args.animated or false
 
     baseItem.entity =
         Entity(
@@ -24,30 +22,48 @@ local function BaseItem(args)
             speed = 0
         }
     )
-
     baseItem.entity.sprite:setDefaultAnimation('default')
-    baseItem.entity.sprite:addAnimation('default', baseItem.img, {args.imgRegion})
+
+    if baseItem.animated then
+        baseItem.quad =
+            love.graphics.newQuad(
+            args.frameRegions.x,
+            args.frameRegions.y,
+            args.frameRegions.width,
+            args.frameRegions.height
+        )
+        baseItem.frameRegions = args.frameRegions
+        baseItem.entity.sprite:addAnimation('default', baseItem.img, args.frameRegions, true)
+    else
+        baseItem.imgRegion = args.imgRegion
+        baseItem.entity.sprite:addFrame(
+            'default',
+            baseItem.img,
+            args.imgRegion or {width = baseItem.img:getWidth(), height = baseItem.img:getHeight()}
+        )
+    end
 
     function baseItem:drop(x, y)
         self.onGround = true
-        self.entity.hitbox.x = x
-        self.entity.hitbox.y = y
+        self.entity.pos.current.x = x
+        self.entity.pos.current.y = y
     end
 
     function baseItem:pickup(inventory)
         inventory:addItem(self)
         self.onGround = false
-        self.entity.hitbox.x = nil
-        self.entity.hitbox.y = nil
+        self.entity.pos.current.x = nil
+        self.entity.pos.current.y = nil
     end
 
     function baseItem:duplicate()
         return BaseItem(
             {
                 img = self.img,
-                imgRegion = self.imgRegion,
-                onGround = self.onGround,
-                label = self.label
+                type = self.type,
+                animated = self.animated,
+                frameRegions = self.frameRegions,
+                imgRegion = self.imgRegion
             }
         )
     end
@@ -73,16 +89,18 @@ local function BaseItem(args)
     function baseItem:draw(box)
         if self.onGround then
             self.entity:draw(box)
-        else
+        elseif self.animated then
             love.graphics.draw(
                 self.img,
                 self.quad,
                 box.x,
                 box.y,
                 0,
-                box.width / self.img:getWidth(),
-                box.width / self.img:getHeight()
+                box.w / self.img:getWidth(),
+                box.h / self.img:getHeight()
             )
+        else
+            love.graphics.draw(self.img, box.x, box.y, 0, box.w / self.img:getWidth(), box.h / self.img:getHeight())
         end
     end
 
