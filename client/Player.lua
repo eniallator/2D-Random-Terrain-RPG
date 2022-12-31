@@ -9,7 +9,7 @@ return function(spriteData, nickname, isLocal)
             speed = 8 / config.tps,
             width = config.entity.player.width,
             height = config.entity.player.height,
-            nextFrameDist = 1.5,
+            nextFrameDist = 1,
             maxHealth = config.entity.player.health,
             label = nickname,
             layeredSprite = true,
