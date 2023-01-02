@@ -146,7 +146,7 @@ return function(player, mapSeed)
         love.graphics.draw(spriteBatch)
     end
 
-    local function drawDrawables(self, dt, box)
+    local function drawDrawables(self, dt, box, labelFont)
         local sortedDrawables = OrderedTable()
         self.player:calcDraw(dt)
         self.player:drawShadow(box)
@@ -172,14 +172,14 @@ return function(player, mapSeed)
 
         sortedDrawables:iterate(
             function(drawable)
-                drawable:draw(box)
+                drawable:draw(box, labelFont)
             end
         )
     end
 
-    function map:draw(localNetworkState, receivedNetworkState, dt, box)
+    function map:draw(localNetworkState, receivedNetworkState, dt, box, labelFont)
         drawChunks(self, box)
-        drawDrawables(self, dt, box)
+        drawDrawables(self, dt, box, labelFont)
     end
 
     return map

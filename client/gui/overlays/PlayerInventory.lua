@@ -8,10 +8,10 @@ return function(inventory)
     playerInventory.menu =
         Inventory {
         styles = {
-            marginLeft = '16%',
-            marginTop = '14%',
-            marginRight = '16%',
-            marginBottom = '14%'
+            marginLeft = '15vmin',
+            marginTop = '20vmin',
+            marginRight = '15vmin',
+            marginBottom = '20vmin'
         },
         inventory = inventory
     }

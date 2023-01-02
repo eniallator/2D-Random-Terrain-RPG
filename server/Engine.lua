@@ -1,6 +1,7 @@
 local config = require 'conf'
 if config.development then
     serialise = require 'common.development.Serialise'
+    timeAnalysis = require 'common.development.timeAnalysis'
 end
 
 local Server, server = require 'server.Main'

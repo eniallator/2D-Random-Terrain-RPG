@@ -86,21 +86,27 @@ local function BaseItem(args)
         end
     end
 
-    function baseItem:draw(box)
+    function baseItem:draw(box, font)
         if self.onGround then
             self.entity:draw(box)
-        elseif self.animated then
-            love.graphics.draw(
-                self.img,
-                self.quad,
-                box.x,
-                box.y,
-                0,
-                box.w / self.img:getWidth(),
-                box.h / self.img:getHeight()
-            )
         else
-            love.graphics.draw(self.img, box.x, box.y, 0, box.w / self.img:getWidth(), box.h / self.img:getHeight())
+            if self.animated then
+                love.graphics.draw(
+                    self.img,
+                    self.quad,
+                    box.x,
+                    box.y,
+                    0,
+                    box.w / self.img:getWidth(),
+                    box.h / self.img:getHeight()
+                )
+            else
+                love.graphics.draw(self.img, box.x, box.y, 0, box.w / self.img:getWidth(), box.h / self.img:getHeight())
+            end
+            local oldFont = love.graphics.getFont()
+            love.graphics.setFont(font)
+            love.graphics.printf(self.stack, box.x, box.y + box.h - font:getHeight(self.stack), box.w, 'right')
+            love.graphics.setFont(oldFont)
         end
     end
 

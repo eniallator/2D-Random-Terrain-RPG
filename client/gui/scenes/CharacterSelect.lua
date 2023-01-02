@@ -19,7 +19,7 @@ return function(state)
             marginBottom = '10%'
         },
         children = {
-            TextInput {outputTbl = state, outputTblKey = 'nickname'},
+            TextInput {styles = {font = 'Psilly'}, outputTbl = state, outputTblKey = 'nickname'},
             Grid {
                 columns = 3,
                 yWeight = 4,

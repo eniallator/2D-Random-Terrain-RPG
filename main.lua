@@ -2,6 +2,7 @@ local config = require 'conf'
 
 if config.development then
     serialise = require 'common.development.Serialise'
+    timeAnalysis = require 'common.development.timeAnalysis'
 end
 
 MOUSE = require 'client.utils.Mouse'

@@ -1,4 +1,3 @@
-local timeAnalysis = require 'common.development.timeAnalysis'
 local config = require 'conf'
 local BaseGui = require 'client.gui.BaseGui'
 local Escape = require 'client.gui.overlays.Escape'
@@ -10,12 +9,19 @@ local Map = require 'client.environment.Map'
 local Camera = require 'client.Camera'
 
 return function(menuState)
-    local game = {}
-    game.player = Player(menuState.spriteData, menuState.nickname, true)
-    game.map = Map(game.player, mapSeed or love.timer.getTime())
-    game.camera = Camera(game.player)
+    local gameLoop = {}
+    gameLoop.player = Player(menuState.spriteData, menuState.nickname, true)
+    gameLoop.map = Map(gameLoop.player, mapSeed or love.timer.getTime())
+    gameLoop.camera = Camera(gameLoop.player)
 
-    game.overlay = nil
+    if timeAnalysis then
+        timeAnalysis.registerMethods(gameLoop.player, 'player', true)
+        timeAnalysis.registerMethods(gameLoop.camera, 'camera', true)
+        timeAnalysis.registerMethods(gameLoop.map, 'map')
+        timeAnalysis.registerMethods(gameLoop, 'game')
+    end
+
+    gameLoop.overlay = nil
 
     local function updateGame(self, localNetworkState, receivedNetworkState)
         if KEYS.recentPressed.t then
@@ -70,13 +76,14 @@ return function(menuState)
         end
     end
 
-    function game:resize(width, height)
+    function gameLoop:resize(width, height)
+        self.labelFont = love.graphics.newFont(ASSETS.fonts.Psilly, math.min(width, height) * 2.5 / 100)
         if self.overlay ~= nil and self.overlay.resize then
             self.overlay:resize(width, height)
         end
     end
 
-    function game:update(localNetworkState, receivedNetworkState, menuState)
+    function gameLoop:update(localNetworkState, receivedNetworkState, menuState)
         if not self.player.alive then
             if self.overlay == nil or self.overlay.name ~= 'death' then
                 self.overlay = Death()
@@ -105,19 +112,21 @@ return function(menuState)
         end
     end
 
-    function game:draw(localNetworkState, receivedNetworkState, dt)
+    function gameLoop:draw(localNetworkState, receivedNetworkState, dt)
         if self.overlay ~= nil and self.overlay.worldShader then
             love.graphics.setShader(self.overlay.worldShader)
         end
 
         local cameraBox = self.camera:getViewBox()
 
-        self.map:draw(localNetworkState, receivedNetworkState, dt, cameraBox)
+        self.map:draw(localNetworkState, receivedNetworkState, dt, cameraBox, self.labelFont)
 
         if self.overlay ~= nil then
             self.overlay:draw()
         end
     end
 
-    return game
+    gameLoop:resize(love.graphics.getDimensions())
+
+    return gameLoop
 end

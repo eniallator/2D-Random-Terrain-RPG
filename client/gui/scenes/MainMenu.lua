@@ -19,7 +19,7 @@ return function(state)
         },
         children = {
             Label {
-                styles = {background = {r = 0.3, g = 0.3, b = 0.3}},
+                styles = {background = {r = 0.3, g = 0.3, b = 0.3}, font = 'Psilly'},
                 text = state.nickname
             },
             CharacterDisplay {spriteData = state.spriteData, yWeight = 4},

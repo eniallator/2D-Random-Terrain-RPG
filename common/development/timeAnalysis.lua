@@ -21,7 +21,7 @@ timeAnalysis.registerMethods = function(tbl, name, deep)
                 currentTimes[itemPath].executionTime = currentTimes[itemPath].executionTime + os.clock() - startTime
                 return res
             end
-        elseif valueType == 'table' and deep then
+        elseif deep and valueType == 'table' then
             timeAnalysis.registerMethods(value, itemPath, deep)
         end
     end

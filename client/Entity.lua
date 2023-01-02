@@ -168,17 +168,16 @@ return function(args)
         love.graphics.setColor(1, 1, 1)
     end
 
-    local function drawLabel(self, box, offset)
+    local function drawLabel(self, box, offset, labelFont)
         local displayLabel = ' ' .. self.label .. ' '
-        local font = love.graphics.getFont()
         local vertPadding = 10
 
         local frameBox = self.sprite:getFrameBox(self.drawPos, box)
         local labelBox = {
-            x = frameBox.x + frameBox.width / 2 - font:getWidth(displayLabel) / 2,
-            y = frameBox.y - frameBox.height / 12 - font:getHeight(displayLabel) - box.height / 20,
-            width = font:getWidth(displayLabel),
-            height = font:getHeight(displayLabel) + vertPadding
+            x = frameBox.x + frameBox.width / 2 - labelFont:getWidth(displayLabel) / 2,
+            y = frameBox.y - frameBox.height / 12 - labelFont:getHeight(displayLabel) - box.height / 20,
+            width = labelFont:getWidth(displayLabel),
+            height = labelFont:getHeight(displayLabel) + vertPadding
         }
 
         if offset then
@@ -188,16 +187,19 @@ return function(args)
         love.graphics.setColor(0, 0, 0, 0.4)
         love.graphics.rectangle('fill', labelBox.x, labelBox.y - vertPadding / 2, labelBox.width, labelBox.height)
         love.graphics.setColor(1, 1, 1)
+        local font = love.graphics.getFont()
+        love.graphics.setFont(labelFont)
         love.graphics.print(displayLabel, labelBox.x, labelBox.y)
+        love.graphics.setFont(font)
     end
 
-    function entity:draw(box)
+    function entity:draw(box, labelFont)
         self.sprite:draw(self.drawPos, box)
         if self.health < self.maxHealth then
             drawHealth(self, box)
         end
         if type(self.label) == 'string' and #self.label > 0 then
-            drawLabel(self, box, self.health < self.maxHealth)
+            drawLabel(self, box, self.health < self.maxHealth, labelFont)
         end
     end
 

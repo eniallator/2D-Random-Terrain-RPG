@@ -10,6 +10,24 @@ local defaultStyles = {
     fontSize = '4vmin'
 }
 
+local unitConversion = {
+    ['%'] = function(value, ctx)
+        return value / 100 * ctx.containerAxisMax
+    end,
+    vw = function(value, ctx)
+        return value / 100 * ctx.viewport.w
+    end,
+    vh = function(value, ctx)
+        return value / 100 * ctx.viewport.h
+    end,
+    vmin = function(value, ctx)
+        return value / 100 * math.min(ctx.viewport.w, ctx.viewport.h)
+    end,
+    vmax = function(value, ctx)
+        return value / 100 * math.max(ctx.viewport.w, ctx.viewport.h)
+    end
+}
+
 return function(args, extraDefaultStyles)
     local baseComponent = {}
 
@@ -26,31 +44,19 @@ return function(args, extraDefaultStyles)
         baseComponent.text = args.text or ''
     end
 
-    function baseComponent:getPixels(val, maxDim)
+    function baseComponent:getPixels(val, containerAxisMax)
         local valType = type(val)
         if valType == 'number' then
             return val
         elseif valType == 'string' then
-            local w, h = love.graphics.getDimensions()
-            local min, max = math.min(w, h), math.max(w, h)
+            local ctx = {
+                containerAxisMax = containerAxisMax,
+                viewport = {}
+            }
+            ctx.viewport.w, ctx.viewport.h = love.graphics.getDimensions()
 
-            local percent = val:match('^([^%%]+)%%$')
-            local vw = val:match('^([^%%]+)vw$')
-            local vh = val:match('^([^%%]+)vh$')
-            local vmin = val:match('^([^%%]+)vmin$')
-            local vmax = val:match('^([^%%]+)vmax$')
-
-            if percent then
-                return tonumber(percent) / 100 * maxDim
-            elseif vw then
-                return tonumber(vw) / 100 * w
-            elseif vh then
-                return tonumber(vh) / 100 * h
-            elseif vmin then
-                return tonumber(vmin) / 100 * min
-            elseif vmax then
-                return tonumber(vmax) / 100 * max
-            end
+            local value, units = val:match('^([%d%.]+)([%w%%]+)$')
+            return unitConversion[units] and unitConversion[units](tonumber(value), ctx) or nil
         end
     end
 
@@ -109,7 +115,7 @@ return function(args, extraDefaultStyles)
             w = w - xOffset - self:getPixels(self.bakedStyles.marginRight, w),
             h = h - yOffset - self:getPixels(self.bakedStyles.marginBottom, h)
         }
-        local fontSize = self:getPixels(self.bakedStyles.fontSize)
+        local fontSize = self:getPixels(self.bakedStyles.fontSize, math.min(w, h))
         self.bakedFont =
             self.bakedStyles.font and love.graphics.newFont(ASSETS.fonts[self.bakedStyles.font], fontSize) or
             love.graphics.newFont(fontSize)

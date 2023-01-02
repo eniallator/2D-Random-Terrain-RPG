@@ -1,4 +1,3 @@
-local timeAnalysis = require 'common.development.timeAnalysis'
 local config = require 'conf'
 local NetworkApi = require 'server.communication.NetworkApi'
 local GameLoopController = require 'common.GameLoopController'
@@ -24,6 +23,12 @@ return function()
     main.channel = love.thread.getChannel('SERVER')
     main.running = true
     main.map = Map(config.mapSeed)
+
+    if timeAnalysis then
+        timeAnalysis.registerMethods(main.map, 'Map', true)
+        timeAnalysis.registerMethods(main.networkApi, 'NetworkApi', true)
+        timeAnalysis.registerMethods(main, 'Main')
+    end
 
     function main:updateTick(connectionsLocalState, connectionsReceivedState)
         local message = self.channel:pop()

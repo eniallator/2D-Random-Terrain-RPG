@@ -9,7 +9,7 @@ return {
     development = true,
     chunkSize = 16,
     playerChunkRadius = 5,
-    maxChunksToSend = 30,
+    maxChunksToSend = 25,
     mapSeed = 1234,
     tps = 20,
     camera = {
@@ -18,27 +18,31 @@ return {
         zoomLimits = {max = 105, min = 6}
     },
     terrain = {
-        biomeScale = 100,
-        noiseOffset = 1000,
+        noise = {
+            scale = 200,
+            offset = 1000,
+            octaves = 3,
+            octaveMultiplier = 0.4
+        },
         biomeMap = {
             {
-                temperature = {min = 0.5, max = 1},
-                humidity = {min = 0.5, max = 1},
+                temperature = {min = 0, max = math.huge},
+                humidity = {min = 0, max = math.huge},
                 name = 'Marsh'
             },
             {
-                temperature = {min = 0, max = 0.5},
-                humidity = {min = 0.5, max = 1},
+                temperature = {min = -math.huge, max = 0},
+                humidity = {min = 0, max = math.huge},
                 name = 'Grassland'
             },
             {
-                temperature = {min = 0.5, max = 1},
-                humidity = {min = 0, max = 0.5},
+                temperature = {min = 0, max = math.huge},
+                humidity = {min = -math.huge, max = 0},
                 name = 'Desert'
             },
             {
-                temperature = {min = 0, max = 0.5},
-                humidity = {min = 0, max = 0.5},
+                temperature = {min = -math.huge, max = 0},
+                humidity = {min = -math.huge, max = 0},
                 name = 'Snow'
             }
         }
