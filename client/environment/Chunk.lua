@@ -2,8 +2,8 @@ local config = require 'conf'
 
 local bitsPerTileId = math.ceil(math.log(#config.terrain.biomeMap))
 local spritesheet = ASSETS.textures.terrain.spritesheet
-local biomeQuadLookUp = {
-    ['Marsh'] = love.graphics.newQuad(
+local tileQuadLookUp = {
+    ['dirt'] = love.graphics.newQuad(
         1 * spritesheet.width,
         1 * spritesheet.height,
         spritesheet.width,
@@ -11,7 +11,7 @@ local biomeQuadLookUp = {
         spritesheet.img:getWidth(),
         spritesheet.img:getHeight()
     ),
-    ['Grassland'] = love.graphics.newQuad(
+    ['grass'] = love.graphics.newQuad(
         4 * spritesheet.width,
         1 * spritesheet.height,
         spritesheet.width,
@@ -19,7 +19,7 @@ local biomeQuadLookUp = {
         spritesheet.img:getWidth(),
         spritesheet.img:getHeight()
     ),
-    ['Desert'] = love.graphics.newQuad(
+    ['sand'] = love.graphics.newQuad(
         7 * spritesheet.width,
         1 * spritesheet.height,
         spritesheet.width,
@@ -27,7 +27,7 @@ local biomeQuadLookUp = {
         spritesheet.img:getWidth(),
         spritesheet.img:getHeight()
     ),
-    ['Snow'] = love.graphics.newQuad(
+    ['snow'] = love.graphics.newQuad(
         10 * spritesheet.width,
         1 * spritesheet.height,
         spritesheet.width,
@@ -63,7 +63,7 @@ return function(chunkData)
     local chunk = chunkData:toTable()
     chunk.groundTiles = deserialiseGroundTiles(chunk.groundTiles)
 
-    function chunk:draw(spriteBatch, x, y, width, height)
+    function chunk:draw(spriteBatches, x, y, width, height)
         local tileDim = {
             width = width / config.chunkSize,
             height = height / config.chunkSize
@@ -71,9 +71,12 @@ return function(chunkData)
 
         for i = 1, config.chunkSize do
             for j = 1, config.chunkSize do
-                local biomeName = config.terrain.biomeMap[self.groundTiles[i][j]].name
-                spriteBatch:add(
-                    biomeQuadLookUp[biomeName],
+                local cfg = config.terrain.biomeMap[self.groundTiles[i][j]]
+                if spriteBatches[cfg.tint] == nil then
+                    spriteBatches[cfg.tint] = love.graphics.newSpriteBatch(ASSETS.textures.terrain.spritesheet.img)
+                end
+                spriteBatches[cfg.tint]:add(
+                    tileQuadLookUp[cfg.tile],
                     x + (j - 1) * tileDim.width,
                     y + (i - 1) * tileDim.height,
                     0,
