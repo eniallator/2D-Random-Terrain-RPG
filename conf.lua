@@ -19,12 +19,12 @@ return {
     },
     terrain = {
         noise = {
-            scale = 150,
+            scale = 200,
             offset = 1000,
             octaves = 4,
             octaveMultiplier = 0.5,
             octaveInfluenceDropoff = 0.5,
-            remappingInfluence = 9
+            remappingInfluence = 20
         },
         tints = {
             brown = {r = 149 / 255, g = 94 / 255, b = 66 / 255},
@@ -36,64 +36,64 @@ return {
         biomeMap = {
             -- From the temperature/humidity table here https://minecraft.fandom.com/wiki/Biome
             {
-                temperature = {min = 0.8, max = 1.0},
-                humidity = {min = 0.0, max = 0.4},
+                temperature = {min = 0.8, max = math.huge},
+                humidity = {min = -math.huge, max = 0.4},
                 name = 'badlands',
                 tile = 'dirt',
                 tint = 'yellow'
             },
             {
-                temperature = {min = 0.8, max = 1.0},
+                temperature = {min = 0.8, max = math.huge},
                 humidity = {min = 0.4, max = 0.6},
                 name = 'desert',
                 tile = 'sand',
                 tint = 'none'
             },
             {
-                temperature = {min = 0.8, max = 1.0},
-                humidity = {min = 0.6, max = 1.0},
+                temperature = {min = 0.8, max = math.huge},
+                humidity = {min = 0.6, max = math.huge},
                 name = 'dryForest',
                 tile = 'grass',
                 tint = 'brown'
             },
             {
                 temperature = {min = 0.6, max = 0.8},
-                humidity = {min = 0.0, max = 0.4},
+                humidity = {min = -math.huge, max = 0.4},
                 name = 'savannah',
                 tile = 'grass',
                 tint = 'yellow'
             },
             {
                 temperature = {min = 0.2, max = 0.6},
-                humidity = {min = 0.0, max = 0.6},
+                humidity = {min = -math.huge, max = 0.6},
                 name = 'plains',
                 tile = 'grass',
                 tint = 'none'
             },
             {
                 temperature = {min = 0.6, max = 0.8},
-                humidity = {min = 0.4, max = 1.0},
+                humidity = {min = 0.4, max = math.huge},
                 name = 'jungle',
                 tile = 'grass',
                 tint = 'green'
             },
             {
                 temperature = {min = 0.2, max = 0.6},
-                humidity = {min = 0.6, max = 1.0},
+                humidity = {min = 0.6, max = math.huge},
                 name = 'taiga',
                 tile = 'grass',
                 tint = 'blue'
             },
             {
-                temperature = {min = 0.0, max = 0.2},
-                humidity = {min = 0.2, max = 1.0},
+                temperature = {min = -math.huge, max = 0.2},
+                humidity = {min = 0.2, max = math.huge},
                 name = 'snowyPlains',
                 tile = 'snow',
                 tint = 'none'
             },
             {
-                temperature = {min = 0.0, max = 0.2},
-                humidity = {min = 0.0, max = 0.2},
+                temperature = {min = -math.huge, max = 0.2},
+                humidity = {min = -math.huge, max = 0.2},
                 name = 'icePlains',
                 tile = 'snow',
                 tint = 'blue'
