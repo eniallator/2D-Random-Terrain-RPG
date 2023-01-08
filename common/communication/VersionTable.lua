@@ -55,14 +55,14 @@ end
 local SUB_TABLE_DELETED = '$D'
 local CLEAR_KEY = '$C'
 local AGE_KEY = '$A'
-local function SynchronisedMetaTable(class, initialAge)
+local function VersionMetaTable(class, initialAge)
     local mt = {
         __newAge = initialAge or 0,
         __data = {[AGE_KEY] = initialAge or 0},
         __otherTypes = {},
         __subTables = {},
         __deletedSubTables = {},
-        __metatable = 'SynchronisedTable',
+        __metatable = 'VersionTable',
         __class = class
     }
 
@@ -245,18 +245,18 @@ local function SynchronisedMetaTable(class, initialAge)
     return mt
 end
 
-local function SynchronisedTable(initialData, initialAge)
-    local synchronisedTable = {}
-    local mt = SynchronisedMetaTable(SynchronisedTable, initialAge)
-    setmetatable(synchronisedTable, mt)
+local function VersionTable(initialData, initialAge)
+    local versionTable = {}
+    local mt = VersionMetaTable(VersionTable, initialAge)
+    setmetatable(versionTable, mt)
 
     if initialData ~= nil then
         for key, value in pairs(initialData) do
-            synchronisedTable[key] = value
+            versionTable[key] = value
         end
     end
 
-    function synchronisedTable:toTable()
+    function versionTable:toTable()
         local tbl = {}
         local key, value, subTable
         for key, value in pairs(mt.__data) do
@@ -268,52 +268,52 @@ local function SynchronisedTable(initialData, initialAge)
         return tbl
     end
 
-    function synchronisedTable:clearCacheBefore(age)
+    function versionTable:clearCacheBefore(age)
         mt.clearCacheBefore(age)
     end
 
-    function synchronisedTable:clear()
+    function versionTable:clear()
         mt.clear()
     end
 
-    function synchronisedTable:setAge(age)
+    function versionTable:setAge(age)
         mt.__newAge = age
         local _, subTable
         for _, subTable in self:subTablePairs() do
             subTable:setAge(age)
         end
     end
-    function synchronisedTable:getNewAge()
+    function versionTable:getNewAge()
         return mt.__newAge
     end
-    function synchronisedTable:getLastAge()
+    function versionTable:getLastAge()
         return mt.getLastAge()
     end
 
-    function synchronisedTable:forceUpdate(deep)
+    function versionTable:forceUpdate(deep)
         mt.forceUpdate(deep)
     end
 
-    function synchronisedTable:dataPairs()
+    function versionTable:dataPairs()
         return pairs(mt.__data)
     end
-    function synchronisedTable:subTablePairs()
+    function versionTable:subTablePairs()
         return pairs(mt.__subTables)
     end
 
-    function synchronisedTable:serialiseUpdates(age, force)
+    function versionTable:serialiseUpdates(age, force)
         local updatesBuilder = StringBuilder()
         mt.serialiseUpdates(age, force, updatesBuilder)
         return updatesBuilder:build()
     end
 
-    function synchronisedTable:deserialiseUpdates(updatesString, age)
+    function versionTable:deserialiseUpdates(updatesString, age)
         if mt.deserialiseUpdates(updatesString, age) < #updatesString then
             error("Didn't process entire updatesString")
         end
     end
 
-    return synchronisedTable
+    return versionTable
 end
 
-return SynchronisedTable
+return VersionTable

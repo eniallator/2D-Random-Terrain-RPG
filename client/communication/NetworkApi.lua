@@ -1,4 +1,4 @@
-local SynchronisedTable = require 'common.communication.SynchronisedTable'
+local VersionTable = require 'common.communication.VersionTable'
 local BaseNetworkApi = require 'common.communication.BaseNetworkApi'
 local packet = require 'common.communication.Packet'
 local socket = require 'socket'

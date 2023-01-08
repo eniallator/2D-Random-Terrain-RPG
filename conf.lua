@@ -122,7 +122,8 @@ return {
         player = {
             health = 1000,
             width = 3,
-            height = 4
+            height = 4,
+            inventorySize = 24
         },
         item = {
             dim = 6

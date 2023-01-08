@@ -1,5 +1,5 @@
 local interpolate = require 'common.utils.interpolate'
-local SynchronisedTable = require 'common.communication.SynchronisedTable'
+local VersionTable = require 'common.communication.VersionTable'
 local LayeredSprite = require 'client.LayeredSprite'
 local Sprite = require 'client.Sprite'
 
@@ -10,7 +10,7 @@ return function(args, age)
     entity.speed = args.speed
 
     entity.data =
-        SynchronisedTable(
+        VersionTable(
         {
             id = args.id,
             pos = {
@@ -38,7 +38,7 @@ return function(args, age)
 
     function entity:getData(keys)
         if keys then
-            local newData = SynchronisedTable(nil, self.data:getLastAge())
+            local newData = VersionTable(nil, self.data:getLastAge())
             for _, key in ipairs(keys) do
                 newData[key] = self.data[key]
             end

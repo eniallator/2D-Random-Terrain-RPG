@@ -14,7 +14,7 @@ return function(args)
     local inventorySquare = ASSETS.textures.inventory.inventorySquare
 
     inventory.inventory = args.inventory
-    inventory.rowWidth = args.rowWidth or 9
+    inventory.rowWidth = args.rowWidth or 6
 
     local oldBake = inventory.bake
     function inventory:bake(x, y, w, h)

@@ -1,12 +1,12 @@
-local SynchronisedTable = require 'common.communication.SynchronisedTable'
+local VersionTable = require 'common.communication.VersionTable'
 
 return function(initialLocalState)
     local baseNetworkApi = {}
 
-    baseNetworkApi.__localState = SynchronisedTable(initialLocalState)
+    baseNetworkApi.__localState = VersionTable(initialLocalState)
     baseNetworkApi.__lastAge = -1
 
-    baseNetworkApi.__receivedState = SynchronisedTable()
+    baseNetworkApi.__receivedState = VersionTable()
     baseNetworkApi.__hasReceivedState = false
 
     function baseNetworkApi:setAge(age)

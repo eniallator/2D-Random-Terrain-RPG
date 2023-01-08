@@ -1,5 +1,5 @@
 local collide = require 'common.utils.collide'
-local SynchronisedTable = require 'common.communication.SynchronisedTable'
+local VersionTable = require 'common.communication.VersionTable'
 
 return function(id, age, args)
     local projectile = {}
@@ -11,7 +11,7 @@ return function(id, age, args)
     projectile.radius = args.width * 0.4
 
     projectile.data =
-        SynchronisedTable(
+        VersionTable(
         {
             id = id,
             pos = {current = {x = args.pos.x, y = args.pos.y}}
