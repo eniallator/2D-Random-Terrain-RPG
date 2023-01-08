@@ -54,11 +54,11 @@ end
 
 local SUB_TABLE_DELETED = '$D'
 local CLEAR_KEY = '$C'
-local AGE_KEY = '$A'
-local function VersionMetaTable(class, initialAge)
+local VERSION_KEY = '$V'
+local function VersionMetaTable(class, initialVersion)
     local mt = {
-        __newAge = initialAge or 0,
-        __data = {[AGE_KEY] = initialAge or 0},
+        __newVersion = initialVersion or 0,
+        __data = {[VERSION_KEY] = initialVersion or 0},
         __otherTypes = {},
         __subTables = {},
         __deletedSubTables = {},
@@ -74,12 +74,12 @@ local function VersionMetaTable(class, initialAge)
         ['nil'] = true
     }
 
-    function mt.getLastAge()
-        return mt.__data[AGE_KEY]
+    function mt.getLastVersion()
+        return mt.__data[VERSION_KEY]
     end
 
     function mt.forceUpdate(deep)
-        mt.__data[AGE_KEY] = mt.__newAge
+        mt.__data[VERSION_KEY] = mt.__newVersion
         if deep then
             local _, subTable
             for _, subTable in pairs(mt.__subTables or {}) do
@@ -91,7 +91,7 @@ local function VersionMetaTable(class, initialAge)
     end
 
     function mt.clear()
-        mt.__data = {[AGE_KEY] = mt.__newAge, [CLEAR_KEY] = mt.__newAge}
+        mt.__data = {[VERSION_KEY] = mt.__newVersion, [CLEAR_KEY] = mt.__newVersion}
         mt.__subTables = {}
     end
 
@@ -105,7 +105,7 @@ local function VersionMetaTable(class, initialAge)
     end
 
     function mt.__newindex(tbl, key, value)
-        if key == AGE_KEY then
+        if key == VERSION_KEY then
             mt.__data[key] = value
             return
         end
@@ -113,23 +113,23 @@ local function VersionMetaTable(class, initialAge)
         if valType == 'table' then
             -- Trigger update if overwriting a data value with a subTable
             if mt.__data[key] ~= nil then
-                mt.__data[AGE_KEY] = mt.__newAge
+                mt.__data[VERSION_KEY] = mt.__newVersion
                 mt.__data[key] = nil
                 mt.__deletedSubTables[key] = nil
             end
             if getmetatable(value) == mt.__metatable then
                 mt.__subTables[key] = value
             else
-                mt.__subTables[key] = mt.__class(value, mt.__data[AGE_KEY])
+                mt.__subTables[key] = mt.__class(value, mt.__data[VERSION_KEY])
             end
         elseif DATA_VALUE_TYPES[valType] then
             -- Trigger update if data value changed
             if mt.__data[key] ~= value then
-                mt.__data[AGE_KEY] = mt.__newAge
+                mt.__data[VERSION_KEY] = mt.__newVersion
             end
             if mt.__subTables[key] ~= nil then
                 mt.__subTables[key] = nil
-                mt.__deletedSubTables[key] = mt.__data[AGE_KEY]
+                mt.__deletedSubTables[key] = mt.__data[VERSION_KEY]
             end
             mt.__data[key] = value
         else
@@ -137,22 +137,22 @@ local function VersionMetaTable(class, initialAge)
         end
     end
 
-    function mt.clearCacheBefore(age)
+    function mt.clearCacheBefore(version)
         local key, val, _, subTable
         for key, val in pairs(mt.__deletedSubTables) do
-            if age > val then
+            if version > val then
                 mt.__deletedSubTables[key] = nil
             end
         end
         for _, subTable in pairs(mt.__subTables) do
-            subTable:clearCacheBefore(age)
+            subTable:clearCacheBefore(version)
         end
     end
 
-    function mt.serialiseUpdates(age, force, updatesBuilder)
+    function mt.serialiseUpdates(version, force, updatesBuilder)
         local hasDataUpdates = false
         local key, value
-        for key, value in pairs((age <= mt.__data[AGE_KEY] or force) and mt.__data or {}) do
+        for key, value in pairs((version <= mt.__data[VERSION_KEY] or force) and mt.__data or {}) do
             if hasDataUpdates then
                 updatesBuilder:add(',')
             else
@@ -171,7 +171,7 @@ local function VersionMetaTable(class, initialAge)
             updatesBuilder:add(hasSubTableUpdates and ',' or '[')
             updatesBuilder:add(tostring(key))
             local lengthBefore = updatesBuilder.length
-            value.meta_serialiseUpdates(age, force, updatesBuilder)
+            value.meta_serialiseUpdates(version, force, updatesBuilder)
             if updatesBuilder.length == lengthBefore then
                 updatesBuilder:removeLast(2)
             else
@@ -189,9 +189,9 @@ local function VersionMetaTable(class, initialAge)
         end
     end
 
-    function mt.deserialiseUpdates(str, age, i)
+    function mt.deserialiseUpdates(str, version, i)
         i = i or 1
-        local oldAge = mt.__data[AGE_KEY]
+        local oldVersion = mt.__data[VERSION_KEY]
         if str:sub(i, i) == '{' then
             mt.__data = {}
             i = i + 1
@@ -202,18 +202,18 @@ local function VersionMetaTable(class, initialAge)
                 if str:sub(i, i) == ',' then
                     i = i + 1
                 end
-                if key == AGE_KEY then
-                    age = age or value
+                if key == VERSION_KEY then
+                    version = version or value
                 else
                     mt.__data[key] = value
                 end
             end
             i = i + 1
-            if age then
-                mt.__data[AGE_KEY] = age
+            if version then
+                mt.__data[VERSION_KEY] = version
             end
         end
-        if mt.__data[CLEAR_KEY] ~= nil and mt.__data[CLEAR_KEY] > oldAge then
+        if mt.__data[CLEAR_KEY] ~= nil and mt.__data[CLEAR_KEY] > oldVersion then
             mt.__subTables = {}
         end
         if str:sub(i, i) == '[' then
@@ -228,7 +228,7 @@ local function VersionMetaTable(class, initialAge)
                     if mt.__subTables[subTableKey] == nil or mt.__subTables[subTableKey] == SUB_TABLE_DELETED then
                         mt.__subTables[subTableKey] = mt.__class()
                     end
-                    i = mt.__subTables[subTableKey].meta_deserialiseUpdates(str, age, i)
+                    i = mt.__subTables[subTableKey].meta_deserialiseUpdates(str, version, i)
                 end
                 local sep = str:sub(i, i)
                 if sep == ',' then
@@ -245,9 +245,9 @@ local function VersionMetaTable(class, initialAge)
     return mt
 end
 
-local function VersionTable(initialData, initialAge)
+local function VersionTable(initialData, initialVersion)
     local versionTable = {}
-    local mt = VersionMetaTable(VersionTable, initialAge)
+    local mt = VersionMetaTable(VersionTable, initialVersion)
     setmetatable(versionTable, mt)
 
     if initialData ~= nil then
@@ -268,26 +268,26 @@ local function VersionTable(initialData, initialAge)
         return tbl
     end
 
-    function versionTable:clearCacheBefore(age)
-        mt.clearCacheBefore(age)
+    function versionTable:clearCacheBefore(version)
+        mt.clearCacheBefore(version)
     end
 
     function versionTable:clear()
         mt.clear()
     end
 
-    function versionTable:setAge(age)
-        mt.__newAge = age
+    function versionTable:setVersion(version)
+        mt.__newVersion = version
         local _, subTable
         for _, subTable in self:subTablePairs() do
-            subTable:setAge(age)
+            subTable:setVersion(version)
         end
     end
-    function versionTable:getNewAge()
-        return mt.__newAge
+    function versionTable:getNewVersion()
+        return mt.__newVersion
     end
-    function versionTable:getLastAge()
-        return mt.getLastAge()
+    function versionTable:getLastVersion()
+        return mt.getLastVersion()
     end
 
     function versionTable:forceUpdate(deep)
@@ -301,14 +301,14 @@ local function VersionTable(initialData, initialAge)
         return pairs(mt.__subTables)
     end
 
-    function versionTable:serialiseUpdates(age, force)
+    function versionTable:serialiseUpdates(version, force)
         local updatesBuilder = StringBuilder()
-        mt.serialiseUpdates(age, force, updatesBuilder)
+        mt.serialiseUpdates(version, force, updatesBuilder)
         return updatesBuilder:build()
     end
 
-    function versionTable:deserialiseUpdates(updatesString, age)
-        if mt.deserialiseUpdates(updatesString, age) < #updatesString then
+    function versionTable:deserialiseUpdates(updatesString, version)
+        if mt.deserialiseUpdates(updatesString, version) < #updatesString then
             error("Didn't process entire updatesString")
         end
     end

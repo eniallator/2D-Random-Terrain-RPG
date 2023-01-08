@@ -19,7 +19,7 @@ return function(initialConnectionState)
         local data, ip, port = udp:receivefrom()
         while data do
             self.__hasReceivedState = true
-            self.__receivedState:setAge(age)
+            self.__receivedState:setVersion(age)
             local address = ip .. ':' .. tostring(port)
             local key = self.addressToIdMap[address]
             local headers, payload = packet.deserialise(data)

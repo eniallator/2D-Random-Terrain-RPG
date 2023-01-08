@@ -22,7 +22,7 @@ return function(networkApi, tps)
         local ticked = false
         while self.dtAccumulated > self.tickLength do
             self.age = self.age + 1
-            self.networkApi:setAge(self.age)
+            self.networkApi:setVersion(self.age)
             self.dtAccumulated = self.dtAccumulated - self.tickLength
             ticked = true
             self:updateTick(self.networkApi:getLocalState(), self.networkApi:getReceivedState())

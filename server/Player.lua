@@ -21,9 +21,9 @@ return function(initialData)
     function player:update(age, map, shouldSimulate)
         if
             self.data.lastAbility.id ~= nil and
-                (abilityLastUsed == nil or self.data.lastAbility:getLastAge() > abilityLastUsed)
+                (abilityLastUsed == nil or self.data.lastAbility:getLastVersion() > abilityLastUsed)
          then
-            abilityLastUsed = self.data.lastAbility:getLastAge()
+            abilityLastUsed = self.data.lastAbility:getLastVersion()
             self.class:useAbility(
                 self.data.lastAbility.id,
                 {map = map, castedBy = self, toPos = self.data.lastAbility.toPos, age = age}

@@ -38,7 +38,7 @@ return function(args, age)
 
     function entity:getData(keys)
         if keys then
-            local newData = VersionTable(nil, self.data:getLastAge())
+            local newData = VersionTable(nil, self.data:getLastVersion())
             for _, key in ipairs(keys) do
                 newData[key] = self.data[key]
             end
@@ -65,7 +65,7 @@ return function(args, age)
     end
 
     function entity:update(age, shouldSimulate)
-        self.data:setAge(age)
+        self.data:setVersion(age)
         if not shouldSimulate then
             return
         end

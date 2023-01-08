@@ -9,8 +9,8 @@ return function(initialLocalState)
     baseNetworkApi.__receivedState = VersionTable()
     baseNetworkApi.__hasReceivedState = false
 
-    function baseNetworkApi:setAge(age)
-        self.__localState:setAge(age)
+    function baseNetworkApi:setVersion(age)
+        self.__localState:setVersion(age)
     end
 
     function baseNetworkApi:checkforUpdates()

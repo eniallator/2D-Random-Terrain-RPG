@@ -69,7 +69,10 @@ return function(args)
         end
 
         local nextPos
-        if not self.isLocal and networkState.pos.dest ~= nil and self.lastUpdate ~= networkState.pos.dest:getLastAge() then
+        if
+            not self.isLocal and networkState.pos.dest ~= nil and
+                self.lastUpdate ~= networkState.pos.dest:getLastVersion()
+         then
             self.lastUpdate = networkState.pos.dest.getLastAge()
             nextPos = {
                 x = networkState.pos.current.x,
